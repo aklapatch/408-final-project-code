@@ -1,0 +1,45 @@
+++ MbedOS Fault Handler ++
+
+FaultType: HardFault
+
+Context:
+R0   : 20000260
+R1   : 20006308
+R2   : 2C362818
+R3   : 2C362C20
+R4   : 20005F00
+R5   : 20000260
+R6   : 2C362819
+R7   : 200007F4
+R8   : 20004794
+R9   : 00000000
+R10  : 00000000
+R11  : 00000000
+R12  : 00000409
+SP   : 20004270
+LR   : 00038025
+PC   : 0000B56A
+xPSR : 010F0000
+PSP  : 20004208
+MSP  : 2002FFC0
+CPUID: 410FC241
+HFSR : 40000000
+MMFSR: 00000000
+BFSR : 00000004
+UFSR : 00000000
+DFSR : 00000008
+AFSR : 00000000
+Mode : Thread
+Priv : Privileged
+Stack: PSP
+-- MbedOS Fault Handler --
+++ MbedOS Error Info ++
+Error Status: 0x80FF013D Code: 317 Module: 255
+Error Message: Fault exception
+Location: 0x4F17
+Error Value: 0xB56A
+Current Thread: main  Id: 0x200016BC Entry: 0xBF1F StackSize: 0x1000 StackMem: 0x20003808 SP: 0x2002FF58
+For more info, visit: https://mbed.com/s/error?error=0x80FF013D&tgt=K64F
+-- MbedOS Error Info --
+= System will be rebooted due to a fatal error =
+= Reboot count(=4721) reached maximum, system will halt after rebooting

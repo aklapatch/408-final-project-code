@@ -1,0 +1,41 @@
+# system info.
+# Board Number:Wifi-SSID:Wifi-Password:DataBase-TABLE:
+Board-2:Hope:weallneedit:Test-Board:
+
+# Sensor info
+
+# ID number, type, Unit, Unit Multiplier ,start-range, end-range, unit.
+SensorID = 0, No Sensor, 0, 0, 0,
+SensorID = 1, CO2, ppm, 2000.0, 0, 2000.0, 
+SensorID = 2, Current, Amps, 133.33, 0.0, 100.0
+SensorID = 3, Current, Amps, 800.00, 0.0, 600.0
+SensorID = 4, Temperature, Degree Celcius, 50.0, 0, 50
+SensorID = 5, Temperature, Degree Celcius, 50.0, 0, 50
+SensorID = 6, Pressure, PSIG, 240.0, 0.0, 200.0
+*SensorID = 7, Humidity, Percentage, 100.0, 0.0, 100.0
+*SensorID = 8, Compressed Air Flow, Percentage , 100.0, 0.0, 100.0,
+
+# Slide Switch Info
+
+# Position : Conversion Circuit 
+Swt_Pos = 1 : 0 - 5 Vdc
+Swt_Pos = 2 : 0 - 2.5 Vdc
+Swt_Pos = 3 : 0 - 20 mA
+Swt_Pos = 4 : 0 - 10 Vdc
+
+# Port info.
+
+# Port : SensorID : Swt_Pos
+# the sensor id has to be 9 spaces out
+Port_1 : 2 : 2 
+Port_2 : 0 : 0 
+Port_3 : 0 : 0
+Port_4 : 0 : 0
+Port_5 : 0 : 0
+Port_6 : 0 : 0
+Port_7 : 0 : 0
+Port_8 : 0 : 0
+Port_9 : 0 : 0
+Port_10 : 0 : 0
+
+

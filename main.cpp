@@ -32,7 +32,7 @@
 BlockDevice *bd = BlockDevice::get_default_instance();
 
 #include "FATFileSystem.h"
-FATFileSystem fs("fs");
+FATFileSystem fs("sd");
 
 using namespace std;  
 
