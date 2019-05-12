@@ -75,6 +75,7 @@ int main()
 
     Serial pc(USBTX, USBRX);  // Serial Communication
     Serial esp(PTC17, PTC16); // tx, rx (Wifi)
+    // wifi pins (PTC17(tx),PTC16(rx))
 
     // data is gathered from these ports/sensor pins
     AnalogIn Port[] = {PTB2,  PTB3, PTB10, PTB11, PTC11,

@@ -14,5 +14,20 @@ That will automatically grab the project and basically `git clone` it right in y
 
 When you have your environment setup and every tool is added to your path, you should be able to run `mbed compile -m k64f -t GCC_ARM --flash` with a FRDM K64F connected, and the program should compile and be flashed to the K64F.
 
+The ESP8266 chip needs to have firmware of at least v2 to work. Upgrade instructions are [here](https://os.mbed.com/users/sarahmarshy/notebook/esp8266-v2-firmware-update-/).
+
+The above paragraph but with Arduino instructions [here](https://www.electronicshub.org/update-flash-esp8266-firmware/).
+
+Make sure that the baud rate in Device manager for the Arduino's serial port is 115200, and that you pulse the RST pin with 3.3 V every time you ground the GPIO/IOG pin to switch to and from firmware upload mode. Also make sure that no other device is using that Serial Port either (like the Arduino Serial Monitor).
+
+Here are the pin connections that I used for the arduino to update the ESP8266 firmware.
+
+| Arduino | ESP8266 |
+|---------|---------|
+| 3.3V | 3V3 , EN, RST (through push button) |
+| GND | IO0 (GPIO), GND |
+| RX (pin 0) | RX |
+| TX (pin 1) | TX |
+
 ### Useful docs:
 + [ESP8266 interface code + docs](https://os.mbed.com/teams/ESP8266/code/esp8266-driver/)
