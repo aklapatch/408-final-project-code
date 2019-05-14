@@ -46,14 +46,14 @@ BoardSpecs readConfigText(FILE *fp);
 /// \param Sens_ID The sensor's ID number
 /// \param Sensors The set of sensor information to pick from
 /// \returns The port's unit multiplier
-float setUnitMultiplier(vector<SensorInfo> & Sensors, int Sens_ID);
+float setUnitMultiplier(vector<SensorInfo> & Sensors, size_t Sens_ID);
 
 /// Returns a name for each sensor depending on the sensor's ID number.
 /// \returns A const char * that is the sensor name
 /// \param Sens_ID The sensor's ID number
 /// \param Sensors The set of sensor information to pick from
 /// \returns What that sensor measures
-string getSensorName(vector<SensorInfo> & Sensors, int Sens_ID);
+string getSensorName(vector<SensorInfo> & Sensors, size_t Sens_ID);
 
 /// Converts an integer to a string without C++11 functions.
 string toString(int input);

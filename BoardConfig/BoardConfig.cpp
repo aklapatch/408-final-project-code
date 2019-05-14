@@ -182,7 +182,7 @@ BoardSpecs readConfigText(FILE *fp)
 }
 
 // ============================================================================
-float setUnitMultiplier(vector<SensorInfo> & Sensors, int Sens_ID)
+float setUnitMultiplier(vector<SensorInfo> & Sensors, size_t Sens_ID)
 {
     // if there is no sensor for that id, then return 0
     if ( Sens_ID >= Sensors.size()){
@@ -193,7 +193,7 @@ float setUnitMultiplier(vector<SensorInfo> & Sensors, int Sens_ID)
 }
 
 // ============================================================================
-string getSensorName(vector<SensorInfo> & Sensors, int Sens_ID)
+string getSensorName(vector<SensorInfo> & Sensors, size_t Sens_ID)
 {
 
     // if there is no sensor for that id, then return error message

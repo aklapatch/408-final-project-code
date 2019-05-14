@@ -24,10 +24,18 @@ Here are the pin connections that I used for the arduino to update the ESP8266 f
 
 | Arduino | ESP8266 |
 |---------|---------|
-| 3.3V | 3V3 , EN, RST (through push button) |
-| GND | IO0 (GPIO), GND |
+| 3.3V | 3V3 , EN |
+| GND | IO0 (GPIO), GND,  RST (through push button) |
 | RX (pin 0) | RX |
 | TX (pin 1) | TX |
+
+This is how the ESP8266 should be connected to function (theoretically):
+| SensorBoard | ESP8266 |
+|----------|-----------|
+| Red Wires (3.3V) | EN, 3V3 |
+| Green | RX |
+| Yellow | TX |
+| Black | GND |
 
 ### Useful docs:
 + [ESP8266 interface code + docs](https://os.mbed.com/teams/ESP8266/code/esp8266-driver/)

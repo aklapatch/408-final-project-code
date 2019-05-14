@@ -301,45 +301,79 @@ bool sendBulkDataTCP(Serial &Debug, Serial &Antenna, vector<PortInfo> Ports, Boa
 }
 
 // ============================================================================
-void setESPMode(Serial & Debug, Serial & Antenna)
+short setESPMode(Serial & Antenna)
 {
     Antenna.printf("AT\r\n");        
         
-    printf("%s",getReply(Antenna, 1).c_str()); // check reception?
+    string Reply = getReply(Antenna, 1); // optimization opportunity
 
-    Debug.printf("\f---------- Starting ESP Config ----------\r\n\n");
+    printf(Reply.c_str());
 
-    Debug.printf("---------- Reset & get Firmware ----------\r\n");
+    if (!hasOK(Reply)){ // chip is not good if there is no 'OK'
+        printf("\r\nERROR: chip did not respond to the AT command\r\n");
+        return -1;
+    }
+
+    printf("\r\n---------- Starting ESP Config ----------\r\n\n");
+
+    printf("---------- Reset & get Firmware ----------\r\n");
 
     sendCMD(Antenna, "AT+RST\r\n");
 
-    string Reply = getReply(Antenna, 1); // optimization opportunity
+    Reply = getReply(Antenna,1);
 
-    Debug.printf(Reply.c_str());
+    printf(Reply.c_str());
 
-    Debug.printf("\n---------- Get Version ----------\r\n");
+    // return error if the chip does not return 'ready'
+    if ( Reply.find("ready") == string::npos){
+        printf("\r\nERROR: wifi reset failed\r\n");
+        return -2;
+
+    }
+
+    printf("\n---------- Get Version ----------\r\n");
 
     sendCMD(Antenna, "AT+GMR\r\n");
 
     Reply = getReply(Antenna, 1); // optimization opportunity
-    Debug.printf(Reply.c_str());
+    printf(Reply.c_str());
+
+    if (!hasOK(Reply)){ // there should be an 'OK' in the response
+        printf("\r\nERROR: wifi chip version retriaval failed!\r\n");
+        return -3; // return an error if there is no 'OK'
+    }
 
     // set CWMODE to 1=Station,2=AP,3=BOTH, default mode 1 (Station)
-    Debug.printf("\n---------- Setting Mode ----------\r\n");
+    printf("\n---------- Setting Mode ----------\r\n");
 
     sendCMD(Antenna, "AT+CWMODE=1\r\n");
 
     Reply = getReply(Antenna, 1); // optimization opportunity
-    Debug.printf(Reply.c_str());
+    printf(Reply.c_str());
 
-    Debug.printf("\n---------- Setting Connection Mode ----------\r\n");
+    if (!hasOK(Reply)){ // return error if there is no 'OK'
+        PRINTLINE;
+        printf("\r\nERROR: Failed to set WIFI chip to AP mode\r\n");
+        
+        return -4;
+    }
+
+    printf("\r\n---------- Setting Connection Mode ----------\r\n");
 
     // set CIPMUX to 0=Single,1=Multi
     sendCMD(Antenna, "AT+CIPMUX=1\r\n");
 
     Reply = getReply(Antenna, 1); // optimization opportunity
 
-    Debug.printf(Reply.c_str());
+    printf(Reply.c_str());
+
+    if (!hasOK(Reply)){
+        PRINTLINE;
+        printf("\r\nERROR: Failed to set TCP connection mode (multi/single)\r\n");
+        return -5;
+    }
+
+    return 0; // successful configuration set
 }
 
 // ============================================================================

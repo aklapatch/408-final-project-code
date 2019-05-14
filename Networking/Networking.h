@@ -24,6 +24,9 @@
 /// The string with the IP, port, and AT command used to init the connection
 #define CONNECTSTRING ("AT+CIPSTART=4,\"TCP\",\"149.165.231.70\",8804\r\n")
 
+/// The macro that indicates the error value where no network errors occured
+#define NETWORK_SUCCESS 0
+
 using namespace std;
 
 /// Returns true if NetworkSSID is found in the list of networks that are detected
@@ -34,7 +37,9 @@ bool canConnectToNetwork(Serial & Antenna, string NetworkSSID);
 
 /// sets the connection mode of the ESP chip.
 /// Also prints the chip specs and version
-void setESPMode(Serial & Debug, Serial & Antenna);
+/// Returns an error code depending on where the application fails
+/// Returns a 0 if successful
+short setESPMode(Serial & Antenna);
 
 /// Returns true if it is connected to a newtork, false if not.
 /// It checks the IP address and sees if the IP is 0.0.0.0 or nonsensical.
