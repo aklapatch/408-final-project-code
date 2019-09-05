@@ -1,1 +1,4 @@
 .vscode/*
+BUILD/*
+__pycache__/*
+
