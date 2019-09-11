@@ -25,6 +25,7 @@
 #include "mbed.h"
 #include <stdio.h>
 #include <errno.h>
+#include "ESP8266Interface.h"
 
 #include "BlockDevice.h"
 
@@ -45,7 +46,6 @@ using namespace std;
 //  * if you are not connected to WiFi, then check if you can connect, and connect
 //   * if connecting succeeds, then try to send data, but don't try if you did not connect
 //  
-// * 
 
 int main()
 {
