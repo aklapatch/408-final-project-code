@@ -10,7 +10,7 @@
 
 /// Prints out the current line of text and name of the file that this macro is
 /// in and on.
-#define PRINTLINE printf("\r\nLine: %d in file:  %sr\n",  __LINE__ ,__FILE__);
+#define PRINTLINE printf("\r\n%s ,Line %d\r\n", __FILE__,  __LINE__ );
 #define PRINTINT(x) printf("\r\n Line %d int = %d\r\n", __LINE__,(x));
 #define PRINTFLOAT(x) printf("\r\n Line %d float = %f\r\n", __LINE__,(x));
 #define PRINTSTRING(x) printf("\r\n Line %d string = %s\r\n", __LINE__,(x.c_str()));

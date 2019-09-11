@@ -62,6 +62,7 @@ int main()
     fflush(stdout);
     int err = fs.mount(bd);
     printf("%s\n", (err ? "Fail :(" : "OK"));
+    printf("\r\n");
     if (err) {
         // Reformat if we can't mount the filesystem
         // this should only happen on the first boot
@@ -74,17 +75,22 @@ int main()
         }
     }
 
+    printf("setting up serial connections: %s, %d\r\n", __FILE__, __LINE__);
     Serial pc(USBTX, USBRX);  // Serial Communication
+    PRINTLINE;
     Serial esp(PTC17, PTC16); // tx, rx (Wifi)
+    PRINTLINE;
     // wifi pins (PTC17(tx),PTC16(rx))
 
     // data is gathered from these ports/sensor pins
     AnalogIn Port[] = {PTB2,  PTB3, PTB10, PTB11, PTC11,
                        PTC10, PTC2, PTC0,  PTC9,  PTC8 };
-
-    pc.baud(115200);
+    PRINTLINE;
     esp.baud(115200);
 
+PRINTLINE;
+    const char * config_file = "/sd/IAC_Config_File.txt";
+    printf("\r\nReading board settings from %s\r\n", config_file); 
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
     PRINTSTRING(Specs.DatabaseTableName);
     

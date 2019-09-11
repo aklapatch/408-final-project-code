@@ -324,8 +324,9 @@ short setESPMode(Serial & Antenna)
 
     printf(Reply.c_str());
 
-    // return error if the chip does not return 'ready'
-    if ( Reply.find("ready") == string::npos){
+    // return error if the chip does not return 
+    // TODO: decide the character that should be detected
+    if ( Reply.find(":") == string::npos){
         printf("\r\nERROR: wifi reset failed\r\n");
         return -2;
 
