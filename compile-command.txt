@@ -1,0 +1,1 @@
+mbed compile --target K64F -t GCC_ARM --flash --profile .\develop.json  

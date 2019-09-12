@@ -380,14 +380,8 @@ short setESPMode(Serial & Antenna)
 // ============================================================================
 bool connectToWiFi(Serial &Debug, Serial &Antenna, BoardSpecs &Specs)
 {
-    if (!canConnectToNetwork(Antenna, Specs.NetworkSSID)){
-        printf(
-            "\r\n %s was not found in adjacent networks. Skipping connection\r\n"
-            , Specs.NetworkSSID.c_str() );
-        return false;
-    }
     
-    Debug.printf("\n---------- Connecting to AP ----------\r\n");
+    Debug.printf("\n---------- Trying to connecting to AP ----------\r\n");
     Debug.printf("ssid = %s   pwd = %s\r\n", Specs.NetworkSSID.c_str(),
                  Specs.NetworkPassword.c_str());
 

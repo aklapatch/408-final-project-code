@@ -3,7 +3,7 @@
 - VCC -> 3.3v
 - REST (reset) -> push button to GND (not shorted unless the button is pressed)
 - RX -> RX (ch 0)
-- TX -> TX (ch 0)
+- TX -> TX (ch 1)
 - GND -> GND
 - CH_PD -> 3.3v
 
@@ -18,16 +18,17 @@ Arduino is flashed with a blank firware.
 # ESP8266 chip stats
 26Mhz crystal freq
 8Mbit (1Mbyte) memory chip
+40 MHz SPI speed
 
 ## extra flashing instructions
 - ground the gpio0 pin 
 - pulse the rst pin with gnd to get it into that mode
--  Use the README to find the flashing addresses
+-  Use the README in the firmware director to find the flashing addresses
 - SET SPI MODE TO DOUT, not QIO
 - you NEED to disconnect gpio0 before flashing.
 
 to get the flash locations for each of the .bin files.
-You need to use the 1.6.2 version for the 8Mb chip since it does not have the 1024x1024 map, it needs to use the .1024 files in the 512x512 folder.
+You need to use the 1.6.2 version for the 8Mb chip since it does not have the 1024x1024 map, it needs to use the files ending in .1024 file in the 512x512 folder.
 
 
 ##  Happenings
