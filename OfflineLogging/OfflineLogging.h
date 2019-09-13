@@ -16,6 +16,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "Structs.h"
 /// The maximum number of characters for a line in a file when getting backup
 /// data.
 #define LINESIZE 128
