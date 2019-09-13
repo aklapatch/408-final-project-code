@@ -17,6 +17,8 @@
  * Then it is uploaded to a database where the data can be processed later.
  */
 
+#include "ESP8266.h"
+#include "mbed_trace.h"
 #include "BoardConfig.h"
 #include "Networking.h"
 #include "OfflineLogging.h"
@@ -49,6 +51,8 @@ using namespace std;
 
 int main()
 {
+    mbed_trace_init();
+
     // interval for the sensor polling
     float PollingInterval = 5.0;
 
@@ -73,23 +77,19 @@ int main()
         if (err) {
             error("error: %s (%d)\n", strerror(-err), err);
         }
+        printf("There is not config file since the drive was just formatted\r\n");
+        printf("Exiting\r\n");
+        return -1;
     }
 
-    printf("setting up serial connections: %s, %d\r\n", __FILE__, __LINE__);
-    Serial pc(USBTX, USBRX);  // Serial Communication
-    PRINTLINE;
-    Serial esp(PTC17, PTC16); // tx, rx (Wifi)
-    PRINTLINE;
-    // wifi pins (PTC17(tx),PTC16(rx))
 
     // data is gathered from these ports/sensor pins
     AnalogIn Port[] = {PTB2,  PTB3, PTB10, PTB11, PTC11,
                        PTC10, PTC2, PTC0,  PTC9,  PTC8 };
     PRINTLINE;
-    esp.baud(115200);
 
-PRINTLINE;
     const char * config_file = "/sd/IAC_Config_File.txt";
+
     printf("\r\nReading board settings from %s\r\n", config_file); 
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
     PRINTSTRING(Specs.DatabaseTableName);
@@ -99,43 +99,58 @@ PRINTLINE;
     // flags that determine connection status
     bool ConnectedToWiFi = false;
 
+
+    ESP8266Interface *wifi = new ESP8266Interface(PTC17, PTC16);
+    if (!wifi) {
+        printf("\r\n ESP Chip was not initialized, entering offline mode\r\n");
+        OfflineMode = true;
+    }
+    
     // if there is no database tableName, or it is all spaces, then exit
     if (Specs.DatabaseTableName == "" || Specs.DatabaseTableName == " "){
         printf("\r\n No Database Table Name Specified, Entering offline mode\r\n");
         OfflineMode = true;
     }
     
-    // TODO, just do logging if the WiFi chip is not present.
-    else if (setESPMode(esp) != NETWORK_SUCCESS){
-        printf("\r\nWifi Chip is not responding, Entering offline mode\r\n");
-        OfflineMode = true;
+
+    printf("trying to connect to %s\r\n",Specs.NetworkSSID.c_str());
+    int wifi_err = connectESPWiFi(wifi, Specs);
+    if (wifi_err != NSAPI_ERROR_OK){
+        printf("\r\n failed to connect to %s. Error code = %d \r\n", Specs.NetworkSSID.c_str(), wifi_err);
+        ConnectedToWiFi = false;
+    }
+    else { 
+        ConnectedToWiFi = true;
+        printf(" connected to %s\r\n", Specs.NetworkSSID.c_str());
     }
 
     
 
     /// FIXME: the below logic does not work consistently and should be simplefied where possible
     
-    if (!OfflineMode){ // only send data if the wifi chip can
-
-        ConnectedToWiFi = connectToWiFi(pc, esp, Specs); // try to connect
+    if (!OfflineMode && ConnectedToWiFi){ // only send data if the wifi chip can
 
         /// backup data needs to be sent first, because if it is not sent first, then
         /// the data will be out of order in the database, and that will be bad.
         while (checkForBackupFile(BackupFileName) && ConnectedToWiFi ) {
             printf("\r\n Sending logged data to the database\r\n");
                 // send the backup data to the database
-            ServerConnection = sendBackupDataTCP(pc, esp, Specs, BackupFileName);
+            wifi_err = sendBackupDataTLS(wifi,Specs, BackupFileName);
                 
-            if (!ServerConnection){
+            if (wifi_err != NSAPI_ERROR_OK){ 
                 printf("\r\n Data was not fully send to the webserver \r\n");
                 
                 // update wifi connectivity
-                ConnectedToWiFi = checkWiFiConnection(esp, Specs); 
-                
-                break; // exit if the Server Connection fails
+                ConnectedToWiFi = checkESPWiFiConnection(wifi); 
+
+                    break; // exit if the Server Connection fails
             
             } else {
                 printf("\r\n Data was successfully sent to the database \r\n");
+                // delete the sent entry
+                // this function will delete the file when 
+                // it is empty
+                deleteDataEntry(Specs, BackupFileName);
             }
         }
     }
@@ -145,7 +160,7 @@ PRINTLINE;
     
     while (true) {
 
-        // iterate through all the ports
+        // Read all of the ports
         for (size_t i = 0; i < NumPorts; ++i) {
 
             // only reads the port if a port is connected
@@ -166,7 +181,7 @@ PRINTLINE;
                     "\r\nPort value is under the valid sample range, assigning error value\r\n");
                 }
                 // print data
-                pc.printf("\r\n%s's value = %f\r\n",Specs.Ports[i].Name.c_str(), Specs.Ports[i].Value);
+                printf("\r\n%s's value = %f\r\n",Specs.Ports[i].Name.c_str(), Specs.Ports[i].Value);
             }
         }
 
@@ -176,10 +191,23 @@ PRINTLINE;
         // only try to send data if the wifi chip is working
         if (!OfflineMode){
         
-            // check if the server connection is due to a wifi connection issue.
+            // try to connect to wifi again if you are not connected now
             if (!ConnectedToWiFi){
-                ConnectedToWiFi=connectToWiFi(pc, esp, Specs);
+                
+                printf("Trying to connect to %s \r\n", Specs.NetworkSSID.c_str());
+                wifi_err = connectESPWiFi(wifi, Specs);
+
+
+                if (wifi_err != NSAPI_ERROR_OK) {
+                    printf("Connection attempt failed error = %d\r\n", wifi_err);
+                   ConnectedToWiFi = false; 
+                }
+                else {
+                    printf("Connected to %s \r\n", Specs.NetworkSSID.c_str());
+                    ConnectedToWiFi = true;
+                }
             }    
+            
             
             // if the board is connected to the network, send data to the database
             if (ConnectedToWiFi) {
@@ -189,10 +217,13 @@ PRINTLINE;
 
                     printf("\r\n Sending backup up data to the database. \r\n");
                     // send the backup data to the database
-                    ServerConnection = sendBackupDataTCP(pc, esp, Specs, BackupFileName);
+                    wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName);
+
                         
-                    if (!ServerConnection){
+                    if (wifi_err != NSAPI_ERROR_OK){
                         printf ("\r\n Failed to transmit backed up data to the Database \r\n");
+                        ServerConnection = false;
+                        printf("Error code = %d\r\n", wifi_err);
                         break; // stop transmitting if data transmission failed.
                         
                     } else { // delete data entry if data was sent
@@ -203,7 +234,12 @@ PRINTLINE;
                 if (ServerConnection) {
                     printf("\r\n Sending the last port reading to the database \r\n");
                     // sends the data for all ports to the remote database
-                    ServerConnection = sendBulkDataTCP(pc, esp, Specs);
+                    wifi_err = sendBulkDataTLS(wifi, Specs);
+                    if (wifi_err != NSAPI_ERROR_OK){
+
+                        ServerConnection = false;
+                        printf("Could not send data to database, error = %d\r\n",wifi_err);
+                    }
                 } else {
                     dumpSensorDataToFile(Specs,BackupFileName);
                     printf("\r\n Backed up Active Port data\r\n");
@@ -214,10 +250,6 @@ PRINTLINE;
                 printf("\r\n Backed up Active Port data\r\n");
             }
             
-            if (!ServerConnection){
-                printf("\r\n Checking WiFi connectivity, since data was not sent================\r\n");
-                ConnectedToWiFi = checkWiFiConnection(esp, Specs); 
-            }
 
         } else { // in offline mode, just dump data to file
             printf("\r\nIn offline mode. Dumping data to file.\r\n");

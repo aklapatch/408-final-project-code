@@ -8,15 +8,18 @@
 /// \file
 /// Has function protoypes that generally interface with the networking chip
 /// to make network connections.
-
 #include "Structs.h"
 #include "mbed.h"
 #include "BoardConfig.h"
 #include "OfflineLogging.h"
+#include "ESP8266Interface.h"
+#include "TCPSocket.h"
+#include "TLSSocket.h"
 
 // C++ headers
 #include <string>
 #include <vector>
+#include <cstring>
 
 /// Arbitrary char array length
 #define BUFFLEN 1024
@@ -24,11 +27,61 @@
 /// The string with the IP, port, and AT command used to init the connection
 #define CONNECTSTRING ("AT+CIPSTART=4,\"TCP\",\"149.165.231.70\",8804\r\n")
 
+
 /// The macro that indicates the error value where no network errors occured
 #define NETWORK_SUCCESS 0
 
 using namespace std;
 
+// for the API rework
+// Here are the steps for sending data
+// 1. init wifi interface
+// 2. connect to wifi
+// 3. set up a socket for that wifi interface
+//      * for tls, set root cert
+// 4. connect the socket to tehe remote host and port
+// 5. send data to the remote host
+// 6. receive response
+// 7. close socket
+// 8. disconnect from wifi
+//
+// 1. should be done in main
+//
+// 2. should be done in a function (to get wifi settings)
+//
+// 3. can be done in main
+//
+// 4-7 should be done in one function
+//
+// 8 does not need to be done 
+//
+// get_ip_address == NULL when you are not connected, so we can check that
+//
+/// Uses the SSID and Password stored in Specs to connect to that network
+/// Returns the mbed error code that you get when trying to connect
+/// THE ESP8266Interface MUST BE ALLOCATE/INITALIZED ALREADY
+/// \param wifi the ESP8266 connection to use
+/// \param Specs The data structure where the SSID and Password pulled from
+/// \returns The error code from the Mbed api https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
+int connectESPWiFi(ESP8266Interface * wifi, BoardSpecs & Specs);
+
+
+/// return true if you are connected, and false if you are not connected
+bool checkESPWiFiConnection(ESP8266Interface * wifi);
+
+/// tries to send data tr from Specs
+int sendBulkDataTLS(ESP8266Interface * wifi, BoardSpecs &Specs) ;
+
+/// tries to send backup data to the database
+int sendBackupDataTLS(ESP8266Interface * wifi,  BoardSpecs & Specs, const char * FileName);
+
+bool checkESPWiFiConnection(ESP8266Interface * wifi);
+
+// The functions below are from the old API ====================================
+
+
+
+/// TODO: figure out if this needs to be ported to the ESP8266Interface or dropped 
 /// Returns true if NetworkSSID is found in the list of networks that are detected
 /// by the Antenna
 /// \param Antenna The connection to scan for networks
