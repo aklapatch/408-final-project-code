@@ -166,7 +166,7 @@ BoardSpecs readConfigText(FILE *fp) {
             tmp.Description = getSensorName(Specs.Sensors, tmp.SensorID);
 
             mbed_printf("Port Info: %s  %d  %0.2f    %s\r\n", tmp.Name.c_str(),
-                   tmp.SensorID, tmp.Multiplier, tmp.Description.c_str());
+                        tmp.SensorID, tmp.Multiplier, tmp.Description.c_str());
 
             // store the port in the boardSpecs struct only if it means anything
             if (tmp.Multiplier != 0.0f) {
@@ -196,15 +196,17 @@ string getSensorName(vector<SensorInfo> &Sensors, size_t Sens_ID) {
         return "No Sensor";
     }
 
-    const char * in = " in ";
+    const char *in = " in ";
 
-    size_t str_size = strlen(in) + Sensors[Sens_ID].Type.size() + Sensors[Sens_ID].Unit.size();
+    size_t str_size = strlen(in) + Sensors[Sens_ID].Type.size() +
+                      Sensors[Sens_ID].Unit.size();
 
-    string ret_str; ret_str.reserve(str_size);
+    string ret_str;
+    ret_str.reserve(str_size);
 
     ret_str.append(Sensors[Sens_ID].Type);
     ret_str.append(in);
     ret_str.append(Sensors[Sens_ID].Unit);
 
-    return ret_str; 
+    return ret_str;
 }

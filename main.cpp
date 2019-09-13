@@ -102,7 +102,8 @@ int main() {
 
     ESP8266Interface *wifi = new ESP8266Interface(PTC17, PTC16);
     if (!wifi) {
-        mbed_printf("\r\n ESP Chip was not initialized, entering offline mode\r\n");
+        mbed_printf(
+            "\r\n ESP Chip was not initialized, entering offline mode\r\n");
         OfflineMode = true;
     }
 
@@ -119,7 +120,7 @@ int main() {
         wifi_err = connectESPWiFi(wifi, Specs);
         if (wifi_err != NSAPI_ERROR_OK) {
             mbed_printf("\r\n failed to connect to %s. Error code = %d \r\n",
-                   Specs.NetworkSSID.c_str(), wifi_err);
+                        Specs.NetworkSSID.c_str(), wifi_err);
             ConnectedToWiFi = false;
         } else {
             ConnectedToWiFi = true;
@@ -142,7 +143,8 @@ int main() {
             wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName);
 
             if (wifi_err != NSAPI_ERROR_OK) {
-                mbed_printf("\r\n Data was not fully send to the webserver \r\n");
+                mbed_printf(
+                    "\r\n Data was not fully send to the webserver \r\n");
 
                 // update wifi connectivity
                 ConnectedToWiFi = checkESPWiFiConnection(wifi);
@@ -150,7 +152,8 @@ int main() {
                 break; // exit if the Server Connection fails
 
             } else {
-                mbed_printf("\r\n Data was successfully sent to the database \r\n");
+                mbed_printf(
+                    "\r\n Data was successfully sent to the database \r\n");
                 // delete the sent entry
                 // this function will delete the file when
                 // it is empty
@@ -177,18 +180,20 @@ int main() {
                 // set error indicator if the sample is out of range
                 if (Specs.Ports[i].Value > Specs.Ports[i].RangeEnd) {
                     Specs.Ports[i].Value = HUGE_VAL;
-                    mbed_printf("\r\nPort value exceeded valid sample value range, "
-                           "assigning "
-                           "error value\r\n");
+                    mbed_printf(
+                        "\r\nPort value exceeded valid sample value range, "
+                        "assigning "
+                        "error value\r\n");
                 } else if (Specs.Ports[i].Value < Specs.Ports[i].RangeStart) {
                     Specs.Ports[i].Value = -HUGE_VAL;
-                    mbed_printf("\r\nPort value is under the valid sample range, "
-                           "assigning "
-                           "error value\r\n");
+                    mbed_printf(
+                        "\r\nPort value is under the valid sample range, "
+                        "assigning "
+                        "error value\r\n");
                 }
                 // print data
-                mbed_printf("\r\n%s's value = %f\r\n", Specs.Ports[i].Name.c_str(),
-                       Specs.Ports[i].Value);
+                mbed_printf("\r\n%s's value = %f\r\n",
+                            Specs.Ports[i].Name.c_str(), Specs.Ports[i].Value);
             }
         }
 
@@ -203,15 +208,16 @@ int main() {
             if (!ConnectedToWiFi) {
 
                 mbed_printf("Trying to connect to %s \r\n",
-                       Specs.NetworkSSID.c_str());
+                            Specs.NetworkSSID.c_str());
                 wifi_err = connectESPWiFi(wifi, Specs);
 
                 if (wifi_err != NSAPI_ERROR_OK) {
                     mbed_printf("Connection attempt failed error = %d\r\n",
-                           wifi_err);
+                                wifi_err);
                     ConnectedToWiFi = false;
                 } else {
-                    mbed_printf("Connected to %s \r\n", Specs.NetworkSSID.c_str());
+                    mbed_printf("Connected to %s \r\n",
+                                Specs.NetworkSSID.c_str());
                     ConnectedToWiFi = true;
                 }
             }
@@ -225,13 +231,15 @@ int main() {
                 while ((PollingTimer.read() <= PollingInterval) &&
                        checkForBackupFile(BackupFileName)) {
 
-                    mbed_printf("\r\n Sending backup up data to the database. \r\n");
+                    mbed_printf(
+                        "\r\n Sending backup up data to the database. \r\n");
                     // send the backup data to the database
                     wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName);
 
                     if (wifi_err != NSAPI_ERROR_OK) {
-                        mbed_printf("\r\n Failed to transmit backed up data to the "
-                               "Database \r\n");
+                        mbed_printf(
+                            "\r\n Failed to transmit backed up data to the "
+                            "Database \r\n");
                         ServerConnection = false;
                         mbed_printf("Error code = %d\r\n", wifi_err);
                         break; // stop transmitting if data transmission failed.
@@ -242,8 +250,9 @@ int main() {
                 }
 
                 if (ServerConnection) {
-                    mbed_printf("\r\n Sending the last port reading to the database "
-                           "\r\n");
+                    mbed_printf(
+                        "\r\n Sending the last port reading to the database "
+                        "\r\n");
                     // sends the data for all ports to the remote database
                     wifi_err = sendBulkDataTLS(wifi, Specs);
                     if (wifi_err != NSAPI_ERROR_OK) {

@@ -24,5 +24,4 @@
 
 #include "mbed_printf.h"
 
-
 #endif // DEBUG

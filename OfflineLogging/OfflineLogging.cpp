@@ -19,8 +19,9 @@ void dumpSensorDataToFile(BoardSpecs &Specs, const char *FileName) {
         File = fopen(FileName, "wb");
 
         if (File == NULL) {
-            mbed_printf("Failed to open %s for logging. Skipping data logging\r\n",
-                   FileName);
+            mbed_printf(
+                "Failed to open %s for logging. Skipping data logging\r\n",
+                FileName);
             return;
         }
 

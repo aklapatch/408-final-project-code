@@ -103,7 +103,8 @@ int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
     Message.append("\r\n");
 
     mbed_printf("Data frame size = %d\r\n", Message.size());
-    mbed_printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
+    mbed_printf("Data frame is: \r\n %s\r\n",
+                Message.c_str()); // display data frame
 
     return sendMessageTLS(wifi, Message);
 }
@@ -150,7 +151,8 @@ int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs) {
     Message.append("\r\n");
 
     mbed_printf("Data frame size = %d\r\n", Message.size());
-    mbed_printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
+    mbed_printf("Data frame is: \r\n %s\r\n",
+                Message.c_str()); // display data frame
 
     return sendMessageTLS(wifi, Message);
 }
@@ -235,7 +237,8 @@ int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
     Message.append("\r\n");
 
     mbed_printf("Data frame size = %d\r\n", Message.size());
-    mbed_printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
+    mbed_printf("Data frame is: \r\n %s\r\n",
+                Message.c_str()); // display data frame
 
     return sendMessageTCP(wifi, Message);
 }
@@ -279,7 +282,8 @@ int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs) {
     Message.append("\r\n");
 
     mbed_printf("Data frame size = %d\r\n", Message.size());
-   mbed_printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
+    mbed_printf("Data frame is: \r\n %s\r\n",
+                Message.c_str()); // display data frame
 
     return sendMessageTCP(wifi, Message);
 }
