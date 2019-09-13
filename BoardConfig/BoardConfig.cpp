@@ -9,8 +9,7 @@
 #include "BoardConfig.h"
 #include "debugging.h"
 // ============================================================================
-BoardSpecs readSDCard(const char *FileName)
-{
+BoardSpecs readSDCard(const char *FileName) {
 
     // try to open sd card
     printf("\r\nReading from SD card...\r\n\n\n");
@@ -42,7 +41,7 @@ BoardSpecs readSDCard(const char *FileName)
         // read config from SD card
         rewind(fp);
         Output = readConfigText(fp);
-        printf("\r\n %d Ports were configured\r\n",Output.Ports.size());
+        printf("\r\n %d Ports were configured\r\n", Output.Ports.size());
         fclose(fp);
 
     } else {
@@ -52,76 +51,75 @@ BoardSpecs readSDCard(const char *FileName)
     return Output;
 }
 
-// goes until it is not pointed at a ' ' character
-char * goPastSpaces(char * Text){
-    while ( Text[0] == ' '){
+// increments Text until is not pointed at a ' ' character
+char *goPastSpaces(char *Text) {
+    while (Text[0] == ' ') {
         ++Text;
     }
     return Text;
 }
 
 // ============================================================================
-BoardSpecs readConfigText(FILE *fp)
-{
+BoardSpecs readConfigText(FILE *fp) {
     BoardSpecs Specs;
-    Specs.Ports.reserve(10); // reserve space for ports
+    Specs.Ports.reserve(10);   // reserve space for ports
     Specs.Sensors.reserve(10); // and sensor types
 
     int prtCnt = 0; // # of ports
 
     // temporary buffer
-    char Buffer[BUFFLEN];    
-    
+    char Buffer[BUFFLEN];
+
     // read through and get sensor ids before getting the port information
-    while (fgets(Buffer, BUFFLEN, fp) !=NULL){
-        
-        // if the line has 'SensorID' in it, then get the sensor info from it 
-        if (strstr(Buffer,"SensorID") && Buffer[0] == 'S'){
+    while (fgets(Buffer, BUFFLEN, fp) != NULL) {
+
+        // if the line has 'SensorID' in it, then get the sensor info from it
+        if (strstr(Buffer, "SensorID") && Buffer[0] == 'S') {
             SensorInfo tmp;
-            
+
             // get the id number
-            strtok(Buffer,"="); // get past the = sign
-            
+            strtok(Buffer, "="); // get past the = sign
+
             const char token[] = ","; // token to split values
-            
-            char * value = strtok(NULL,token);
-            tmp.ID = atoi(value);// get id value
+
+            char *value = strtok(NULL, token);
+            tmp.ID = atoi(value); // get id value
             PRINTINT(tmp.ID);
-            
+
             // get waht the sensor is measuring
-            value = strtok(NULL,token);
+            value = strtok(NULL, token);
             tmp.Type = value;
             PRINTSTRING(tmp.Type);
-            
+
             // get the unit of the sensor
-            value = strtok(NULL,token);
+            value = strtok(NULL, token);
             tmp.Unit = value;
             PRINTSTRING(tmp.Unit);
-            
+
             // get unit multiplier
-            value = strtok(NULL,token);
+            value = strtok(NULL, token);
             tmp.Multiplier = atof(value);
             PRINTFLOAT(tmp.Multiplier);
-            
+
             // get range start
-            value = strtok(NULL,token);
+            value = strtok(NULL, token);
             tmp.RangeStart = atof(value);
-            
+
             // get range end till end of line
-            value = strtok(NULL,"\n");
+            value = strtok(NULL, "\n");
             tmp.RangeEnd = atof(value);
-            
+
             Specs.Sensors.push_back(tmp); // store those values
         }
     }
-            
-    rewind(fp); // get ready to read again.                    
-    
+
+    rewind(fp); // get ready to read again.
+
     // get a whole line instead of reading one char at a time
-    while(fgets(Buffer, BUFFLEN, fp) != NULL) {
+    while (fgets(Buffer, BUFFLEN, fp) != NULL) {
 
         // checks the character at the beginning of each line
-        if (Buffer[0] == 'B') {
+        if (Buffer[0] == 'B' && strstr(Buffer, "Board")) {
             const char s[2] = ":";
 
             // get board id and assign it
@@ -135,7 +133,7 @@ BoardSpecs readConfigText(FILE *fp)
 
             // getting and assigning Database tablename
             Specs.DatabaseTableName = strtok(NULL, s); // opt opportunity
-        } else if (Buffer[0] == 'P') {     // if a port description is detected
+        } else if (Buffer[0] == 'P') { // if a port description is detected
 
             // use a deque or queue to temporarily hold a Port entry
             // then assign them to the vector in Specs
@@ -150,14 +148,13 @@ BoardSpecs readConfigText(FILE *fp)
 
             } else {
                 tmp.SensorID = int(Buffer[10] - '0');
-
             }
             // grab the port name too
-            tmp.Name = strtok(Buffer,":");
-            
+            tmp.Name = strtok(Buffer, ":");
+
             // remove whitespace from the name
             size_t SpaceDex = tmp.Name.find_first_of(' ');
-            while (SpaceDex != string::npos){
+            while (SpaceDex != string::npos) {
                 tmp.Name.erase(SpaceDex);
                 SpaceDex = tmp.Name.find_first_of(' ');
             }
@@ -167,25 +164,24 @@ BoardSpecs readConfigText(FILE *fp)
 
             // get sensorname
             tmp.Description = getSensorName(Specs.Sensors, tmp.SensorID);
-                
-            printf("Port Info: %s  %d  %0.2f    %s\r\n",tmp.Name.c_str(), tmp.SensorID, tmp.Multiplier,
-                       tmp.Description.c_str());
+
+            printf("Port Info: %s  %d  %0.2f    %s\r\n", tmp.Name.c_str(),
+                   tmp.SensorID, tmp.Multiplier, tmp.Description.c_str());
 
             // store the port in the boardSpecs struct only if it means anything
-            if (tmp.Multiplier != 0.0f){
+            if (tmp.Multiplier != 0.0f) {
                 Specs.Ports.push_back(tmp);
             }
         }
     }
-        
+
     return Specs;
 }
 
 // ============================================================================
-float setUnitMultiplier(vector<SensorInfo> & Sensors, size_t Sens_ID)
-{
+float setUnitMultiplier(vector<SensorInfo> &Sensors, size_t Sens_ID) {
     // if there is no sensor for that id, then return 0
-    if ( Sens_ID >= Sensors.size()){
+    if (Sens_ID >= Sensors.size()) {
         return 0.0;
     }
 
@@ -193,27 +189,24 @@ float setUnitMultiplier(vector<SensorInfo> & Sensors, size_t Sens_ID)
 }
 
 // ============================================================================
-string getSensorName(vector<SensorInfo> & Sensors, size_t Sens_ID)
-{
+string getSensorName(vector<SensorInfo> &Sensors, size_t Sens_ID) {
 
     // if there is no sensor for that id, then return error message
-    if ( Sens_ID >= Sensors.size()){
+    if (Sens_ID >= Sensors.size()) {
         return "No Sensor";
     }
 
     return Sensors[Sens_ID].Type + " in " + Sensors[Sens_ID].Unit;
 }
 // ============================================================================
-string toString(float input)
-{
+string toString(float input) {
     stringstream Number;
     Number << input;
     return Number.str();
 }
 
 // ============================================================================
-string toString(int input)
-{
+string toString(int input) {
     stringstream Number;
     Number << input;
     return Number.str();
