@@ -112,18 +112,19 @@ int main()
         OfflineMode = true;
     }
     
-
-    printf("trying to connect to %s\r\n",Specs.NetworkSSID.c_str());
-    int wifi_err = connectESPWiFi(wifi, Specs);
-    if (wifi_err != NSAPI_ERROR_OK){
-        printf("\r\n failed to connect to %s. Error code = %d \r\n", Specs.NetworkSSID.c_str(), wifi_err);
-        ConnectedToWiFi = false;
+    int wifi_err = 0;
+    if (!OfflineMode) {
+        printf("trying to connect to %s\r\n",Specs.NetworkSSID.c_str());
+        wifi_err = connectESPWiFi(wifi, Specs);
+        if (wifi_err != NSAPI_ERROR_OK){
+            printf("\r\n failed to connect to %s. Error code = %d \r\n", Specs.NetworkSSID.c_str(), wifi_err);
+            ConnectedToWiFi = false;
+        }
+        else { 
+            ConnectedToWiFi = true;
+            printf(" connected to %s\r\n", Specs.NetworkSSID.c_str());
+        }
     }
-    else { 
-        ConnectedToWiFi = true;
-        printf(" connected to %s\r\n", Specs.NetworkSSID.c_str());
-    }
-
     
 
     /// FIXME: the below logic does not work consistently and should be simplefied where possible

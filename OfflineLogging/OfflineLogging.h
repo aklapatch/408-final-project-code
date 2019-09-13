@@ -10,11 +10,9 @@
 
 #include "BoardConfig.h"
 
-// C++ headers
 #include <vector>
 #include <algorithm>
 
-// C headers
 #include <cstdio>
 #include <cstring>
 
@@ -23,8 +21,8 @@
 
 using namespace std;
 
-/// deletes n data entries from the file listed
-/// Returns false if the file was, or should be deleted, returns true if there is
+/// deletes data entries from the file listed
+/// Returns false if the file was, or should be deleted (no entries are there), returns true if there is more data left.
 /// more data to send. This function will delete the backup data file
 bool deleteDataEntry(BoardSpecs & Specs,const char *FileName);
 
@@ -33,7 +31,7 @@ bool deleteDataEntry(BoardSpecs & Specs,const char *FileName);
 void dumpSensorDataToFile(BoardSpecs &Specs, const char *FileName);
 
 /// Returns a single sensor reading from the file. That includes one sample from
-/// every sensor. It also truncates the file when it is done with it.
+/// every sensor. The size of the vector is the same size as the number of active ports in Specs 
 vector<PortInfo> getSensorDataFromFile(BoardSpecs &Specs, const char *FileName);
 
 /// Returns true if FileName exists in the current filesystem.

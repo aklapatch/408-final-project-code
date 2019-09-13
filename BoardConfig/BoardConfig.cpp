@@ -9,8 +9,7 @@
 #include "BoardConfig.h"
 #include "debugging.h"
 // ============================================================================
-BoardSpecs readSDCard(const char *FileName)
-{
+BoardSpecs readSDCard(const char *FileName){
 
     // try to open sd card
     printf("\r\nReading from SD card...\r\n\n\n");
@@ -52,7 +51,7 @@ BoardSpecs readSDCard(const char *FileName)
     return Output;
 }
 
-// goes until it is not pointed at a ' ' character
+// increments Text until is not pointed at a ' ' character
 char * goPastSpaces(char * Text){
     while ( Text[0] == ' '){
         ++Text;
@@ -121,7 +120,7 @@ BoardSpecs readConfigText(FILE *fp)
     while(fgets(Buffer, BUFFLEN, fp) != NULL) {
 
         // checks the character at the beginning of each line
-        if (Buffer[0] == 'B') {
+        if (Buffer[0] == 'B' && strstr(Buffer, "Board")) {
             const char s[2] = ":";
 
             // get board id and assign it

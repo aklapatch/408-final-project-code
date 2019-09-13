@@ -1,10 +1,14 @@
 # system info.
 # Board Number:Wifi-SSID:Wifi-Password:DataBase-TABLE:
+# for this to be detected, Board needs to be in this line and B needs to be the first letter in the line
 Board-2:Hope:weallneedit:Test-Board:
 
 # Sensor info
 
 # ID number, type, Unit, Unit Multiplier ,start-range, end-range, unit.
+# for this to work, S has to be the first character in the line and SensorID has to be in the line
+# this is setup so that a port with a sensor id of 0 will be assigned the first sensor id in the file, and
+# a port with a sensor id of 1 will be assigned the second sensor id in the file, and so one
 SensorID = 0, No Sensor, 0, 0, 0,
 SensorID = 1, CO2, ppm, 2000.0, 0, 2000.0, 
 SensorID = 2, Current, Amps, 133.33, 0.0, 100.0
@@ -18,6 +22,7 @@ SensorID = 6, Pressure, PSIG, 240.0, 0.0, 200.0
 # Slide Switch Info
 
 # Position : Conversion Circuit 
+# These are meaningless and do nothing right now - Aaron K.
 Swt_Pos = 1 : 0 - 5 Vdc
 Swt_Pos = 2 : 0 - 2.5 Vdc
 Swt_Pos = 3 : 0 - 20 mA
@@ -27,6 +32,7 @@ Swt_Pos = 4 : 0 - 10 Vdc
 
 # Port : SensorID : Swt_Pos
 # the sensor id has to be 9 spaces out
+# P has to be the first letter on the line ,otherwise the program will skip the line
 Port_1 : 2 : 2 
 Port_2 : 0 : 0 
 Port_3 : 0 : 0

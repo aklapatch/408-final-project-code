@@ -12,14 +12,15 @@ uint16_t web_server_port = 443;
 /// The get request that all bulk data transfers use
 const char * bulk_get_request = "GET /MEuser/bulk-sensor-readings.php?Board_ID=";
 
-///The field that specifies the numerical value in the get request 
+///The field that specifies the preceeds the value of a port reading in the get
+/// request 
 const char* value_get_str = "&Value[]=";
 
 /// The string that preceeds the port ID field
 const char * port_get_str = "&Port_ID[]=";
 
-/// A certificate for TLS communication, (currently an empty string) 
-/// This certificate is from: https://github.com/ARMmbed/mbed-os-example-tls-socket/blob/master/main.cpp
+/// A certificate for TLS communication. This certificate is from:
+/// https://github.com/ARMmbed/mbed-os-example-tls-socket/blob/master/main.cpp
 const char * ca_cert = "-----BEGIN CERTIFICATE-----\n"
     "MIIENjCCAx6gAwIBAgIBATANBgkqhkiG9w0BAQUFADBvMQswCQYDVQQGEwJTRTEU\n"
     "MBIGA1UEChMLQWRkVHJ1c3QgQUIxJjAkBgNVBAsTHUFkZFRydXN0IEV4dGVybmFs\n"

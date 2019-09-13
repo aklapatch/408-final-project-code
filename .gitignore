@@ -2,6 +2,6 @@
 BUILD/*
 __pycache__/*
 sphinx/build/*
-doxygen.sqlite3.db
+doxygen_sqlite3.db
 docs/xml/*
 
