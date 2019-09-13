@@ -1,4 +1,5 @@
 #include "Networking.h"
+#include "NetworkConstants.h"
 #include "debugging.h"
 //===-- Networking.cpp - Networking function definitions -----------------===//
 //
@@ -9,16 +10,8 @@
 /// Has the definitions for the funtions that interface with other networks.
 
 
-/// for tesla.cs.iupui.edu
-const char * web_server_ip = "134.68.51.14";
-/// for https connections
-uint16_t web_server_port = 443;
 
-const char * bulk_get_request = "GET /MEuser/bulk-sensor-readings.php?Board_ID=";
 
-const char* value_get_str = "&Value[]=";
-const char * port_get_str = "&Port_ID[]=";
-const char * ca_cert = "";
 
 
 int connectESPWiFi(ESP8266Interface * wifi, BoardSpecs &Specs) {
