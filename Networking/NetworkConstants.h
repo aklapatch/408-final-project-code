@@ -5,23 +5,24 @@
 /// Has some string and number constants for transmitting data over TCP
 
 /// for tesla.cs.iupui.edu
-const char * web_server_ip = "134.68.51.14";
+const char *web_server_ip = "134.68.51.14";
 /// for https connections
 uint16_t web_server_port = 443;
 
 /// The get request that all bulk data transfers use
-const char * bulk_get_request = "GET /MEuser/bulk-sensor-readings.php?Board_ID=";
+const char *bulk_get_request = "GET /MEuser/bulk-sensor-readings.php?Board_ID=";
 
-///The field that specifies the preceeds the value of a port reading in the get
-/// request 
-const char* value_get_str = "&Value[]=";
+/// The field that specifies the preceeds the value of a port reading in the get
+/// request
+const char *value_get_str = "&Value[]=";
 
 /// The string that preceeds the port ID field
-const char * port_get_str = "&Port_ID[]=";
+const char *port_get_str = "&Port_ID[]=";
 
 /// A certificate for TLS communication. This certificate is from:
 /// https://github.com/ARMmbed/mbed-os-example-tls-socket/blob/master/main.cpp
-const char * ca_cert = "-----BEGIN CERTIFICATE-----\n"
+const char *ca_cert =
+    "-----BEGIN CERTIFICATE-----\n"
     "MIIENjCCAx6gAwIBAgIBATANBgkqhkiG9w0BAQUFADBvMQswCQYDVQQGEwJTRTEU\n"
     "MBIGA1UEChMLQWRkVHJ1c3QgQUIxJjAkBgNVBAsTHUFkZFRydXN0IEV4dGVybmFs\n"
     "IFRUUCBOZXR3b3JrMSIwIAYDVQQDExlBZGRUcnVzdCBFeHRlcm5hbCBDQSBSb290\n"
@@ -47,4 +48,4 @@ const char * ca_cert = "-----BEGIN CERTIFICATE-----\n"
     "mnkPIAou1Z5jJh5VkpTYghdae9C8x49OhgQ=\n"
     "-----END CERTIFICATE-----";
 
-#endif // NETWORKCONSTANTS_H 
+#endif // NETWORKCONSTANTS_H

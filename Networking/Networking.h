@@ -7,18 +7,18 @@
 //===---------------------------------------------------------------------===//
 /// \file
 /// Networking function declarations
-#include "Structs.h"
-#include "mbed.h"
 #include "BoardConfig.h"
-#include "OfflineLogging.h"
 #include "ESP8266Interface.h"
+#include "OfflineLogging.h"
+#include "Structs.h"
 #include "TCPSocket.h"
 #include "TLSSocket.h"
+#include "mbed.h"
 
 // C++ headers
+#include <cstring>
 #include <string>
 #include <vector>
-#include <cstring>
 
 /// Arbitrary char array length
 #define BUFFLEN 1024
@@ -45,73 +45,67 @@ using namespace std;
 //
 // 4-7 should be done in one function
 //
-// 8 does not need to be done 
+// 8 does not need to be done
 //
 // get_ip_address == NULL when you are not connected, so we can check that
 //
 /// Uses the SSID and Password stored in Specs to connect to that network
 /// Returns the mbed error code that you get when trying to connect
-/// THE ESP8266Interface MUST BE ALLOCATE/INITALIZED ALREADY. It will not be 
+/// THE ESP8266Interface MUST BE ALLOCATE/INITALIZED ALREADY. It will not be
 /// freed inside this function either.
 /// \param wifi The ESP8266 connection to use
 /// \param Specs The data structure where the SSID and Password are pulled from
-/// \returns The error code from the Mbed api: see 
-///https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int connectESPWiFi(ESP8266Interface * wifi, BoardSpecs & Specs);
-
+/// \returns The error code from the Mbed api: see
+/// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
+int connectESPWiFi(ESP8266Interface *wifi, BoardSpecs &Specs);
 
 /// return true if you are connected, and false if you are not
 /// \param wifi The ESP8266 instance to use
-bool checkESPWiFiConnection(ESP8266Interface * wifi);
+bool checkESPWiFiConnection(ESP8266Interface *wifi);
 
-/// Opens a socket using \ref wifi and sends \ref message to a remote host with TLS 
-/// \param wifi The ESP instance to use
-/// \param message The data to send
+/// Opens a socket using \ref wifi and sends \ref message to a remote host with
+/// TLS \param wifi The ESP instance to use \param message The data to send
 /// \returns And error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendMessageTLS(ESP8266Interface * wifi, string & message);
+int sendMessageTLS(ESP8266Interface *wifi, string &message);
 
-/// Tries to send data from the current port readings in Specs to the remote database 
-/// param wifi The ESP8266 instance to use. This uses TLS encryption and is intended for https connections
-/// \param Specs The set of port readings and database table name are pulled from
-/// here
-/// \returns And error code from the Mbed Socket api: see
+/// Tries to send data from the current port readings in Specs to the remote
+/// database param wifi The ESP8266 instance to use. This uses TLS encryption
+/// and is intended for https connections \param Specs The set of port readings
+/// and database table name are pulled from here \returns And error code from
+/// the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendBulkDataTLS(ESP8266Interface * wifi, BoardSpecs &Specs) ;
+int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs);
 
-/// Tries to send backup data to the database. This uses TLS and is intended for https connections.
-/// \param wifi The ESP8266 instance to use
-/// \param Specs provides the dabase table name and board name
-/// \returns An error code from the Mbed Socket api: see
+/// Tries to send backup data to the database. This uses TLS and is intended for
+/// https connections. \param wifi The ESP8266 instance to use \param Specs
+/// provides the dabase table name and board name \returns An error code from
+/// the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendBackupDataTLS(ESP8266Interface * wifi,  BoardSpecs & Specs, const char * FileName);
+int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
+                      const char *FileName);
 
-/// Opens a socket using \ref wifi and sends \ref message to a remote host (without TLS)
-/// \param wifi The ESP instance to use
-/// \param message The data to send
-/// \returns And error code from the Mbed Socket api: see
+/// Opens a socket using \ref wifi and sends \ref message to a remote host
+/// (without TLS) \param wifi The ESP instance to use \param message The data to
+/// send \returns And error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendMessageTCP(ESP8266Interface * wifi, string & message);
+int sendMessageTCP(ESP8266Interface *wifi, string &message);
 
-/// Tries to send data from the current port readings in Specs to the remote 
+/// Tries to send data from the current port readings in Specs to the remote
 /// database without TLS. This will work for http connections
 /// \param wifi The ESP8266 instance to use
-/// \param Specs The set of port readings and database table name are pulled from
-/// here
-/// \returns And error code from the Mbed Socket api: see
+/// \param Specs The set of port readings and database table name are pulled
+/// from here \returns And error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendBulkDataTCP(ESP8266Interface * wifi, BoardSpecs &Specs) ;
+int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs);
 
-/// tries to send backup data to the database without TLS. This will work for 
+/// tries to send backup data to the database without TLS. This will work for
 /// http connections
 /// \param wifi The ESP8266 instance to use
 /// \param Specs provides the dabase table name and board name
 /// \returns An error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendBackupDataTCP(ESP8266Interface * wifi,  BoardSpecs & Specs, const char * FileName);
-
+int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
+                      const char *FileName);
 
 #endif
-
-
-
