@@ -12,13 +12,12 @@
 #include "Networking.h"
 #include "Structs.h"
 #include "mbed.h"
+#include "mbed_printf.h"
 
 // C++ headers
-#include <deque>
-#include <sstream>
 
 // C headers
-#include <cstdio>
+//
 #include <cstdlib>
 #include <cstring>
 

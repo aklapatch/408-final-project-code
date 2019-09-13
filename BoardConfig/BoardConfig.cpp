@@ -12,13 +12,13 @@
 BoardSpecs readSDCard(const char *FileName) {
 
     // try to open sd card
-    printf("\r\nReading from SD card...\r\n\n\n");
+    mbed_printf("\r\nReading from SD card...\r\n\n\n");
     FILE *fp = fopen(FileName, "rb"); // the 'b' in 'rb' may not be necessary
 
     BoardSpecs Output;
 
     if (fp != NULL) {
-        printf(" \r\n ---- Config File ---- \r\n");
+        mbed_printf(" \r\n ---- Config File ---- \r\n");
 
         // get file size for buffer
         fseek(fp, 0, SEEK_END);
@@ -32,20 +32,20 @@ BoardSpecs readSDCard(const char *FileName) {
         Buffer[FileSize] = '\0';
 
         // print it
-        printf("%s", Buffer);
+        mbed_printf("%s", Buffer);
 
         delete[] Buffer; // clean up
 
-        printf(" \r\n ---- End of Config File ---- \r\n");
+        mbed_printf(" \r\n ---- End of Config File ---- \r\n");
 
         // read config from SD card
         rewind(fp);
         Output = readConfigText(fp);
-        printf("\r\n %d Ports were configured\r\n", Output.Ports.size());
+        mbed_printf("\r\n %d Ports were configured\r\n", Output.Ports.size());
         fclose(fp);
 
     } else {
-        printf("\nReading Failed!\r\n");
+        mbed_printf("\nReading Failed!\r\n");
     }
 
     return Output;
@@ -165,7 +165,7 @@ BoardSpecs readConfigText(FILE *fp) {
             // get sensorname
             tmp.Description = getSensorName(Specs.Sensors, tmp.SensorID);
 
-            printf("Port Info: %s  %d  %0.2f    %s\r\n", tmp.Name.c_str(),
+            mbed_printf("Port Info: %s  %d  %0.2f    %s\r\n", tmp.Name.c_str(),
                    tmp.SensorID, tmp.Multiplier, tmp.Description.c_str());
 
             // store the port in the boardSpecs struct only if it means anything
@@ -196,18 +196,15 @@ string getSensorName(vector<SensorInfo> &Sensors, size_t Sens_ID) {
         return "No Sensor";
     }
 
-    return Sensors[Sens_ID].Type + " in " + Sensors[Sens_ID].Unit;
-}
-// ============================================================================
-string toString(float input) {
-    stringstream Number;
-    Number << input;
-    return Number.str();
-}
+    const char * in = " in ";
 
-// ============================================================================
-string toString(int input) {
-    stringstream Number;
-    Number << input;
-    return Number.str();
+    size_t str_size = strlen(in) + Sensors[Sens_ID].Type.size() + Sensors[Sens_ID].Unit.size();
+
+    string ret_str; ret_str.reserve(str_size);
+
+    ret_str.append(Sensors[Sens_ID].Type);
+    ret_str.append(in);
+    ret_str.append(Sensors[Sens_ID].Unit);
+
+    return ret_str; 
 }

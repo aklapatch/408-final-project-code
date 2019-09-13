@@ -48,9 +48,9 @@ int sendMessageTLS(ESP8266Interface *wifi, string &message) {
 
     while ((err = sock->recv(buffer, 255)) > 0) {
         buffer[255] = 0;
-        printf("%s", buffer);
+        mbed_printf("%s", buffer);
     }
-    printf("\r\n");
+    mbed_printf("\r\n");
 
 CLOSEFREE:
     sock->close();
@@ -78,7 +78,7 @@ int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
     for (size_t i = 0; i < End; ++i) {
         if (Ports[i].Multiplier != 0) {
             message_size += Ports[i].Name.size() +
-                            toString(Ports[i].Value).size() + get_extras;
+                            to_string(Ports[i].Value).size() + get_extras;
         }
     }
     // add on for the \r\n
@@ -97,13 +97,13 @@ int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
             Message.append(port_get_str);
             Message.append(Ports[i].Name);
             Message.append(value_get_str);
-            Message.append(toString(Ports[i].Value));
+            Message.append(to_string(Ports[i].Value));
         }
     }
     Message.append("\r\n");
 
-    printf("Data frame size = %d\r\n", Message.size());
-    printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
+    mbed_printf("Data frame size = %d\r\n", Message.size());
+    mbed_printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
 
     return sendMessageTLS(wifi, Message);
 }
@@ -125,7 +125,7 @@ int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs) {
     for (size_t i = 0; i < End; ++i) {
         if (Specs.Ports[i].Multiplier != 0) {
             message_size += Specs.Ports[i].Name.size() +
-                            toString(Specs.Ports[i].Value).size() + get_extras;
+                            to_string(Specs.Ports[i].Value).size() + get_extras;
         }
     }
     // add on for the \r\n
@@ -144,13 +144,13 @@ int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs) {
             Message.append(port_get_str);
             Message.append(Specs.Ports[i].Name);
             Message.append(value_get_str);
-            Message.append(toString(Specs.Ports[i].Value));
+            Message.append(to_string(Specs.Ports[i].Value));
         }
     }
     Message.append("\r\n");
 
-    printf("Data frame size = %d\r\n", Message.size());
-    printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
+    mbed_printf("Data frame size = %d\r\n", Message.size());
+    mbed_printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
 
     return sendMessageTLS(wifi, Message);
 }
@@ -183,9 +183,9 @@ int sendMessageTCP(ESP8266Interface *wifi, string &message) {
 
     while ((err = sock->recv(buffer, 255)) > 0) {
         buffer[255] = 0;
-        printf("%s", buffer);
+        mbed_printf("%s", buffer);
     }
-    printf("\r\n");
+    mbed_printf("\r\n");
 
 CLOSEFREE:
     sock->close();
@@ -210,7 +210,7 @@ int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
     for (size_t i = 0; i < End; ++i) {
         if (Ports[i].Multiplier != 0) {
             message_size += Ports[i].Name.size() +
-                            toString(Ports[i].Value).size() + get_extras;
+                            to_string(Ports[i].Value).size() + get_extras;
         }
     }
     // add on for the \r\n
@@ -229,13 +229,13 @@ int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
             Message.append(port_get_str);
             Message.append(Ports[i].Name);
             Message.append(value_get_str);
-            Message.append(toString(Ports[i].Value));
+            Message.append(to_string(Ports[i].Value));
         }
     }
     Message.append("\r\n");
 
-    printf("Data frame size = %d\r\n", Message.size());
-    printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
+    mbed_printf("Data frame size = %d\r\n", Message.size());
+    mbed_printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
 
     return sendMessageTCP(wifi, Message);
 }
@@ -254,7 +254,7 @@ int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs) {
     for (size_t i = 0; i < End; ++i) {
         if (Specs.Ports[i].Multiplier != 0) {
             message_size += Specs.Ports[i].Name.size() +
-                            toString(Specs.Ports[i].Value).size() + get_extras;
+                            to_string(Specs.Ports[i].Value).size() + get_extras;
         }
     }
     // add on for the \r\n
@@ -273,13 +273,13 @@ int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs) {
             Message.append(port_get_str);
             Message.append(Specs.Ports[i].Name);
             Message.append(value_get_str);
-            Message.append(toString(Specs.Ports[i].Value));
+            Message.append(to_string(Specs.Ports[i].Value));
         }
     }
     Message.append("\r\n");
 
-    printf("Data frame size = %d\r\n", Message.size());
-    printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
+    mbed_printf("Data frame size = %d\r\n", Message.size());
+   mbed_printf("Data frame is: \r\n %s\r\n", Message.c_str()); // display data frame
 
     return sendMessageTCP(wifi, Message);
 }

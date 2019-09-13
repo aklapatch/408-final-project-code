@@ -10,7 +10,6 @@
 
 #include "BoardConfig.h"
 
-#include <algorithm>
 #include <vector>
 
 #include <cstdio>

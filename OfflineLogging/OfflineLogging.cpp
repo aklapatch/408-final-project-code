@@ -15,17 +15,17 @@ void dumpSensorDataToFile(BoardSpecs &Specs, const char *FileName) {
 
     // if the file is not there, open in write, not append mode
     if (File == NULL) {
-        printf("making new data file \r\n");
+        mbed_printf("making new data file \r\n");
         File = fopen(FileName, "wb");
 
         if (File == NULL) {
-            printf("Failed to open %s for logging. Skipping data logging\r\n",
+            mbed_printf("Failed to open %s for logging. Skipping data logging\r\n",
                    FileName);
             return;
         }
 
     } else {
-        printf("Appending data to data file \r\n");
+        mbed_printf("Appending data to data file \r\n");
         fclose(File);
         File = fopen(FileName, "ab");
         fseek(File, 0, SEEK_END); // go to end of the file to append data
@@ -82,7 +82,7 @@ bool deleteDataEntry(BoardSpecs &Specs, const char *FileName) {
     PRINTLINE;
     // if the file is not there, just return false (entry was not deleted)
     if (DataFile == NULL) {
-        printf("Data file not found!\n");
+        mbed_printf("Data file not found!\n");
         return false;
     }
 
@@ -111,7 +111,7 @@ bool deleteDataEntry(BoardSpecs &Specs, const char *FileName) {
 
     // stop if the file was not able to be opened
     if (TempFile == NULL) {
-        printf("Failed to open temporary file!\n");
+        mbed_printf("Failed to open temporary file!\n");
         return true; // data still needs to be transmitted
     }
 
@@ -141,7 +141,7 @@ vector<PortInfo> getSensorDataFromFile(BoardSpecs &Specs,
 
     // if the file is not there, just return an empty vector
     if (DataFile == NULL) {
-        printf("Data file not found!\n");
+        mbed_printf("Data file not found!\n");
         return std::vector<PortInfo>(0);
     }
 
@@ -170,7 +170,7 @@ vector<PortInfo> getSensorDataFromFile(BoardSpecs &Specs,
         memcpy(&(output[i].Value), strtok(NULL, ","), sizeof(float));
 
         output[i].Description = strtok(NULL, "\n");
-        printf(output[i].Description.c_str());
+        mbed_printf(output[i].Description.c_str());
     }
     fclose(DataFile);
     return output;
