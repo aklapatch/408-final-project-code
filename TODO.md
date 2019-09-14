@@ -7,7 +7,7 @@ This is by no means a complete TODO list
 - simplify the logic in main.cpp
 - make a simple file header for all files in this project
 - (maybe) for boardspecs struct, make the nework SSID and password a constant size (they have limits to length in standards) the SSID is 32 (+ \0 = 33) and the password is 64 including \0
-
+- Add the remote pollling rate, or make some code to deal with that
 # Planning
 
 # notes
