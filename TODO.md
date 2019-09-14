@@ -1,15 +1,12 @@
 # TODO
 This is by no means a complete TODO list
 - Think of a way to address the failure to open a log file (OfflineLogging.cpp)
-- finish the deleteEntry function
 - write a test suite for the offline logging functions
 - test everything
 - Flash remaining wifi chips to latest firmware
-- add documentation 
-- clean up all .cpp and .h files
 - simplify the logic in main.cpp
 - make a simple file header for all files in this project
-- for boardspecs struct, make the nework SSID and password a constant size (they have limits to length in standards) the SSID is 32 (+ \0 = 33) and the password is 64 including \0
+- (maybe) for boardspecs struct, make the nework SSID and password a constant size (they have limits to length in standards) the SSID is 32 (+ \0 = 33) and the password is 64 including \0
 
 # Planning
 
