@@ -3,6 +3,11 @@
 # for this to be detected, Board needs to be in this line and B needs to be the first letter in the line
 Board-2:Hope:weallneedit:Test-Board:
 
+# REmote IP:portNum:file/link to reference with making a get request:
+RemoteIP:134.68.51.14:443:/MEuser/bulk-sensor-readings.php?Board_ID=:
+
+
+
 # Sensor info
 
 # ID number, type, Unit, Unit Multiplier ,start-range, end-range, unit.

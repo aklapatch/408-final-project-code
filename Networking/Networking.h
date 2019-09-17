@@ -1,10 +1,5 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
-//===-- Networking.h - Networking function prototypes --------------------===//
-//
-// Part of the IAC energy monitoring project
-//
-//===---------------------------------------------------------------------===//
 /// \file
 /// Networking function declarations
 #include "BoardConfig.h"
@@ -63,7 +58,7 @@ int connectESPWiFi(ESP8266Interface *wifi, BoardSpecs &Specs);
 /// \param wifi The ESP8266 instance to use
 bool checkESPWiFiConnection(ESP8266Interface *wifi);
 
-/// Opens a socket using \ref wifi and sends \ref message to a remote host with
+/// Opens a socket using wifi and sends message to a remote host with
 /// TLS \param wifi The ESP instance to use \param message The data to send
 /// \returns And error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
@@ -71,24 +66,33 @@ int sendMessageTLS(ESP8266Interface *wifi, string &message);
 
 /// Tries to send data from the current port readings in Specs to the remote
 /// database param wifi The ESP8266 instance to use. This uses TLS encryption
-/// and is intended for https connections \param Specs The set of port readings
+/// and is intended for https connections
 /// and database table name are pulled from here \returns And error code from
 /// the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
+/// \param wifi the ESP8266 instance to use
+/// \param Specs The port readings that are sent are pulled from here
 int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs);
 
 /// Tries to send backup data to the database. This uses TLS and is intended for
-/// https connections. \param wifi The ESP8266 instance to use \param Specs
-/// provides the dabase table name and board name \returns An error code from
+/// https connections.
+// \returns An error code from
 /// the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
+/// \param wifi the ESP8266 instance to use
+/// \param Specs the number of port samples is pulled from the number of ports
+/// that Specs has
+/// \param FileName The file from which to pull port readings
 int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
                       const char *FileName);
 
-/// Opens a socket using \ref wifi and sends \ref message to a remote host
-/// (without TLS) \param wifi The ESP instance to use \param message The data to
-/// send \returns And error code from the Mbed Socket api: see
+/// Opens a socket using wifi and sends message to a remote host
+/// (without TLS)
+/// send
+/// \returns And error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
+/// \param wifi The ESP8266 instance to use.
+/// \param message The plaintext message to send
 int sendMessageTCP(ESP8266Interface *wifi, string &message);
 
 /// Tries to send data from the current port readings in Specs to the remote
@@ -103,6 +107,7 @@ int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs);
 /// http connections
 /// \param wifi The ESP8266 instance to use
 /// \param Specs provides the dabase table name and board name
+/// \param FileName the file to pull data readings from
 /// \returns An error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
 int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,

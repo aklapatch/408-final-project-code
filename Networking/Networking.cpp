@@ -1,11 +1,6 @@
 #include "Networking.h"
 #include "NetworkConstants.h"
 #include "debugging.h"
-//===-- Networking.cpp - Networking function definitions -----------------===//
-//
-// Part of the IAC energy monitoring project
-//
-//===---------------------------------------------------------------------===//
 /// \file
 /// Implementation for all network functions
 

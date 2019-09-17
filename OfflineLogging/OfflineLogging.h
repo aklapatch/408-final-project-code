@@ -1,10 +1,5 @@
 #ifndef OFFLINELOGGING_H
 #define OFFLINELOGGING_H
-//===-- OfflineLogging.h Data logging prototypes  ------------------------===//
-//
-// Part of the IAC energy monitoring project
-//
-//===---------------------------------------------------------------------===//
 /// \file
 /// Has prototypes for functions that log data that cannot be sent to a database
 

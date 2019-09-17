@@ -1,8 +1,3 @@
-//===-- OfflineLogging.cpp Data logging definitions ----------------------===//
-//
-// Part of the IAC energy monitoring project
-//
-//===---------------------------------------------------------------------===//
 /** @file
     Implementations for Data logging functions
 

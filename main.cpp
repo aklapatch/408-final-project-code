@@ -1,21 +1,4 @@
-//===-- main.cpp - main driver definition ---------------------------------===//
-//
-// Part of the IAC energy monitoring project
-//
-//===----------------------------------------------------------------------===//
-/// \file
-/// Has the main() function.
-//===----------------------------------------------------------------------===//
 
-/**
- * \mainpage IAC Energy Monitoring project
- *
- * Introduction
- * ------------
- * This project works on an embedded platfrom to monitor energy usage.
- * This usage is collected through sensors attached to the board.
- * Then it is uploaded to a database where the data can be processed later.
- */
 
 #include "BoardConfig.h"
 #include "ESP8266.h"
@@ -91,10 +74,6 @@ int main() {
 
     const char *config_file = "/sd/IAC_Config_File.txt";
 
-    mbed_printf("\r\nReading board settings from %s\r\n", config_file);
-    BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
-    PRINTSTRING(Specs.DatabaseTableName);
-
     bool OfflineMode = false; // indicates whether to actually send data or not
     bool ServerConnection = false;
     // flags that determine connection status
@@ -106,6 +85,10 @@ int main() {
             "\r\n ESP Chip was not initialized, entering offline mode\r\n");
         OfflineMode = true;
     }
+
+    mbed_printf("\r\nReading board settings from %s\r\n", config_file);
+    BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
+    PRINTSTRING(Specs.DatabaseTableName);
 
     // if there is no database tableName, or it is all spaces, then exit
     if (Specs.DatabaseTableName == "" || Specs.DatabaseTableName == " ") {
@@ -286,3 +269,22 @@ int main() {
         PollingTimer.reset();
     }
 }
+
+/**
+ * \mainpage IAC Energy Monitoring project
+ *
+ * Introduction
+ * ------------
+ * This project works on an embedded platfrom to monitor energy usage.
+ * This usage is collected through sensors attached to the board.
+ * Then it is uploaded to a database where the data can be processed later.
+ *
+ * Here is how some of the code is organized:
+ * - Networking.cpp / Networking.h -> functions related to networking
+ * - BoardConfig.cpp / BoardConfig.h -> functions for getting, and holding the
+ *   configuration for the board
+ * - Structs.h -> structs that contain configuration items
+ * - OfflineLogging.cpp / OfflineLogging.h -> functions that relate to logging
+ *   and deleting data to and from a file
+ * - debugging.h -> Macros that are meant to assist in debugging
+ */

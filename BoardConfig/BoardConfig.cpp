@@ -1,10 +1,3 @@
-//===-- BoardConfig.cpp - Definitions for board config functions ----------===//
-//
-// Part of the IAC energy monitoring project
-//
-//===----------------------------------------------------------------------===//
-/// \file
-/// Has function definitions for configuring the board with its data structures
 
 #include "BoardConfig.h"
 #include "debugging.h"

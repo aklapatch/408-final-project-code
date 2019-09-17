@@ -28,7 +28,7 @@ Arduino is flashed with a blank firware.
 - you NEED to disconnect gpio0 before flashing.
 
 to get the flash locations for each of the .bin files.
-You need to use the 1.6.2 version for the 8Mb chip since it does not have the 1024x1024 map, it needs to use the files ending in .1024 file in the 512x512 folder.
+You need to use the 1.6.2 version for the 8Mb chip since this chip does not have the 1024x1024 map, it needs to use the files ending in .1024 file in the 512x512 folder.
 
 
 ##  Happenings
@@ -36,7 +36,7 @@ Tried flashing (had to get a bigger power supply for the arduino (5v 3a) and it 
 
 you can see the boot log by using 74880 buad, so use that to monitor boot modes
 
-Boot mode should be 1,6 in the boot log to flash.
+Boot mode should be 1,7 in the boot log to flash.
 Use a button to ground gpio0.
 
 Try flashing immediately after resetting, and without any other program using the serial port. I have had better luck that way, but in reality it is just finicky

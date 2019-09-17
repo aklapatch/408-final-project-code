@@ -1,10 +1,5 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
-//===-- Structs.h - Board information data structure header --------------===//
-//
-// Part of the IAC energy monitoring project
-//
-//===---------------------------------------------------------------------===//
 /// \file
 /// Has the structs that store the board's information.
 

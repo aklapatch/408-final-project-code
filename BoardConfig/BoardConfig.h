@@ -1,10 +1,5 @@
 #ifndef BOARDCONFIG_H
 #define BOARDCONFIG_H
-//===-- BoardConfig.h - header for board config functions ----------------===//
-//
-// Part of the IAC energy monitoring project
-//
-//===---------------------------------------------------------------------===//
 /// \file
 /// Has the function prototypes for functions that set the board's
 /// configuration.
