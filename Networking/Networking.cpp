@@ -16,7 +16,7 @@ bool checkESPWiFiConnection(ESP8266Interface *wifi) {
     return wifi->get_ip_address() != NULL;
 }
 // =============================================================================
-int sendMessageTLS(ESP8266Interface *wifi, string &message) {
+int sendMessageTLS(ESP8266Interface *wifi, string &message, string &response) {
 
     // connect to the web server
     TLSSocket *sock = new TLSSocket();
@@ -40,12 +40,12 @@ int sendMessageTLS(ESP8266Interface *wifi, string &message) {
 
     // get the response
     char buffer[256];
+    response.clear();
 
-    while ((err = sock->recv(buffer, 255)) > 0) {
-        buffer[255] = 0;
-        mbed_printf("%s", buffer);
+    while ((err = sock->recv(buffer, 256)) > 0) {
+        response.append(buffer);
+
     }
-    mbed_printf("\r\n");
 
 CLOSEFREE:
     sock->close();
@@ -58,7 +58,7 @@ FREE:
 // sends a vector of port values instead
 // gets those port values from the backup file
 int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
-                      const char *FileName) {
+                      const char *FileName, string &response) {
 
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
 
@@ -101,14 +101,14 @@ int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
     mbed_printf("Data frame is: \r\n %s\r\n",
                 Message.c_str()); // display data frame
 
-    return sendMessageTLS(wifi, Message);
+    return sendMessageTLS(wifi, Message, response);
 }
 
 // =============================================================================
 // wi The socket must be connected to the 8266 chip (opened)
 // the cert must be set too
 // returns the int result from the mbed API
-int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs) {
+int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs, string & response) {
 
     // make the message to send
     // get the size to allocate memory
@@ -149,10 +149,10 @@ int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs) {
     mbed_printf("Data frame is: \r\n %s\r\n",
                 Message.c_str()); // display data frame
 
-    return sendMessageTLS(wifi, Message);
+    return sendMessageTLS(wifi, Message, response);
 }
 // ============================================================================
-int sendMessageTCP(ESP8266Interface *wifi, string &message) {
+int sendMessageTCP(ESP8266Interface *wifi, string &message, string &response) {
 
     // connect to the web server
     TCPSocket *sock = new TCPSocket();
@@ -177,12 +177,11 @@ int sendMessageTCP(ESP8266Interface *wifi, string &message) {
 
     // get the response
     char buffer[256];
+    response.clear();
 
-    while ((err = sock->recv(buffer, 255)) > 0) {
-        buffer[255] = 0;
-        mbed_printf("%s", buffer);
+    while ((err = sock->recv(buffer, 256)) > 0) {
+        response.append(buffer);
     }
-    mbed_printf("\r\n");
 
 CLOSEFREE:
     sock->close();
@@ -192,7 +191,7 @@ FREE:
 }
 
 int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
-                      const char *FileName) {
+                      const char *FileName, string &response) {
 
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
 
@@ -235,11 +234,11 @@ int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
     mbed_printf("Data frame is: \r\n %s\r\n",
                 Message.c_str()); // display data frame
 
-    return sendMessageTCP(wifi, Message);
+    return sendMessageTCP(wifi, Message, response);
 }
 
 // =============================================================================
-int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs) {
+int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs, string &response) {
 
     // make the message to send
     // get the size to allocate memory
@@ -280,5 +279,5 @@ int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs) {
     mbed_printf("Data frame is: \r\n %s\r\n",
                 Message.c_str()); // display data frame
 
-    return sendMessageTCP(wifi, Message);
+    return sendMessageTCP(wifi, Message, response);
 }

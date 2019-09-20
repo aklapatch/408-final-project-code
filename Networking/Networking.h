@@ -62,7 +62,7 @@ bool checkESPWiFiConnection(ESP8266Interface *wifi);
 /// TLS \param wifi The ESP instance to use \param message The data to send
 /// \returns And error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendMessageTLS(ESP8266Interface *wifi, string &message);
+int sendMessageTLS(ESP8266Interface *wifi, string &message, string &response);
 
 /// Tries to send data from the current port readings in Specs to the remote
 /// database param wifi The ESP8266 instance to use. This uses TLS encryption
@@ -72,7 +72,7 @@ int sendMessageTLS(ESP8266Interface *wifi, string &message);
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
 /// \param wifi the ESP8266 instance to use
 /// \param Specs The port readings that are sent are pulled from here
-int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs);
+int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs, string &response);
 
 /// Tries to send backup data to the database. This uses TLS and is intended for
 /// https connections.
@@ -84,7 +84,7 @@ int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs);
 /// that Specs has
 /// \param FileName The file from which to pull port readings
 int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
-                      const char *FileName);
+                      const char *FileName, string & response);
 
 /// Opens a socket using wifi and sends message to a remote host
 /// (without TLS)
@@ -93,7 +93,7 @@ int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
 /// \param wifi The ESP8266 instance to use.
 /// \param message The plaintext message to send
-int sendMessageTCP(ESP8266Interface *wifi, string &message);
+int sendMessageTCP(ESP8266Interface *wifi, string &message, string &response);
 
 /// Tries to send data from the current port readings in Specs to the remote
 /// database without TLS. This will work for http connections

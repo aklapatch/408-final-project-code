@@ -21,18 +21,25 @@ FATFileSystem fs("sd");
 
 using namespace std;
 
-// Aaron's notes
-// Control flow for detecting if you can connect to the webserver or not.
-// * first detect if the network is there, if yes, connect, if no, then don't
-// connect
-//      * There: connect -> set connected to WiFi to true
-//      * Not There: don't connect, set not connected to false
-// * Next, do all your port reading
-//  * if you are not connected to WiFi, then check if you can connect, and
-//  connect
-//   * if connecting succeeds, then try to send data, but don't try if you did
-//   not connect
-//
+
+/// returns the characters between startchars and endchars
+string textBetween(string input, const char * startchars, const char * endchars){
+    size_t start_idx = input.find(startchars);
+    size_t end_idx = input.find(endchars);
+
+    // return an empty string if you cannot find the filter text
+    if (start_idx != string::npos || end_idx != string::npos)
+        return "";
+
+    if (start_idx > end_idx)
+        return "";
+
+    start_idx+= strlen(startchars);
+
+    return input.substr(start_idx, end_idx - start_idx);
+}
+
+
 
 int main() {
     mbed_trace_init();
@@ -79,6 +86,8 @@ int main() {
     // flags that determine connection status
     bool ConnectedToWiFi = false;
 
+    string response; // a response from tcp/tls connections
+
     ESP8266Interface *wifi = new ESP8266Interface(PTC17, PTC16);
     if (!wifi) {
         mbed_printf(
@@ -123,7 +132,7 @@ int main() {
         while (checkForBackupFile(BackupFileName) && ConnectedToWiFi) {
             mbed_printf("\r\n Sending logged data to the database\r\n");
             // send the backup data to the database
-            wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName);
+            wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName, response);
 
             if (wifi_err != NSAPI_ERROR_OK) {
                 mbed_printf(
@@ -217,7 +226,7 @@ int main() {
                     mbed_printf(
                         "\r\n Sending backup up data to the database. \r\n");
                     // send the backup data to the database
-                    wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName);
+                    wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName, response);
 
                     if (wifi_err != NSAPI_ERROR_OK) {
                         mbed_printf(
@@ -237,7 +246,7 @@ int main() {
                         "\r\n Sending the last port reading to the database "
                         "\r\n");
                     // sends the data for all ports to the remote database
-                    wifi_err = sendBulkDataTLS(wifi, Specs);
+                    wifi_err = sendBulkDataTLS(wifi, Specs, response);
                     if (wifi_err != NSAPI_ERROR_OK) {
 
                         ServerConnection = false;
