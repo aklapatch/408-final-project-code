@@ -1,14 +1,146 @@
 #include "Networking.h"
-#include "NetworkConstants.h"
 #include "debugging.h"
 /// \file
 /// Implementation for all network functions
+
+const char *value_get_str = "&Value[]=";
+
+/// The string that preceeds the port ID field
+const char *port_get_str = "&Port_ID[]=";
+
+const char *id_get_str = "Board_ID=";
+
+const char * getstr= "GET ";
+
+/// A certificate for TLS communication. This certificate is from:
+/// https://github.com/ARMmbed/mbed-os-example-tls-socket/blob/master/main.cpp
+const char *ca_cert =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIENjCCAx6gAwIBAgIBATANBgkqhkiG9w0BAQUFADBvMQswCQYDVQQGEwJTRTEU\n"
+    "MBIGA1UEChMLQWRkVHJ1c3QgQUIxJjAkBgNVBAsTHUFkZFRydXN0IEV4dGVybmFs\n"
+    "IFRUUCBOZXR3b3JrMSIwIAYDVQQDExlBZGRUcnVzdCBFeHRlcm5hbCBDQSBSb290\n"
+    "MB4XDTAwMDUzMDEwNDgzOFoXDTIwMDUzMDEwNDgzOFowbzELMAkGA1UEBhMCU0Ux\n"
+    "FDASBgNVBAoTC0FkZFRydXN0IEFCMSYwJAYDVQQLEx1BZGRUcnVzdCBFeHRlcm5h\n"
+    "bCBUVFAgTmV0d29yazEiMCAGA1UEAxMZQWRkVHJ1c3QgRXh0ZXJuYWwgQ0EgUm9v\n"
+    "dDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALf3GjPm8gAELTngTlvt\n"
+    "H7xsD821+iO2zt6bETOXpClMfZOfvUq8k+0DGuOPz+VtUFrWlymUWoCwSXrbLpX9\n"
+    "uMq/NzgtHj6RQa1wVsfwTz/oMp50ysiQVOnGXw94nZpAPA6sYapeFI+eh6FqUNzX\n"
+    "mk6vBbOmcZSccbNQYArHE504B4YCqOmoaSYYkKtMsE8jqzpPhNjfzp/haW+710LX\n"
+    "a0Tkx63ubUFfclpxCDezeWWkWaCUN/cALw3CknLa0Dhy2xSoRcRdKn23tNbE7qzN\n"
+    "E0S3ySvdQwAl+mG5aWpYIxG3pzOPVnVZ9c0p10a3CitlttNCbxWyuHv77+ldU9U0\n"
+    "WicCAwEAAaOB3DCB2TAdBgNVHQ4EFgQUrb2YejS0Jvf6xCZU7wO94CTLVBowCwYD\n"
+    "VR0PBAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8wgZkGA1UdIwSBkTCBjoAUrb2YejS0\n"
+    "Jvf6xCZU7wO94CTLVBqhc6RxMG8xCzAJBgNVBAYTAlNFMRQwEgYDVQQKEwtBZGRU\n"
+    "cnVzdCBBQjEmMCQGA1UECxMdQWRkVHJ1c3QgRXh0ZXJuYWwgVFRQIE5ldHdvcmsx\n"
+    "IjAgBgNVBAMTGUFkZFRydXN0IEV4dGVybmFsIENBIFJvb3SCAQEwDQYJKoZIhvcN\n"
+    "AQEFBQADggEBALCb4IUlwtYj4g+WBpKdQZic2YR5gdkeWxQHIzZlj7DYd7usQWxH\n"
+    "YINRsPkyPef89iYTx4AWpb9a/IfPeHmJIZriTAcKhjW88t5RxNKWt9x+Tu5w/Rw5\n"
+    "6wwCURQtjr0W4MHfRnXnJK3s9EK0hZNwEGe6nQY1ShjTK3rMUUKhemPR5ruhxSvC\n"
+    "Nr4TDea9Y355e6cJDUCrat2PisP29owaQgVR1EX1n6diIWgVIEM8med8vSTYqZEX\n"
+    "c4g/VhsxOBi0cQ+azcgOno4uG+GMmIPLHzHxREzGBHNJdmAPx/i9F4BrLunMTA5a\n"
+    "mnkPIAou1Z5jJh5VkpTYghdae9C8x49OhgQ=\n"
+    "-----END CERTIFICATE-----";
 
 int connectESPWiFi(ESP8266Interface *wifi, BoardSpecs &Specs) {
     return wifi->connect(Specs.NetworkSSID.c_str(),
                          Specs.NetworkPassword.c_str());
 }
 
+
+// =============================================================================
+string makeGetReqStr(BoardSpecs & Specs) {
+    // make the message to send
+    // get the size to allocate memory
+    size_t message_size =
+        strlen(getstr) + Specs.RemoteDir.size() + Specs.DatabaseTableName.size() + 1 ;
+        // the 1 is for the '?'
+
+    size_t End = Specs.Ports.size();
+    size_t get_extras = strlen(port_get_str) + strlen(value_get_str);
+
+    for (size_t i = 0; i < End; ++i) {
+        if (Specs.Ports[i].Multiplier != 0) {
+            message_size += Specs.Ports[i].Name.size() +
+                            to_string(Specs.Ports[i].Value).size() + get_extras;
+        }
+    }
+    // add on for the \r\n
+    message_size += strlen(id_get_str) + strlen(getstr) +  strlen("\r\n");
+
+    string Message = getstr;
+
+    // reserve so that further allocations are not needed
+    Message.reserve(message_size);
+
+    Message.append(Specs.RemoteDir);
+
+    Message.append("?");
+
+    Message.append(id_get_str);
+
+    Message.append(Specs.DatabaseTableName);
+
+    // append to get request for every active port
+    for (size_t i = 0; i < End; ++i) {
+        if (Specs.Ports[i].Multiplier != 0) {
+            Message.append(port_get_str);
+            Message.append(Specs.Ports[i].Name);
+            Message.append(value_get_str);
+            Message.append(to_string(Specs.Ports[i].Value));
+        }
+    }
+    Message.append("\r\n");
+
+
+    return Message;
+}
+// ===============================================================================
+
+string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs & Specs) {
+    // make the message to send
+    // get the size to allocate memory
+    size_t message_size =
+        strlen(getstr) + Specs.RemoteDir.size() + Specs.DatabaseTableName.size() + 1 ;
+        // the 1 is for the '?'
+
+    size_t End = Ports.size();
+    size_t get_extras = strlen(port_get_str) + strlen(value_get_str);
+
+    for (size_t i = 0; i < End; ++i) {
+        if (Ports[i].Multiplier != 0) {
+            message_size += Ports[i].Name.size() +
+                            to_string(Ports[i].Value).size() + get_extras;
+        }
+    }
+    // add on for the \r\n
+    message_size += strlen(id_get_str) + strlen(getstr) +  strlen("\r\n");
+
+    string Message = getstr;
+
+    // reserve so that further allocations are not needed
+    Message.reserve(message_size);
+
+    Message.append(Specs.RemoteDir);
+
+    Message.append("?");
+
+    Message.append(id_get_str);
+
+    Message.append(Specs.DatabaseTableName);
+
+    // append to get request for every active port
+    for (size_t i = 0; i < End; ++i) {
+        if (Ports[i].Multiplier != 0) {
+            Message.append(port_get_str);
+            Message.append(Ports[i].Name);
+            Message.append(value_get_str);
+            Message.append(to_string(Ports[i].Value));
+        }
+    }
+    Message.append("\r\n");
+
+    return Message;
+}
 //==============================================================================
 
 // return true if you are connected, and false if you are not connected
@@ -16,7 +148,7 @@ bool checkESPWiFiConnection(ESP8266Interface *wifi) {
     return wifi->get_ip_address() != NULL;
 }
 // =============================================================================
-int sendMessageTLS(ESP8266Interface *wifi, string &message, string &response) {
+int sendMessageTLS(ESP8266Interface *wifi, BoardSpecs & Specs, string &message, string &response) {
 
     // connect to the web server
     TLSSocket *sock = new TLSSocket();
@@ -29,7 +161,7 @@ int sendMessageTLS(ESP8266Interface *wifi, string &message, string &response) {
     if (err != NSAPI_ERROR_OK)
         goto CLOSEFREE;
 
-    err = sock->connect(web_server_ip, web_server_port);
+    err = sock->connect(Specs.RemoteIP.c_str(),Specs.RemotePort);
 
     if (err != NSAPI_ERROR_OK)
         goto CLOSEFREE;
@@ -62,46 +194,11 @@ int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
 
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
 
-    // make the message to send
-    // get the size to allocate memory
-    size_t message_size =
-        strlen(bulk_get_request) + Specs.DatabaseTableName.size();
-
-    size_t End = Specs.Ports.size();
-    size_t get_extras = strlen(port_get_str) + strlen(value_get_str);
-
-    for (size_t i = 0; i < End; ++i) {
-        if (Ports[i].Multiplier != 0) {
-            message_size += Ports[i].Name.size() +
-                            to_string(Ports[i].Value).size() + get_extras;
-        }
-    }
-    // add on for the \r\n
-    message_size += strlen("\r\n");
-
-    string Message = bulk_get_request;
-
-    // reserve so that further allocations are not needed
-    Message.reserve(message_size);
-
-    Message.append(Specs.DatabaseTableName);
-
-    // append to get request for every active port
-    for (size_t i = 0; i < End; ++i) {
-        if (Ports[i].Multiplier != 0) {
-            Message.append(port_get_str);
-            Message.append(Ports[i].Name);
-            Message.append(value_get_str);
-            Message.append(to_string(Ports[i].Value));
-        }
-    }
-    Message.append("\r\n");
-
+    string Message = makeGetReqStr(Specs);
     mbed_printf("Data frame size = %d\r\n", Message.size());
     mbed_printf("Data frame is: \r\n %s\r\n",
                 Message.c_str()); // display data frame
-
-    return sendMessageTLS(wifi, Message, response);
+    return sendMessageTLS(wifi,Specs, Message,  response);
 }
 
 // =============================================================================
@@ -110,49 +207,15 @@ int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
 // returns the int result from the mbed API
 int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs, string & response) {
 
-    // make the message to send
-    // get the size to allocate memory
-    size_t message_size =
-        strlen(bulk_get_request) + Specs.DatabaseTableName.size();
-
-    size_t End = Specs.Ports.size();
-    size_t get_extras = strlen(port_get_str) + strlen(value_get_str);
-
-    for (size_t i = 0; i < End; ++i) {
-        if (Specs.Ports[i].Multiplier != 0) {
-            message_size += Specs.Ports[i].Name.size() +
-                            to_string(Specs.Ports[i].Value).size() + get_extras;
-        }
-    }
-    // add on for the \r\n
-    message_size += strlen("\r\n");
-
-    string Message = bulk_get_request;
-
-    // reserve so that further allocations are not needed
-    Message.reserve(message_size);
-
-    Message.append(Specs.DatabaseTableName);
-
-    // append to get request for every active port
-    for (size_t i = 0; i < End; ++i) {
-        if (Specs.Ports[i].Multiplier != 0) {
-            Message.append(port_get_str);
-            Message.append(Specs.Ports[i].Name);
-            Message.append(value_get_str);
-            Message.append(to_string(Specs.Ports[i].Value));
-        }
-    }
-    Message.append("\r\n");
-
+    string Message = makeGetReqStr(Specs);
     mbed_printf("Data frame size = %d\r\n", Message.size());
     mbed_printf("Data frame is: \r\n %s\r\n",
                 Message.c_str()); // display data frame
 
-    return sendMessageTLS(wifi, Message, response);
+    return sendMessageTLS(wifi,Specs, Message, response);
 }
 // ============================================================================
-int sendMessageTCP(ESP8266Interface *wifi, string &message, string &response) {
+int sendMessageTCP(ESP8266Interface *wifi,BoardSpecs & Specs, string &message, string &response) {
 
     // connect to the web server
     TCPSocket *sock = new TCPSocket();
@@ -165,8 +228,7 @@ int sendMessageTCP(ESP8266Interface *wifi, string &message, string &response) {
     err = sock->open(wifi);
     if (err != NSAPI_ERROR_OK)
         goto CLOSEFREE;
-
-    err = sock->connect(web_server_ip, web_server_port);
+    err = sock->connect(Specs.RemoteIP.c_str(),Specs.RemotePort);
 
     if (err != NSAPI_ERROR_OK)
         goto CLOSEFREE;
@@ -195,89 +257,15 @@ int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
 
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
 
-    // make the message to send
-    // get the size to allocate memory
-    size_t message_size =
-        strlen(bulk_get_request) + Specs.DatabaseTableName.size();
+    string Message = makeGetReqStr(Ports, Specs);
 
-    size_t End = Specs.Ports.size();
-    size_t get_extras = strlen(port_get_str) + strlen(value_get_str);
-
-    for (size_t i = 0; i < End; ++i) {
-        if (Ports[i].Multiplier != 0) {
-            message_size += Ports[i].Name.size() +
-                            to_string(Ports[i].Value).size() + get_extras;
-        }
-    }
-    // add on for the \r\n
-    message_size += strlen("\r\n");
-
-    string Message = bulk_get_request;
-
-    // reserve so that further allocations are not needed
-    Message.reserve(message_size);
-
-    Message.append(Specs.DatabaseTableName);
-
-    // append to get request for every active port
-    for (size_t i = 0; i < End; ++i) {
-        if (Ports[i].Multiplier != 0) {
-            Message.append(port_get_str);
-            Message.append(Ports[i].Name);
-            Message.append(value_get_str);
-            Message.append(to_string(Ports[i].Value));
-        }
-    }
-    Message.append("\r\n");
-
-    mbed_printf("Data frame size = %d\r\n", Message.size());
-    mbed_printf("Data frame is: \r\n %s\r\n",
-                Message.c_str()); // display data frame
-
-    return sendMessageTCP(wifi, Message, response);
+    return sendMessageTCP(wifi, Specs, Message, response);
 }
 
 // =============================================================================
 int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs, string &response) {
 
-    // make the message to send
-    // get the size to allocate memory
-    size_t message_size =
-        strlen(bulk_get_request) + Specs.DatabaseTableName.size();
+    string message = makeGetReqStr( Specs);
 
-    size_t End = Specs.Ports.size();
-    size_t get_extras = strlen(port_get_str) + strlen(value_get_str);
-
-    for (size_t i = 0; i < End; ++i) {
-        if (Specs.Ports[i].Multiplier != 0) {
-            message_size += Specs.Ports[i].Name.size() +
-                            to_string(Specs.Ports[i].Value).size() + get_extras;
-        }
-    }
-    // add on for the \r\n
-    message_size += strlen("\r\n");
-
-    string Message = bulk_get_request;
-
-    // reserve so that further allocations are not needed
-    Message.reserve(message_size);
-
-    Message.append(Specs.DatabaseTableName);
-
-    // append to get request for every active port
-    for (size_t i = 0; i < End; ++i) {
-        if (Specs.Ports[i].Multiplier != 0) {
-            Message.append(port_get_str);
-            Message.append(Specs.Ports[i].Name);
-            Message.append(value_get_str);
-            Message.append(to_string(Specs.Ports[i].Value));
-        }
-    }
-    Message.append("\r\n");
-
-    mbed_printf("Data frame size = %d\r\n", Message.size());
-    mbed_printf("Data frame is: \r\n %s\r\n",
-                Message.c_str()); // display data frame
-
-    return sendMessageTCP(wifi, Message, response);
+    return sendMessageTCP(wifi, Specs,message, response);
 }

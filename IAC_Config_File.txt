@@ -1,19 +1,17 @@
 # system info.
 # Board Number:Wifi-SSID:Wifi-Password:DataBase-TABLE:
 # for this to be detected, Board needs to be in this line and B needs to be the first letter in the line
-Board-2:Hope:weallneedit:Test-Board:
+Board-2:IU DeviceNet: :Test-Board:
 
-# REmote IP:portNum:file/link to reference with making a get request:
-RemoteIP:134.68.51.14:443:/MEuser/bulk-sensor-readings.php?Board_ID=:
-
-
+# Label:RemoteIP:portNum:file/link to reference with making a get request
+RemoteInfo:134.68.51.14:443:/~aklapatc/iac/bulk-data-send.php
 
 # Sensor info
 
-# ID number, type, Unit, Unit Multiplier ,start-range, end-range, unit.
+# ID number: type: Unit: Unit Multiplier :start-range: end-range: unit.
 # for this to work, S has to be the first character in the line and SensorID has to be in the line
 # this is setup so that a port with a sensor id of 0 will be assigned the first sensor id in the file, and
-# a port with a sensor id of 1 will be assigned the second sensor id in the file, and so one
+# a port with a sensor id of 1 will be assigned the second sensor id in the file, and so on
 SensorID = 0, No Sensor, 0, 0, 0,
 SensorID = 1, CO2, ppm, 2000.0, 0, 2000.0, 
 SensorID = 2, Current, Amps, 133.33, 0.0, 100.0

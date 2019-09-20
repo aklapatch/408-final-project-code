@@ -48,7 +48,7 @@ int main() {
     float PollingInterval = 5.0;
 
     // name of the file where data is stored
-    const char BackupFileName[] = "/sd/BackupFile.dat";
+    const char BackupFileName[] = "/sd/PortReadings.dat";
 
     Timer PollingTimer; // Timer that controlls when polling happens
 
@@ -106,6 +106,28 @@ int main() {
         OfflineMode = true;
     }
 
+    // there needs to be a remote ip and remote directory specified too
+    if (Specs.RemoteDir == " " || Specs.RemoteDir == ""){
+        OfflineMode = true;
+
+        mbed_printf(
+            "\r\n No Remote directory specified, Entering offline mode\r\n");
+    }
+
+    if (Specs.RemoteIP == " " || Specs.RemoteIP== ""){
+        OfflineMode = true;
+
+        mbed_printf(
+            "\r\n No Remote IP address specified, Entering offline mode\r\n");
+    }
+
+    if (Specs.RemotePort == 0){
+        OfflineMode = true;
+
+        mbed_printf(
+            "\r\n No Remote port specified, Entering offline mode\r\n");
+    }
+
     int wifi_err = 0;
     if (!OfflineMode) {
         mbed_printf("trying to connect to %s\r\n", Specs.NetworkSSID.c_str());
@@ -117,40 +139,6 @@ int main() {
         } else {
             ConnectedToWiFi = true;
             mbed_printf(" connected to %s\r\n", Specs.NetworkSSID.c_str());
-        }
-    }
-
-    /// FIXME: the below logic does not work consistently and should be
-    /// simplefied where possible
-
-    if (!OfflineMode &&
-        ConnectedToWiFi) { // only send data if the wifi chip can
-
-        /// backup data needs to be sent first, because if it is not sent first,
-        /// then the data will be out of order in the database, and that will be
-        /// bad.
-        while (checkForBackupFile(BackupFileName) && ConnectedToWiFi) {
-            mbed_printf("\r\n Sending logged data to the database\r\n");
-            // send the backup data to the database
-            wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName, response);
-
-            if (wifi_err != NSAPI_ERROR_OK) {
-                mbed_printf(
-                    "\r\n Data was not fully send to the webserver \r\n");
-
-                // update wifi connectivity
-                ConnectedToWiFi = checkESPWiFiConnection(wifi);
-
-                break; // exit if the Server Connection fails
-
-            } else {
-                mbed_printf(
-                    "\r\n Data was successfully sent to the database \r\n");
-                // delete the sent entry
-                // this function will delete the file when
-                // it is empty
-                deleteDataEntry(Specs, BackupFileName);
-            }
         }
     }
 
@@ -227,7 +215,7 @@ int main() {
                         "\r\n Sending backup up data to the database. \r\n");
                     // send the backup data to the database
                     wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName, response);
-
+                    mbed_printf("Response \r\n %s \r\n", response.c_str());
                     if (wifi_err != NSAPI_ERROR_OK) {
                         mbed_printf(
                             "\r\n Failed to transmit backed up data to the "
@@ -256,7 +244,6 @@ int main() {
                     }
                 } else {
                     dumpSensorDataToFile(Specs, BackupFileName);
-                    mbed_printf("\r\n Backed up Active Port data\r\n");
                 }
 
             } else { // back up data if you are not connected

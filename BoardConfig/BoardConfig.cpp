@@ -1,4 +1,5 @@
 
+#include <cctype>
 #include "BoardConfig.h"
 #include "debugging.h"
 // ============================================================================
@@ -108,12 +109,37 @@ BoardSpecs readConfigText(FILE *fp) {
 
     rewind(fp); // get ready to read again.
 
-    // get a whole line instead of reading one char at a time
     while (fgets(Buffer, BUFFLEN, fp) != NULL) {
+
+        const char * s = ":";
+
+        // save the remote connection info 
+        if (Buffer[0] == 'R' && strstr(Buffer, "RemoteInfo")){
+            
+            // we don't need the first token
+            char * tmp = strtok(Buffer,s);
+
+            Specs.RemoteIP = strtok(NULL,s);
+
+            PRINTSTRING(Specs.RemoteIP);
+
+            // make sure there is a digit to convert, and set an error value
+            tmp = strtok(NULL, s);
+            if (isdigit(tmp[0])){
+            Specs.RemotePort = atoi(tmp);
+            } else {
+                Specs.RemotePort = 0;
+            }
+
+            PRINTINT(Specs.RemotePort);
+            Specs.RemoteDir = strtok(NULL, "\n");
+
+            PRINTSTRING(Specs.RemoteDir);
+
+        }
 
         // checks the character at the beginning of each line
         if (Buffer[0] == 'B' && strstr(Buffer, "Board")) {
-            const char s[2] = ":";
 
             // get board id and assign it
             Specs.ID = strtok(Buffer, s);
@@ -128,7 +154,7 @@ BoardSpecs readConfigText(FILE *fp) {
             Specs.DatabaseTableName = strtok(NULL, s); // opt opportunity
         } else if (Buffer[0] == 'P') { // if a port description is detected
 
-            // use a deque or queue to temporarily hold a Port entry
+            //hold a Port entry
             // then assign them to the vector in Specs
             PortInfo tmp;
 

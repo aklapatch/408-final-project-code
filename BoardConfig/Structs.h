@@ -71,11 +71,17 @@ struct BoardSpecs {
     /// Password of the above WiFi network
     string NetworkPassword;
 
-    /// The IP address of this board
-    string WiFiIP;
-
     /// The Database table name that this board is associated with
     string DatabaseTableName;
+
+    /// The IP Address that this board will communicate with
+    string RemoteIP;
+
+    /// The remote directory used when making a GET request
+    string RemoteDir;
+
+    /// the http port used in the GET request
+    uint16_t RemotePort;
 
     /// The collection of ports and their information
     vector<PortInfo> Ports;
@@ -92,8 +98,8 @@ struct BoardSpecs {
     /// Default constructor.
     /// Sets all strings to "" and sets the initializes the vector size to 0
     BoardSpecs()
-        : ID(""), NetworkSSID(""), NetworkPassword(""), WiFiIP(""),
-          DatabaseTableName(""), Ports() {}
+        : ID(""), NetworkSSID(""), NetworkPassword(""), DatabaseTableName(""), RemoteIP(""),
+        RemoteDir(""), RemotePort(0),  Ports() {}
 };
 
 #endif // STRUCTS
