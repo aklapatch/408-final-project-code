@@ -21,9 +21,8 @@ FATFileSystem fs("sd");
 
 using namespace std;
 
-
 /// returns the characters between startchars and endchars
-string textBetween(string input, const char * startchars, const char * endchars){
+string textBetween(string input, const char *startchars, const char *endchars) {
     size_t start_idx = input.find(startchars);
     size_t end_idx = input.find(endchars);
 
@@ -34,12 +33,10 @@ string textBetween(string input, const char * startchars, const char * endchars)
     if (start_idx > end_idx)
         return "";
 
-    start_idx+= strlen(startchars);
+    start_idx += strlen(startchars);
 
     return input.substr(start_idx, end_idx - start_idx);
 }
-
-
 
 int main() {
     mbed_trace_init();
@@ -107,25 +104,24 @@ int main() {
     }
 
     // there needs to be a remote ip and remote directory specified too
-    if (Specs.RemoteDir == " " || Specs.RemoteDir == ""){
+    if (Specs.RemoteDir == " " || Specs.RemoteDir == "") {
         OfflineMode = true;
 
         mbed_printf(
             "\r\n No Remote directory specified, Entering offline mode\r\n");
     }
 
-    if (Specs.RemoteIP == " " || Specs.RemoteIP== ""){
+    if (Specs.RemoteIP == " " || Specs.RemoteIP == "") {
         OfflineMode = true;
 
         mbed_printf(
             "\r\n No Remote IP address specified, Entering offline mode\r\n");
     }
 
-    if (Specs.RemotePort == 0){
+    if (Specs.RemotePort == 0) {
         OfflineMode = true;
 
-        mbed_printf(
-            "\r\n No Remote port specified, Entering offline mode\r\n");
+        mbed_printf("\r\n No Remote port specified, Entering offline mode\r\n");
     }
 
     int wifi_err = 0;
@@ -214,7 +210,8 @@ int main() {
                     mbed_printf(
                         "\r\n Sending backup up data to the database. \r\n");
                     // send the backup data to the database
-                    wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName, response);
+                    wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName,
+                                                 response);
                     mbed_printf("Response \r\n %s \r\n", response.c_str());
                     if (wifi_err != NSAPI_ERROR_OK) {
                         mbed_printf(

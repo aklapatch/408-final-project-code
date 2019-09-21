@@ -98,8 +98,8 @@ struct BoardSpecs {
     /// Default constructor.
     /// Sets all strings to "" and sets the initializes the vector size to 0
     BoardSpecs()
-        : ID(""), NetworkSSID(""), NetworkPassword(""), DatabaseTableName(""), RemoteIP(""),
-        RemoteDir(""), RemotePort(0),  Ports() {}
+        : ID(""), NetworkSSID(""), NetworkPassword(""), DatabaseTableName(""),
+          RemoteIP(""), RemoteDir(""), RemotePort(0), Ports() {}
 };
 
 #endif // STRUCTS

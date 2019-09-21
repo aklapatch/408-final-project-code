@@ -1,7 +1,7 @@
 
-#include <cctype>
 #include "BoardConfig.h"
 #include "debugging.h"
+#include <cctype>
 // ============================================================================
 BoardSpecs readSDCard(const char *FileName) {
 
@@ -111,22 +111,22 @@ BoardSpecs readConfigText(FILE *fp) {
 
     while (fgets(Buffer, BUFFLEN, fp) != NULL) {
 
-        const char * s = ":";
+        const char *s = ":";
 
-        // save the remote connection info 
-        if (Buffer[0] == 'R' && strstr(Buffer, "RemoteInfo")){
-            
+        // save the remote connection info
+        if (Buffer[0] == 'R' && strstr(Buffer, "RemoteInfo")) {
+
             // we don't need the first token
-            char * tmp = strtok(Buffer,s);
+            char *tmp = strtok(Buffer, s);
 
-            Specs.RemoteIP = strtok(NULL,s);
+            Specs.RemoteIP = strtok(NULL, s);
 
             PRINTSTRING(Specs.RemoteIP);
 
             // make sure there is a digit to convert, and set an error value
             tmp = strtok(NULL, s);
-            if (isdigit(tmp[0])){
-            Specs.RemotePort = atoi(tmp);
+            if (isdigit(tmp[0])) {
+                Specs.RemotePort = atoi(tmp);
             } else {
                 Specs.RemotePort = 0;
             }
@@ -135,7 +135,6 @@ BoardSpecs readConfigText(FILE *fp) {
             Specs.RemoteDir = strtok(NULL, "\n");
 
             PRINTSTRING(Specs.RemoteDir);
-
         }
 
         // checks the character at the beginning of each line
@@ -154,7 +153,7 @@ BoardSpecs readConfigText(FILE *fp) {
             Specs.DatabaseTableName = strtok(NULL, s); // opt opportunity
         } else if (Buffer[0] == 'P') { // if a port description is detected
 
-            //hold a Port entry
+            // hold a Port entry
             // then assign them to the vector in Specs
             PortInfo tmp;
 

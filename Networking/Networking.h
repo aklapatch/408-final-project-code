@@ -72,7 +72,8 @@ int sendMessageTLS(ESP8266Interface *wifi, string &message, string &response);
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
 /// \param wifi the ESP8266 instance to use
 /// \param Specs The port readings that are sent are pulled from here
-int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs, string &response);
+int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
+                    string &response);
 
 /// Tries to send backup data to the database. This uses TLS and is intended for
 /// https connections.
@@ -84,7 +85,7 @@ int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs, string &response)
 /// that Specs has
 /// \param FileName The file from which to pull port readings
 int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
-                      const char *FileName, string & response);
+                      const char *FileName, string &response);
 
 /// Opens a socket using wifi and sends message to a remote host
 /// (without TLS)
