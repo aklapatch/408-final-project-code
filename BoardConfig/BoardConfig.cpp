@@ -130,11 +130,23 @@ BoardSpecs readConfigText(FILE *fp) {
             } else {
                 Specs.RemotePort = 0;
             }
-
+            
             PRINTINT(Specs.RemotePort);
-            Specs.RemoteDir = strtok(NULL, "\n");
+
+            // check for the TLS variable
+            tmp = strtok(NULL, s);
+            if (tmp == NULL)
+                Specs.RemoteDir = strtok(NULL, "\n");
+            else 
+                Specs.RemoteDir = tmp;
+            
+            if (strstr(Buffer, ":TLS"))
+                Specs.useTLS = true;
+
 
             PRINTSTRING(Specs.RemoteDir);
+
+
         }
 
         // checks the character at the beginning of each line

@@ -8,6 +8,7 @@
 #include "Structs.h"
 #include "TCPSocket.h"
 #include "TLSSocket.h"
+#include "SocketAddress.h"
 #include "mbed.h"
 
 // C++ headers
@@ -62,7 +63,7 @@ bool checkESPWiFiConnection(ESP8266Interface *wifi);
 /// TLS \param wifi The ESP instance to use \param message The data to send
 /// \returns And error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendMessageTLS(ESP8266Interface *wifi, string &message, string &response);
+int sendMessageTLS(TLSSocket * sock, string &message, string &response);
 
 /// Tries to send data from the current port readings in Specs to the remote
 /// database param wifi The ESP8266 instance to use. This uses TLS encryption
@@ -72,7 +73,7 @@ int sendMessageTLS(ESP8266Interface *wifi, string &message, string &response);
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
 /// \param wifi the ESP8266 instance to use
 /// \param Specs The port readings that are sent are pulled from here
-int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
+int sendBulkDataTLS(TLSSocket * sock, BoardSpecs &Specs,
                     string &response);
 
 /// Tries to send backup data to the database. This uses TLS and is intended for
@@ -84,7 +85,7 @@ int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
 /// \param Specs the number of port samples is pulled from the number of ports
 /// that Specs has
 /// \param FileName The file from which to pull port readings
-int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
+int sendBackupDataTLS(TLSSocket * sock, BoardSpecs &Specs,
                       const char *FileName, string &response);
 
 /// Opens a socket using wifi and sends message to a remote host
@@ -94,7 +95,7 @@ int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
 /// \param wifi The ESP8266 instance to use.
 /// \param message The plaintext message to send
-int sendMessageTCP(ESP8266Interface *wifi, string &message, string &response);
+int sendMessageTCP(TCPSocket * sock, string &message, string &response);
 
 /// Tries to send data from the current port readings in Specs to the remote
 /// database without TLS. This will work for http connections
@@ -102,7 +103,7 @@ int sendMessageTCP(ESP8266Interface *wifi, string &message, string &response);
 /// \param Specs The set of port readings and database table name are pulled
 /// from here \returns And error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs);
+int sendBulkDataTCP(TCPSocket * sock, BoardSpecs &Specs, string & response);
 
 /// tries to send backup data to the database without TLS. This will work for
 /// http connections
@@ -111,7 +112,11 @@ int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs);
 /// \param FileName the file to pull data readings from
 /// \returns An error code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
-                      const char *FileName);
+int sendBackupDataTCP(TCPSocket * sock, BoardSpecs &Specs,
+                      const char *FileName, string & response);
 
+
+/// The socked passed into this function MUST ALREADY BE SETUP. It must be allocated, the certificate must be set, and it must be initialized with a device/netowrk interface
+int sendMessageToServer(ESP8266Interface *wifi, Socket * sock, BoardSpecs &Specs, string &message,
+                   string &response); 
 #endif

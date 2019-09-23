@@ -13,6 +13,34 @@
 
 #include "BlockDevice.h"
 
+/// A certificate for TLS communication. This certificate is from:
+/// https://github.com/ARMmbed/mbed-os-example-tls-socket/blob/master/main.cpp
+const char *ca_cert =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIENjCCAx6gAwIBAgIBATANBgkqhkiG9w0BAQUFADBvMQswCQYDVQQGEwJTRTEU\n"
+    "MBIGA1UEChMLQWRkVHJ1c3QgQUIxJjAkBgNVBAsTHUFkZFRydXN0IEV4dGVybmFs\n"
+    "IFRUUCBOZXR3b3JrMSIwIAYDVQQDExlBZGRUcnVzdCBFeHRlcm5hbCBDQSBSb290\n"
+    "MB4XDTAwMDUzMDEwNDgzOFoXDTIwMDUzMDEwNDgzOFowbzELMAkGA1UEBhMCU0Ux\n"
+    "FDASBgNVBAoTC0FkZFRydXN0IEFCMSYwJAYDVQQLEx1BZGRUcnVzdCBFeHRlcm5h\n"
+    "bCBUVFAgTmV0d29yazEiMCAGA1UEAxMZQWRkVHJ1c3QgRXh0ZXJuYWwgQ0EgUm9v\n"
+    "dDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALf3GjPm8gAELTngTlvt\n"
+    "H7xsD821+iO2zt6bETOXpClMfZOfvUq8k+0DGuOPz+VtUFrWlymUWoCwSXrbLpX9\n"
+    "uMq/NzgtHj6RQa1wVsfwTz/oMp50ysiQVOnGXw94nZpAPA6sYapeFI+eh6FqUNzX\n"
+    "mk6vBbOmcZSccbNQYArHE504B4YCqOmoaSYYkKtMsE8jqzpPhNjfzp/haW+710LX\n"
+    "a0Tkx63ubUFfclpxCDezeWWkWaCUN/cALw3CknLa0Dhy2xSoRcRdKn23tNbE7qzN\n"
+    "E0S3ySvdQwAl+mG5aWpYIxG3pzOPVnVZ9c0p10a3CitlttNCbxWyuHv77+ldU9U0\n"
+    "WicCAwEAAaOB3DCB2TAdBgNVHQ4EFgQUrb2YejS0Jvf6xCZU7wO94CTLVBowCwYD\n"
+    "VR0PBAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8wgZkGA1UdIwSBkTCBjoAUrb2YejS0\n"
+    "Jvf6xCZU7wO94CTLVBqhc6RxMG8xCzAJBgNVBAYTAlNFMRQwEgYDVQQKEwtBZGRU\n"
+    "cnVzdCBBQjEmMCQGA1UECxMdQWRkVHJ1c3QgRXh0ZXJuYWwgVFRQIE5ldHdvcmsx\n"
+    "IjAgBgNVBAMTGUFkZFRydXN0IEV4dGVybmFsIENBIFJvb3SCAQEwDQYJKoZIhvcN\n"
+    "AQEFBQADggEBALCb4IUlwtYj4g+WBpKdQZic2YR5gdkeWxQHIzZlj7DYd7usQWxH\n"
+    "YINRsPkyPef89iYTx4AWpb9a/IfPeHmJIZriTAcKhjW88t5RxNKWt9x+Tu5w/Rw5\n"
+    "6wwCURQtjr0W4MHfRnXnJK3s9EK0hZNwEGe6nQY1ShjTK3rMUUKhemPR5ruhxSvC\n"
+    "Nr4TDea9Y355e6cJDUCrat2PisP29owaQgVR1EX1n6diIWgVIEM8med8vSTYqZEX\n"
+    "c4g/VhsxOBi0cQ+azcgOno4uG+GMmIPLHzHxREzGBHNJdmAPx/i9F4BrLunMTA5a\n"
+    "mnkPIAou1Z5jJh5VkpTYghdae9C8x49OhgQ=\n"
+    "-----END CERTIFICATE-----";
 // This will take the system's default block device
 BlockDevice *bd = BlockDevice::get_default_instance();
 
@@ -21,8 +49,20 @@ FATFileSystem fs("sd");
 
 using namespace std;
 
-/// returns the characters between startchars and endchars
+union DualSocket{
+    TCPSocket *TCP;
+    TLSSocket *TLS;
+};
+
+/// returns the characters between startchars and endchars. It returns an empty string if it cannot find the start and enc filter sequences
 string textBetween(string input, const char *startchars, const char *endchars) {
+    
+    // check if the string is big engough to actually filter 
+    // this will throw and exception if we do not do this
+   size_t filter_size = strlen(startchars) + strlen(endchars);
+   if (filter_size >= input.size())
+        return ""; 
+
     size_t start_idx = input.find(startchars);
     size_t end_idx = input.find(endchars);
 
@@ -36,6 +76,24 @@ string textBetween(string input, const char *startchars, const char *endchars) {
     start_idx += strlen(startchars);
 
     return input.substr(start_idx, end_idx - start_idx);
+}
+
+const char * filter_start= "samplerate=\"";
+const char * filter_end= "\"></span>";
+
+/// extracts the sample rate from response text, converts it to a float, and returns it. This returns -1 if it fails.
+float extractSampleRate(string & message_response){
+    string rate_text = textBetween(message_response, filter_start, filter_end);
+    PRINTLINE;
+    if (rate_text == "")
+        return -1;
+    else {
+        if (isdigit(rate_text[0]))
+            return stof(rate_text);
+
+        else 
+            return -1;
+    }
 }
 
 int main() {
@@ -80,8 +138,6 @@ int main() {
 
     bool OfflineMode = false; // indicates whether to actually send data or not
     bool ServerConnection = false;
-    // flags that determine connection status
-    bool ConnectedToWiFi = false;
 
     string response; // a response from tcp/tls connections
 
@@ -128,15 +184,27 @@ int main() {
     if (!OfflineMode) {
         mbed_printf("trying to connect to %s\r\n", Specs.NetworkSSID.c_str());
         wifi_err = connectESPWiFi(wifi, Specs);
+
+
         if (wifi_err != NSAPI_ERROR_OK) {
             mbed_printf("\r\n failed to connect to %s. Error code = %d \r\n",
                         Specs.NetworkSSID.c_str(), wifi_err);
-            ConnectedToWiFi = false;
         } else {
-            ConnectedToWiFi = true;
             mbed_printf(" connected to %s\r\n", Specs.NetworkSSID.c_str());
         }
     }
+
+    // initialize the socket for moving data to the server.
+    DualSocket sock;
+    if (Specs.useTLS){
+        sock.TLS = new TLSSocket();
+        sock.TLS->set_root_ca_cert(ca_cert);
+        sock.TLS->open(wifi);
+    } else {
+        sock.TCP = new TCPSocket();
+        sock.TCP->open(wifi);
+    }
+
 
     // get the number of ports for the loop
     const size_t NumPorts = Specs.Ports.size();
@@ -181,7 +249,7 @@ int main() {
         if (!OfflineMode) {
 
             // try to connect to wifi again if you are not connected now
-            if (!ConnectedToWiFi) {
+            if (!checkESPWiFiConnection(wifi)) {
 
                 mbed_printf("Trying to connect to %s \r\n",
                             Specs.NetworkSSID.c_str());
@@ -190,17 +258,15 @@ int main() {
                 if (wifi_err != NSAPI_ERROR_OK) {
                     mbed_printf("Connection attempt failed error = %d\r\n",
                                 wifi_err);
-                    ConnectedToWiFi = false;
                 } else {
                     mbed_printf("Connected to %s \r\n",
                                 Specs.NetworkSSID.c_str());
-                    ConnectedToWiFi = true;
                 }
             }
 
             // if the board is connected to the network, send data to the
             // database
-            if (ConnectedToWiFi) {
+            if (checkESPWiFiConnection(wifi)) {
 
                 // send backed up data while waiting for the polling rate to
                 // expire
@@ -208,10 +274,24 @@ int main() {
                        checkForBackupFile(BackupFileName)) {
 
                     mbed_printf(
-                        "\r\n Sending backup up data to the database. \r\n");
+                        "\r\n Sending backed up data to the database. \r\n");
                     // send the backup data to the database
-                    wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName,
+                    if (Specs.useTLS) {
+
+                        wifi_err = sendBackupDataTLS(sock.TLS, Specs, BackupFileName,
                                                  response);
+                    } else {
+                        wifi_err = sendBackupDataTCP(sock.TCP, Specs, BackupFileName, response);
+                    }
+                    PRINTLINE;
+                    float tmp = extractSampleRate(response);
+                    
+                    PRINTLINE;
+                    if (tmp != -1 && tmp > 0) {
+                        PollingInterval = tmp;
+                        mbed_printf("Sample interval is now %f\r\n", PollingInterval);
+                    }
+
                     mbed_printf("Response \r\n %s \r\n", response.c_str());
                     if (wifi_err != NSAPI_ERROR_OK) {
                         mbed_printf(
@@ -231,7 +311,13 @@ int main() {
                         "\r\n Sending the last port reading to the database "
                         "\r\n");
                     // sends the data for all ports to the remote database
-                    wifi_err = sendBulkDataTLS(wifi, Specs, response);
+                    if (Specs.useTLS) {
+                        wifi_err = sendBulkDataTLS(sock.TLS, Specs, response);
+
+                    }else { 
+                        wifi_err = sendBulkDataTCP(sock.TCP, Specs, response);
+                    }
+
                     if (wifi_err != NSAPI_ERROR_OK) {
 
                         ServerConnection = false;
