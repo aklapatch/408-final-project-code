@@ -100,8 +100,8 @@ struct BoardSpecs {
 
     /// Default constructor.
     /// Sets all strings to "" and sets the initializes the vector size to 0
-    /// This one sets useTLS to false, so it will not use an encrypted connection
-    /// by default
+    /// This one sets useTLS to false, so it will not use an encrypted
+    /// connection by default
     BoardSpecs()
         : ID(""), NetworkSSID(""), NetworkPassword(""), DatabaseTableName(""),
           RemoteIP(""), RemoteDir(""), RemotePort(0), Ports(), useTLS(false) {}

@@ -2,17 +2,32 @@
 #include "BoardConfig.h"
 #include "debugging.h"
 #include <cctype>
+
+void printSpecs(BoardSpecs &Specs) {
+    mbed_printf("Board ID = %s\t", Specs.ID.c_str());
+    mbed_printf("Network SSID = %s \r\n", Specs.NetworkSSID.c_str());
+
+    mbed_printf("Network Password = %s\t", Specs.NetworkPassword.c_str());
+    mbed_printf("Remote Database Table name = %s\r\n",
+                Specs.DatabaseTableName.c_str());
+
+    mbed_printf("Remote IP = %s\t", Specs.RemoteIP.c_str());
+    mbed_printf("Remote Get Request directory = %s\r\n",
+                Specs.RemoteDir.c_str());
+
+    mbed_printf("remote http port = %d\t", Specs.RemotePort);
+    mbed_printf("TLS usage: %d\r\n", Specs.useTLS);
+}
 // ============================================================================
 BoardSpecs readSDCard(const char *FileName) {
 
     // try to open sd card
     mbed_printf("\r\nReading from SD card...\r\n\n\n");
-    FILE *fp = fopen(FileName, "rb"); // the 'b' in 'rb' may not be necessary
+    FILE *fp = fopen(FileName, "rb");
 
     BoardSpecs Output;
 
     if (fp != NULL) {
-        mbed_printf(" \r\n ---- Config File ---- \r\n");
 
         // get file size for buffer
         fseek(fp, 0, SEEK_END);
@@ -25,12 +40,7 @@ BoardSpecs readSDCard(const char *FileName) {
         // set \0 for Cstring compatability
         Buffer[FileSize] = '\0';
 
-        // print it
-        mbed_printf("%s", Buffer);
-
         delete[] Buffer; // clean up
-
-        mbed_printf(" \r\n ---- End of Config File ---- \r\n");
 
         // read config from SD card
         rewind(fp);
@@ -78,22 +88,18 @@ BoardSpecs readConfigText(FILE *fp) {
 
             char *value = strtok(NULL, token);
             tmp.ID = atoi(value); // get id value
-            PRINTINT(tmp.ID);
 
             // get waht the sensor is measuring
             value = strtok(NULL, token);
             tmp.Type = value;
-            PRINTSTRING(tmp.Type);
 
             // get the unit of the sensor
             value = strtok(NULL, token);
             tmp.Unit = value;
-            PRINTSTRING(tmp.Unit);
 
             // get unit multiplier
             value = strtok(NULL, token);
             tmp.Multiplier = atof(value);
-            PRINTFLOAT(tmp.Multiplier);
 
             // get range start
             value = strtok(NULL, token);
@@ -121,8 +127,6 @@ BoardSpecs readConfigText(FILE *fp) {
 
             Specs.RemoteIP = strtok(NULL, s);
 
-            PRINTSTRING(Specs.RemoteIP);
-
             // make sure there is a digit to convert, and set an error value
             tmp = strtok(NULL, s);
             if (isdigit(tmp[0])) {
@@ -130,23 +134,16 @@ BoardSpecs readConfigText(FILE *fp) {
             } else {
                 Specs.RemotePort = 0;
             }
-            
-            PRINTINT(Specs.RemotePort);
 
             // check for the TLS variable
             tmp = strtok(NULL, s);
             if (tmp == NULL)
                 Specs.RemoteDir = strtok(NULL, "\n");
-            else 
+            else
                 Specs.RemoteDir = tmp;
-            
+
             if (strstr(Buffer, ":TLS"))
                 Specs.useTLS = true;
-
-
-            PRINTSTRING(Specs.RemoteDir);
-
-
         }
 
         // checks the character at the beginning of each line
@@ -204,7 +201,7 @@ BoardSpecs readConfigText(FILE *fp) {
             }
         }
     }
-
+    printSpecs(Specs);
     return Specs;
 }
 

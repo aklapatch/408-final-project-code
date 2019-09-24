@@ -49,19 +49,20 @@ FATFileSystem fs("sd");
 
 using namespace std;
 
-union DualSocket{
+union DualSocket {
     TCPSocket *TCP;
     TLSSocket *TLS;
 };
 
-/// returns the characters between startchars and endchars. It returns an empty string if it cannot find the start and enc filter sequences
+/// returns the characters between startchars and endchars. It returns an empty
+/// string if it cannot find the start and enc filter sequences
 string textBetween(string input, const char *startchars, const char *endchars) {
-    
-    // check if the string is big engough to actually filter 
+
+    // check if the string is big engough to actually filter
     // this will throw and exception if we do not do this
-   size_t filter_size = strlen(startchars) + strlen(endchars);
-   if (filter_size >= input.size())
-        return ""; 
+    size_t filter_size = strlen(startchars) + strlen(endchars);
+    if (filter_size >= input.size())
+        return "";
 
     size_t start_idx = input.find(startchars);
     size_t end_idx = input.find(endchars);
@@ -78,11 +79,12 @@ string textBetween(string input, const char *startchars, const char *endchars) {
     return input.substr(start_idx, end_idx - start_idx);
 }
 
-const char * filter_start= "samplerate=\"";
-const char * filter_end= "\"></span>";
+const char *filter_start = "samplerate=\"";
+const char *filter_end = "\"></span>";
 
-/// extracts the sample rate from response text, converts it to a float, and returns it. This returns -1 if it fails.
-float extractSampleRate(string & message_response){
+/// extracts the sample rate from response text, converts it to a float, and
+/// returns it. This returns -1 if it fails.
+float extractSampleRate(string &message_response) {
     string rate_text = textBetween(message_response, filter_start, filter_end);
     PRINTLINE;
     if (rate_text == "")
@@ -91,7 +93,7 @@ float extractSampleRate(string & message_response){
         if (isdigit(rate_text[0]))
             return stof(rate_text);
 
-        else 
+        else
             return -1;
     }
 }
@@ -185,7 +187,6 @@ int main() {
         mbed_printf("trying to connect to %s\r\n", Specs.NetworkSSID.c_str());
         wifi_err = connectESPWiFi(wifi, Specs);
 
-
         if (wifi_err != NSAPI_ERROR_OK) {
             mbed_printf("\r\n failed to connect to %s. Error code = %d \r\n",
                         Specs.NetworkSSID.c_str(), wifi_err);
@@ -196,7 +197,7 @@ int main() {
 
     // initialize the socket for moving data to the server.
     DualSocket sock;
-    if (Specs.useTLS){
+    if (Specs.useTLS) {
         sock.TLS = new TLSSocket();
         sock.TLS->set_root_ca_cert(ca_cert);
         sock.TLS->open(wifi);
@@ -204,7 +205,6 @@ int main() {
         sock.TCP = new TCPSocket();
         sock.TCP->open(wifi);
     }
-
 
     // get the number of ports for the loop
     const size_t NumPorts = Specs.Ports.size();
@@ -278,18 +278,20 @@ int main() {
                     // send the backup data to the database
                     if (Specs.useTLS) {
 
-                        wifi_err = sendBackupDataTLS(sock.TLS, Specs, BackupFileName,
-                                                 response);
+                        wifi_err = sendBackupDataTLS(sock.TLS, Specs,
+                                                     BackupFileName, response);
                     } else {
-                        wifi_err = sendBackupDataTCP(sock.TCP, Specs, BackupFileName, response);
+                        wifi_err = sendBackupDataTCP(sock.TCP, Specs,
+                                                     BackupFileName, response);
                     }
                     PRINTLINE;
                     float tmp = extractSampleRate(response);
-                    
+
                     PRINTLINE;
                     if (tmp != -1 && tmp > 0) {
                         PollingInterval = tmp;
-                        mbed_printf("Sample interval is now %f\r\n", PollingInterval);
+                        mbed_printf("Sample interval is now %f\r\n",
+                                    PollingInterval);
                     }
 
                     mbed_printf("Response \r\n %s \r\n", response.c_str());
@@ -314,7 +316,7 @@ int main() {
                     if (Specs.useTLS) {
                         wifi_err = sendBulkDataTLS(sock.TLS, Specs, response);
 
-                    }else { 
+                    } else {
                         wifi_err = sendBulkDataTCP(sock.TCP, Specs, response);
                     }
 

@@ -14,13 +14,13 @@ const char *id_get_str = "Board_ID=";
 const char *getstr = "GET ";
 
 int connectESPWiFi(ESP8266Interface *wifi, BoardSpecs &Specs) {
-    int wifi_err = wifi->connect(Specs.NetworkSSID.c_str(),
-                         Specs.NetworkPassword.c_str());
-        
+    int wifi_err =
+        wifi->connect(Specs.NetworkSSID.c_str(), Specs.NetworkPassword.c_str());
+
     if (wifi_err == NSAPI_ERROR_IS_CONNECTED)
         return NSAPI_ERROR_OK;
 
-   return wifi_err; 
+    return wifi_err;
 }
 
 // =============================================================================
@@ -123,7 +123,7 @@ bool checkESPWiFiConnection(ESP8266Interface *wifi) {
     return wifi->get_ip_address() != NULL;
 }
 // =============================================================================
-int sendMessageTLS(TLSSocket * sock, BoardSpecs &Specs, string &message,
+int sendMessageTLS(TLSSocket *sock, BoardSpecs &Specs, string &message,
                    string &response) {
 
     int err = sock->connect(Specs.RemoteIP.c_str(), Specs.RemotePort);
@@ -148,11 +148,14 @@ CLOSEFREE:
     return err;
 }
 
-/// The socked passed into this function MUST ALREADY BE SETUP. It must be allocated, the certificate must be set, and it must be initialized with a device/netowrk interface
-int sendMessageToServer(ESP8266Interface *wifi, Socket * sock, BoardSpecs &Specs, string &message,
-                   string &response) {
+/// The socked passed into this function MUST ALREADY BE SETUP. It must be
+/// allocated, the certificate must be set, and it must be initialized with a
+/// device/netowrk interface
+int sendMessageToServer(ESP8266Interface *wifi, Socket *sock, BoardSpecs &Specs,
+                        string &message, string &response) {
 
-    int err = sock->connect(SocketAddress(Specs.RemoteIP.c_str(), Specs.RemotePort));
+    int err =
+        sock->connect(SocketAddress(Specs.RemoteIP.c_str(), Specs.RemotePort));
 
     if (err != NSAPI_ERROR_OK)
         goto CLOSE;
@@ -178,8 +181,8 @@ CLOSE:
 // =============================================================================
 // sends a vector of port values instead
 // gets those port values from the backup file
-int sendBackupDataTLS(TLSSocket * sock, BoardSpecs &Specs,
-                      const char *FileName, string &response) {
+int sendBackupDataTLS(TLSSocket *sock, BoardSpecs &Specs, const char *FileName,
+                      string &response) {
 
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
 
@@ -194,8 +197,7 @@ int sendBackupDataTLS(TLSSocket * sock, BoardSpecs &Specs,
 // wi The socket must be connected to the 8266 chip (opened)
 // the cert must be set too
 // returns the int result from the mbed API
-int sendBulkDataTLS(TLSSocket * sock, BoardSpecs &Specs,
-                    string &response) {
+int sendBulkDataTLS(TLSSocket *sock, BoardSpecs &Specs, string &response) {
 
     string Message = makeGetReqStr(Specs);
     mbed_printf("Data frame size = %d\r\n", Message.size());
@@ -205,7 +207,7 @@ int sendBulkDataTLS(TLSSocket * sock, BoardSpecs &Specs,
     return sendMessageTLS(sock, Specs, Message, response);
 }
 // ============================================================================
-int sendMessageTCP(TCPSocket * sock, BoardSpecs &Specs, string &message,
+int sendMessageTCP(TCPSocket *sock, BoardSpecs &Specs, string &message,
                    string &response) {
 
     // connect to the web server
@@ -230,8 +232,8 @@ CLOSEFREE:
     return err;
 }
 
-int sendBackupDataTCP(TCPSocket * sock, BoardSpecs &Specs,
-                      const char *FileName, string &response) {
+int sendBackupDataTCP(TCPSocket *sock, BoardSpecs &Specs, const char *FileName,
+                      string &response) {
 
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
 
@@ -241,8 +243,7 @@ int sendBackupDataTCP(TCPSocket * sock, BoardSpecs &Specs,
 }
 
 // =============================================================================
-int sendBulkDataTCP(TCPSocket * sock, BoardSpecs &Specs,
-                    string &response) {
+int sendBulkDataTCP(TCPSocket *sock, BoardSpecs &Specs, string &response) {
 
     string message = makeGetReqStr(Specs);
 
