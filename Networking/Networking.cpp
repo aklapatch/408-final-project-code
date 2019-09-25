@@ -69,7 +69,7 @@ string makeGetReqStr(BoardSpecs &Specs) {
 
     return Message;
 }
-// ===============================================================================
+// ===========================================================================
 
 string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
     // make the message to send
@@ -148,36 +148,6 @@ CLOSEFREE:
     return err;
 }
 
-/// The socked passed into this function MUST ALREADY BE SETUP. It must be
-/// allocated, the certificate must be set, and it must be initialized with a
-/// device/netowrk interface
-int sendMessageToServer(ESP8266Interface *wifi, Socket *sock, BoardSpecs &Specs,
-                        string &message, string &response) {
-
-    int err =
-        sock->connect(SocketAddress(Specs.RemoteIP.c_str(), Specs.RemotePort));
-
-    if (err != NSAPI_ERROR_OK)
-        goto CLOSE;
-
-    err = sock->send(message.c_str(), message.size());
-    if (err != NSAPI_ERROR_OK)
-        goto CLOSE;
-
-    // get the response
-    char buffer[256];
-    response.clear();
-
-    while ((err = sock->recv(buffer, 256)) > 0) {
-        response.append(buffer);
-    }
-
-CLOSE:
-    sock->close();
-
-    return err;
-}
-
 // =============================================================================
 // sends a vector of port values instead
 // gets those port values from the backup file
@@ -229,6 +199,7 @@ int sendMessageTCP(TCPSocket *sock, BoardSpecs &Specs, string &message,
     }
 
 CLOSEFREE:
+    sock->close();
     return err;
 }
 
