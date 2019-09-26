@@ -228,8 +228,7 @@ string getSensorName(vector<SensorInfo> &Sensors, size_t Sens_ID) {
     size_t str_size = strlen(in) + Sensors[Sens_ID].Type.size() +
                       Sensors[Sens_ID].Unit.size();
 
-    string ret_str;
-    ret_str.reserve(str_size);
+    string ret_str(str_size, '\0');
 
     ret_str.append(Sensors[Sens_ID].Type);
     ret_str.append(in);
