@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['readconfigtext_91',['readConfigText',['../_board_config_8cpp.html#a9ef0c27db32dbdb8d4b25147f917357d',1,'readConfigText(FILE *fp):&#160;BoardConfig.cpp'],['../_board_config_8h.html#a9ef0c27db32dbdb8d4b25147f917357d',1,'readConfigText(FILE *fp):&#160;BoardConfig.cpp']]],
-  ['readsdcard_92',['readSDCard',['../_board_config_8cpp.html#a39e2485e3ebde24213f3ed3b5bdf9e4a',1,'readSDCard(const char *FileName):&#160;BoardConfig.cpp'],['../_board_config_8h.html#a39e2485e3ebde24213f3ed3b5bdf9e4a',1,'readSDCard(const char *FileName):&#160;BoardConfig.cpp']]]
+  ['portinfo_102',['PortInfo',['../struct_port_info.html#a25e5558c79be2b88bf65e3cd09aa0cdb',1,'PortInfo']]],
+  ['printspecs_103',['printSpecs',['../_board_config_8cpp.html#a9f2769775815153654a7758b6c29b994',1,'BoardConfig.cpp']]]
 ];

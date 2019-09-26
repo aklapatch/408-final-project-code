@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['port_5fget_5fstr_113',['port_get_str',['../_network_constants_8h.html#a98ce9ecf5f7328685c6d0b10fad6b4e3',1,'NetworkConstants.h']]],
-  ['ports_114',['Ports',['../struct_board_specs.html#aa361306a442264cc1f878a9235fecebe',1,'BoardSpecs']]]
+  ['multiplier_126',['Multiplier',['../struct_port_info.html#aefc53d2b951eca46697494eba4ec6f23',1,'PortInfo::Multiplier()'],['../struct_sensor_info.html#a8dd95589f7e5a69e9bc2abfd10d4f9e6',1,'SensorInfo::Multiplier()']]]
 ];

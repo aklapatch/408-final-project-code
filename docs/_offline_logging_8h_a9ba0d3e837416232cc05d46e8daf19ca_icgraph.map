@@ -1,6 +1,6 @@
 <map id="getSensorDataFromFile" name="getSensorDataFromFile">
-<area shape="rect" id="node1" title=" " alt="" coords="291,31,447,57"/>
-<area shape="rect" id="node2" href="$_networking_8h.html#a5f7ee8e7ec0867ede93e0807c7cc0578" title=" " alt="" coords="104,5,243,32"/>
-<area shape="rect" id="node3" href="$_networking_8h.html#ac550cbd406e5f4d54c21c3b1d2c0b6cf" title=" " alt="" coords="105,56,242,83"/>
-<area shape="rect" id="node4" href="$main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,56,56,83"/>
+<area shape="rect" id="node1" title=" " alt="" coords="311,31,484,57"/>
+<area shape="rect" id="node2" href="$_networking_8h.html#af882b430cdd09e980bdecdf2c065d290" title=" " alt="" coords="108,5,263,32"/>
+<area shape="rect" id="node4" href="$_networking_8h.html#a01e28f0399e1f8da2624b3db6bb3573f" title=" " alt="" coords="108,56,263,83"/>
+<area shape="rect" id="node3" href="$main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,31,60,57"/>
 </map>

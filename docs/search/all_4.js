@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['getportnum_16',['getPortNum',['../struct_board_specs.html#aad5467761856d84418e0b891dbfa919e',1,'BoardSpecs']]],
-  ['getsensordatafromfile_17',['getSensorDataFromFile',['../_offline_logging_8cpp.html#a9ba0d3e837416232cc05d46e8daf19ca',1,'getSensorDataFromFile(BoardSpecs &amp;Specs, const char *FileName):&#160;OfflineLogging.cpp'],['../_offline_logging_8h.html#a9ba0d3e837416232cc05d46e8daf19ca',1,'getSensorDataFromFile(BoardSpecs &amp;Specs, const char *FileName):&#160;OfflineLogging.cpp']]],
-  ['getsensorname_18',['getSensorName',['../_board_config_8cpp.html#a23791198695abe0165be6c8b1aa522bb',1,'getSensorName(vector&lt; SensorInfo &gt; &amp;Sensors, size_t Sens_ID):&#160;BoardConfig.cpp'],['../_board_config_8h.html#a23791198695abe0165be6c8b1aa522bb',1,'getSensorName(vector&lt; SensorInfo &gt; &amp;Sensors, size_t Sens_ID):&#160;BoardConfig.cpp']]],
-  ['gopastspaces_19',['goPastSpaces',['../_board_config_8cpp.html#a3202adba9f1cb08868f6fe0bcf7c2148',1,'BoardConfig.cpp']]]
+  ['filter_5fend_16',['filter_end',['../main_8cpp.html#a9286fbc933c3a27aa2fcc35f7d18a18d',1,'main.cpp']]],
+  ['filter_5fstart_17',['filter_start',['../main_8cpp.html#a4c25161682db31ce9099fc3617ce935c',1,'main.cpp']]],
+  ['fs_18',['fs',['../main_8cpp.html#aac3addc26331e1e62b86b2966d3a9549',1,'main.cpp']]]
 ];

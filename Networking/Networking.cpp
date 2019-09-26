@@ -140,7 +140,7 @@ int sendMessageTLS(TLSSocket *sock, BoardSpecs &Specs, string &message,
     response.clear();
     response.reserve(256);
 
-    while ((err = sock->recv(buffer, 255)) > 0){
+    while ((err = sock->recv(buffer, 255)) > 0) {
         buffer[255] = '\0';
         mbed_printf("%s", buffer);
     }
@@ -200,14 +200,13 @@ int sendMessageTCP(TCPSocket *sock, BoardSpecs &Specs, string &message,
     response.clear();
     response.reserve(256);
 
-    while ((err = sock->recv(buffer, 255)) > 0){
+    while ((err = sock->recv(buffer, 255)) > 0) {
         buffer[255] = '\0';
         mbed_printf("%s", buffer);
     }
 
     // store the last 255 characters of the response in the string
     response.assign(buffer);
-
 
 CLOSEFREE:
     sock->close();

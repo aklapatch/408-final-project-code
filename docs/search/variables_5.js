@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['name_110',['Name',['../struct_port_info.html#a810ec1c4afa93616420bd7878cb7c6d4',1,'PortInfo']]],
-  ['networkpassword_111',['NetworkPassword',['../struct_board_specs.html#a864ffdab7aeae85898b501bdcf407c31',1,'BoardSpecs']]],
-  ['networkssid_112',['NetworkSSID',['../struct_board_specs.html#a175741f0e9f8b9b57e6142290f812f3e',1,'BoardSpecs']]]
+  ['id_124',['ID',['../struct_sensor_info.html#a162dbfc3d22c0faac536ea8e160ac766',1,'SensorInfo::ID()'],['../struct_board_specs.html#a3f1cce374429f50a4ea166734993572d',1,'BoardSpecs::ID()']]],
+  ['id_5fget_5fstr_125',['id_get_str',['../_networking_8cpp.html#a2a2d64bc0eee304ee641eb7b86cb90b6',1,'Networking.cpp']]]
 ];

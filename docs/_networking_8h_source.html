@@ -75,77 +75,54 @@ $(function() {
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_board_config_8h.html">BoardConfig.h</a>&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;ESP8266Interface.h&quot;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_offline_logging_8h.html">OfflineLogging.h</a>&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_structs_8h.html">Structs.h</a>&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;TCPSocket.h&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;TLSSocket.h&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;mbed.h&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">// C++ headers</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="_networking_8h.html#a65314ede9be8799048771161a9589f2b">   19</a></span>&#160;<span class="preprocessor">#define BUFFLEN 1024</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">using namespace </span>std;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">// for the API rework</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">// Here are the steps for sending data</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// 1. init wifi interface</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// 2. connect to wifi</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">// 3. set up a socket for that wifi interface</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">//      * for tls, set root cert</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">// 4. connect the socket to tehe remote host and port</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">// 5. send data to the remote host</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">// 6. receive response</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">// 7. close socket</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">// 8. disconnect from wifi</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">// 1. should be done in main</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">// 2. should be done in a function (to get wifi settings)</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">// 3. can be done in main</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">// 4-7 should be done in one function</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">// 8 does not need to be done</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">// get_ip_address == NULL when you are not connected, so we can check that</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment"></span><span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#a9123444989cc1593b11fa4c7c89e9804">connectESPWiFi</a>(ESP8266Interface *wifi, <a class="code" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="_networking_8h.html#aa923a396845212ab5a462707736ef134">checkESPWiFiConnection</a>(ESP8266Interface *wifi);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#a229750f7eb5f3b4283c6a62fde9ad6e2">sendMessageTLS</a>(ESP8266Interface *wifi, <span class="keywordtype">string</span> &amp;message);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#a4f00ff26cea7d5286b80ab60e2860630">sendBulkDataTLS</a>(ESP8266Interface *wifi, <a class="code" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">// \returns An error code from</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment"></span><span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#ac550cbd406e5f4d54c21c3b1d2c0b6cf">sendBackupDataTLS</a>(ESP8266Interface *wifi, <a class="code" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs,</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                      <span class="keyword">const</span> <span class="keywordtype">char</span> *FileName);</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#a8bc1232a769d3161dc09c677912f14fd">sendMessageTCP</a>(ESP8266Interface *wifi, <span class="keywordtype">string</span> &amp;message);</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;SocketAddress.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_structs_8h.html">Structs.h</a>&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;TCPSocket.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;TLSSocket.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;mbed.h&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">// C++ headers</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="_networking_8h.html#a65314ede9be8799048771161a9589f2b">   20</a></span>&#160;<span class="preprocessor">#define BUFFLEN 1024</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">using namespace </span>std;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#a9123444989cc1593b11fa4c7c89e9804">connectESPWiFi</a>(ESP8266Interface *wifi, <a class="code" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="_networking_8h.html#aa923a396845212ab5a462707736ef134">checkESPWiFiConnection</a>(ESP8266Interface *wifi);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#ab50c14e43e0d6b0d1db552d51821d216">sendMessageTLS</a>(TLSSocket *sock, <span class="keywordtype">string</span> &amp;message, <span class="keywordtype">string</span> &amp;response);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#ac466923d791b6e83bb5c4745305895b8">sendBulkDataTLS</a>(TLSSocket *sock, <a class="code" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs, <span class="keywordtype">string</span> &amp;response);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">// \returns An error code from</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment"></span><span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#a01e28f0399e1f8da2624b3db6bb3573f">sendBackupDataTLS</a>(TLSSocket *sock, <a class="code" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs, <span class="keyword">const</span> <span class="keywordtype">char</span> *FileName,</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                      <span class="keywordtype">string</span> &amp;response);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#a4e5a84350ee040936577a2b44c4254d7">sendMessageTCP</a>(TCPSocket *sock, <span class="keywordtype">string</span> &amp;message, <span class="keywordtype">string</span> &amp;response);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#a415db526d8897f32dc5ebb73ba450ec3">sendBulkDataTCP</a>(TCPSocket *sock, <a class="code" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs, <span class="keywordtype">string</span> &amp;response);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#af882b430cdd09e980bdecdf2c065d290">sendBackupDataTCP</a>(TCPSocket *sock, <a class="code" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs, <span class="keyword">const</span> <span class="keywordtype">char</span> *FileName,</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                      <span class="keywordtype">string</span> &amp;response);</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#a90aec3ce68a8041b8209ad9980cd2d08">sendBulkDataTCP</a>(ESP8266Interface *wifi, <a class="code" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="keywordtype">int</span> <a class="code" href="_networking_8h.html#a5f7ee8e7ec0867ede93e0807c7cc0578">sendBackupDataTCP</a>(ESP8266Interface *wifi, <a class="code" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs,</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                      <span class="keyword">const</span> <span class="keywordtype">char</span> *FileName);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="a_structs_8h_html"><div class="ttname"><a href="_structs_8h.html">Structs.h</a></div></div>
-<div class="ttc" id="a_networking_8h_html_a5f7ee8e7ec0867ede93e0807c7cc0578"><div class="ttname"><a href="_networking_8h.html#a5f7ee8e7ec0867ede93e0807c7cc0578">sendBackupDataTCP</a></div><div class="ttdeci">int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &amp;Specs, const char *FileName)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00194">Networking.cpp:194</a></div></div>
-<div class="ttc" id="a_networking_8h_html_ac550cbd406e5f4d54c21c3b1d2c0b6cf"><div class="ttname"><a href="_networking_8h.html#ac550cbd406e5f4d54c21c3b1d2c0b6cf">sendBackupDataTLS</a></div><div class="ttdeci">int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &amp;Specs, const char *FileName)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00060">Networking.cpp:60</a></div></div>
-<div class="ttc" id="a_networking_8h_html_aa923a396845212ab5a462707736ef134"><div class="ttname"><a href="_networking_8h.html#aa923a396845212ab5a462707736ef134">checkESPWiFiConnection</a></div><div class="ttdeci">bool checkESPWiFiConnection(ESP8266Interface *wifi)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00015">Networking.cpp:15</a></div></div>
-<div class="ttc" id="a_networking_8h_html_a9123444989cc1593b11fa4c7c89e9804"><div class="ttname"><a href="_networking_8h.html#a9123444989cc1593b11fa4c7c89e9804">connectESPWiFi</a></div><div class="ttdeci">int connectESPWiFi(ESP8266Interface *wifi, BoardSpecs &amp;Specs)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00007">Networking.cpp:7</a></div></div>
-<div class="ttc" id="a_networking_8h_html_a90aec3ce68a8041b8209ad9980cd2d08"><div class="ttname"><a href="_networking_8h.html#a90aec3ce68a8041b8209ad9980cd2d08">sendBulkDataTCP</a></div><div class="ttdeci">int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &amp;Specs)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00242">Networking.cpp:242</a></div></div>
+<div class="ttc" id="a_networking_8h_html_aa923a396845212ab5a462707736ef134"><div class="ttname"><a href="_networking_8h.html#aa923a396845212ab5a462707736ef134">checkESPWiFiConnection</a></div><div class="ttdeci">bool checkESPWiFiConnection(ESP8266Interface *wifi)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00122">Networking.cpp:122</a></div></div>
+<div class="ttc" id="a_networking_8h_html_a9123444989cc1593b11fa4c7c89e9804"><div class="ttname"><a href="_networking_8h.html#a9123444989cc1593b11fa4c7c89e9804">connectESPWiFi</a></div><div class="ttdeci">int connectESPWiFi(ESP8266Interface *wifi, BoardSpecs &amp;Specs)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00016">Networking.cpp:16</a></div></div>
+<div class="ttc" id="a_networking_8h_html_ac466923d791b6e83bb5c4745305895b8"><div class="ttname"><a href="_networking_8h.html#ac466923d791b6e83bb5c4745305895b8">sendBulkDataTLS</a></div><div class="ttdeci">int sendBulkDataTLS(TLSSocket *sock, BoardSpecs &amp;Specs, string &amp;response)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00175">Networking.cpp:175</a></div></div>
+<div class="ttc" id="a_networking_8h_html_ab50c14e43e0d6b0d1db552d51821d216"><div class="ttname"><a href="_networking_8h.html#ab50c14e43e0d6b0d1db552d51821d216">sendMessageTLS</a></div><div class="ttdeci">int sendMessageTLS(TLSSocket *sock, string &amp;message, string &amp;response)</div></div>
 <div class="ttc" id="astruct_board_specs_html"><div class="ttname"><a href="struct_board_specs.html">BoardSpecs</a></div><div class="ttdef"><b>Definition:</b> <a href="_structs_8h_source.html#l00063">Structs.h:63</a></div></div>
+<div class="ttc" id="a_networking_8h_html_a415db526d8897f32dc5ebb73ba450ec3"><div class="ttname"><a href="_networking_8h.html#a415db526d8897f32dc5ebb73ba450ec3">sendBulkDataTCP</a></div><div class="ttdeci">int sendBulkDataTCP(TCPSocket *sock, BoardSpecs &amp;Specs, string &amp;response)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00227">Networking.cpp:227</a></div></div>
 <div class="ttc" id="a_offline_logging_8h_html"><div class="ttname"><a href="_offline_logging_8h.html">OfflineLogging.h</a></div></div>
-<div class="ttc" id="a_networking_8h_html_a4f00ff26cea7d5286b80ab60e2860630"><div class="ttname"><a href="_networking_8h.html#a4f00ff26cea7d5286b80ab60e2860630">sendBulkDataTLS</a></div><div class="ttdeci">int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &amp;Specs)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00111">Networking.cpp:111</a></div></div>
-<div class="ttc" id="a_networking_8h_html_a229750f7eb5f3b4283c6a62fde9ad6e2"><div class="ttname"><a href="_networking_8h.html#a229750f7eb5f3b4283c6a62fde9ad6e2">sendMessageTLS</a></div><div class="ttdeci">int sendMessageTLS(ESP8266Interface *wifi, string &amp;message)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00019">Networking.cpp:19</a></div></div>
-<div class="ttc" id="a_networking_8h_html_a8bc1232a769d3161dc09c677912f14fd"><div class="ttname"><a href="_networking_8h.html#a8bc1232a769d3161dc09c677912f14fd">sendMessageTCP</a></div><div class="ttdeci">int sendMessageTCP(ESP8266Interface *wifi, string &amp;message)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00155">Networking.cpp:155</a></div></div>
+<div class="ttc" id="a_networking_8h_html_af882b430cdd09e980bdecdf2c065d290"><div class="ttname"><a href="_networking_8h.html#af882b430cdd09e980bdecdf2c065d290">sendBackupDataTCP</a></div><div class="ttdeci">int sendBackupDataTCP(TCPSocket *sock, BoardSpecs &amp;Specs, const char *FileName, string &amp;response)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00216">Networking.cpp:216</a></div></div>
+<div class="ttc" id="a_networking_8h_html_a4e5a84350ee040936577a2b44c4254d7"><div class="ttname"><a href="_networking_8h.html#a4e5a84350ee040936577a2b44c4254d7">sendMessageTCP</a></div><div class="ttdeci">int sendMessageTCP(TCPSocket *sock, string &amp;message, string &amp;response)</div></div>
 <div class="ttc" id="a_board_config_8h_html"><div class="ttname"><a href="_board_config_8h.html">BoardConfig.h</a></div></div>
+<div class="ttc" id="a_networking_8h_html_a01e28f0399e1f8da2624b3db6bb3573f"><div class="ttname"><a href="_networking_8h.html#a01e28f0399e1f8da2624b3db6bb3573f">sendBackupDataTLS</a></div><div class="ttdeci">int sendBackupDataTLS(TLSSocket *sock, BoardSpecs &amp;Specs, const char *FileName, string &amp;response)</div><div class="ttdef"><b>Definition:</b> <a href="_networking_8cpp_source.html#l00159">Networking.cpp:159</a></div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

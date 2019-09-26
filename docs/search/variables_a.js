@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['unit_120',['Unit',['../struct_sensor_info.html#ad38706ccba47b0948e7c983938b06c41',1,'SensorInfo']]]
+  ['sensorid_137',['SensorID',['../struct_port_info.html#a4bb89b294c96ffbb120d635fea6fb4d4',1,'PortInfo']]],
+  ['sensors_138',['Sensors',['../struct_board_specs.html#a818aeda910dd50656e2ad41bfd86d62b',1,'BoardSpecs']]]
 ];

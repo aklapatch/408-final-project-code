@@ -76,6 +76,7 @@ $(function() {
 <div class="textblock"><code>#include &quot;<a class="el" href="_board_config_8h_source.html">BoardConfig.h</a>&quot;</code><br />
 <code>#include &quot;ESP8266Interface.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="_offline_logging_8h_source.html">OfflineLogging.h</a>&quot;</code><br />
+<code>#include &quot;SocketAddress.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="_structs_8h_source.html">Structs.h</a>&quot;</code><br />
 <code>#include &quot;TCPSocket.h&quot;</code><br />
 <code>#include &quot;TLSSocket.h&quot;</code><br />
@@ -88,20 +89,21 @@ Include dependency graph for Networking.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="_networking_8h__incl.jpeg" border="0" usemap="#_networking_8h" alt=""/></div>
 <map name="_networking_8h" id="_networking_8h">
-<area shape="rect" title=" " alt="" coords="360,5,457,32"/>
-<area shape="rect" href="_board_config_8h.html" title=" " alt="" coords="251,155,353,181"/>
-<area shape="rect" href="_structs_8h.html" title=" " alt="" coords="100,229,173,256"/>
-<area shape="rect" title=" " alt="" coords="104,304,169,331"/>
-<area shape="rect" title=" " alt="" coords="5,304,60,331"/>
-<area shape="rect" title=" " alt="" coords="443,304,500,331"/>
-<area shape="rect" title=" " alt="" coords="509,229,569,256"/>
-<area shape="rect" title=" " alt="" coords="661,80,796,107"/>
-<area shape="rect" href="_offline_logging_8h.html" title=" " alt="" coords="351,80,466,107"/>
-<area shape="rect" title=" " alt="" coords="820,80,915,107"/>
-<area shape="rect" title=" " alt="" coords="939,80,1033,107"/>
-<area shape="rect" title=" " alt="" coords="197,229,300,256"/>
-<area shape="rect" title=" " alt="" coords="325,229,383,256"/>
-<area shape="rect" title=" " alt="" coords="429,155,484,181"/>
+<area shape="rect" title=" " alt="" coords="462,5,567,32"/>
+<area shape="rect" href="_board_config_8h.html" title=" " alt="" coords="263,155,375,181"/>
+<area shape="rect" href="_structs_8h.html" title=" " alt="" coords="103,229,183,256"/>
+<area shape="rect" title=" " alt="" coords="107,304,178,331"/>
+<area shape="rect" title=" " alt="" coords="5,304,64,331"/>
+<area shape="rect" title=" " alt="" coords="462,304,525,331"/>
+<area shape="rect" title=" " alt="" coords="531,229,597,256"/>
+<area shape="rect" title=" " alt="" coords="687,80,833,107"/>
+<area shape="rect" href="_offline_logging_8h.html" title=" " alt="" coords="394,80,518,107"/>
+<area shape="rect" title=" " alt="" coords="857,80,988,107"/>
+<area shape="rect" title=" " alt="" coords="1013,80,1115,107"/>
+<area shape="rect" title=" " alt="" coords="1140,80,1241,107"/>
+<area shape="rect" title=" " alt="" coords="207,229,318,256"/>
+<area shape="rect" title=" " alt="" coords="342,229,405,256"/>
+<area shape="rect" title=" " alt="" coords="450,155,510,181"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -133,18 +135,18 @@ Functions</h2></td></tr>
 <tr class="separator:a9123444989cc1593b11fa4c7c89e9804"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa923a396845212ab5a462707736ef134"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#aa923a396845212ab5a462707736ef134">checkESPWiFiConnection</a> (ESP8266Interface *wifi)</td></tr>
 <tr class="separator:aa923a396845212ab5a462707736ef134"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a229750f7eb5f3b4283c6a62fde9ad6e2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#a229750f7eb5f3b4283c6a62fde9ad6e2">sendMessageTLS</a> (ESP8266Interface *wifi, string &amp;message)</td></tr>
-<tr class="separator:a229750f7eb5f3b4283c6a62fde9ad6e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f00ff26cea7d5286b80ab60e2860630"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#a4f00ff26cea7d5286b80ab60e2860630">sendBulkDataTLS</a> (ESP8266Interface *wifi, <a class="el" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs)</td></tr>
-<tr class="separator:a4f00ff26cea7d5286b80ab60e2860630"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac550cbd406e5f4d54c21c3b1d2c0b6cf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#ac550cbd406e5f4d54c21c3b1d2c0b6cf">sendBackupDataTLS</a> (ESP8266Interface *wifi, <a class="el" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs, const char *FileName)</td></tr>
-<tr class="separator:ac550cbd406e5f4d54c21c3b1d2c0b6cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bc1232a769d3161dc09c677912f14fd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#a8bc1232a769d3161dc09c677912f14fd">sendMessageTCP</a> (ESP8266Interface *wifi, string &amp;message)</td></tr>
-<tr class="separator:a8bc1232a769d3161dc09c677912f14fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90aec3ce68a8041b8209ad9980cd2d08"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#a90aec3ce68a8041b8209ad9980cd2d08">sendBulkDataTCP</a> (ESP8266Interface *wifi, <a class="el" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs)</td></tr>
-<tr class="separator:a90aec3ce68a8041b8209ad9980cd2d08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f7ee8e7ec0867ede93e0807c7cc0578"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#a5f7ee8e7ec0867ede93e0807c7cc0578">sendBackupDataTCP</a> (ESP8266Interface *wifi, <a class="el" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs, const char *FileName)</td></tr>
-<tr class="separator:a5f7ee8e7ec0867ede93e0807c7cc0578"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab50c14e43e0d6b0d1db552d51821d216"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#ab50c14e43e0d6b0d1db552d51821d216">sendMessageTLS</a> (TLSSocket *sock, string &amp;message, string &amp;response)</td></tr>
+<tr class="separator:ab50c14e43e0d6b0d1db552d51821d216"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac466923d791b6e83bb5c4745305895b8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#ac466923d791b6e83bb5c4745305895b8">sendBulkDataTLS</a> (TLSSocket *sock, <a class="el" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs, string &amp;response)</td></tr>
+<tr class="separator:ac466923d791b6e83bb5c4745305895b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01e28f0399e1f8da2624b3db6bb3573f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#a01e28f0399e1f8da2624b3db6bb3573f">sendBackupDataTLS</a> (TLSSocket *sock, <a class="el" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs, const char *FileName, string &amp;response)</td></tr>
+<tr class="separator:a01e28f0399e1f8da2624b3db6bb3573f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e5a84350ee040936577a2b44c4254d7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#a4e5a84350ee040936577a2b44c4254d7">sendMessageTCP</a> (TCPSocket *sock, string &amp;message, string &amp;response)</td></tr>
+<tr class="separator:a4e5a84350ee040936577a2b44c4254d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a415db526d8897f32dc5ebb73ba450ec3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#a415db526d8897f32dc5ebb73ba450ec3">sendBulkDataTCP</a> (TCPSocket *sock, <a class="el" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs, string &amp;response)</td></tr>
+<tr class="separator:a415db526d8897f32dc5ebb73ba450ec3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af882b430cdd09e980bdecdf2c065d290"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_networking_8h.html#af882b430cdd09e980bdecdf2c065d290">sendBackupDataTCP</a> (TCPSocket *sock, <a class="el" href="struct_board_specs.html">BoardSpecs</a> &amp;Specs, const char *FileName, string &amp;response)</td></tr>
+<tr class="separator:af882b430cdd09e980bdecdf2c065d290"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Networking function declarations </p>
@@ -165,7 +167,7 @@ Functions</h2></td></tr>
 
 <p>Arbitrary char array length. </p>
 
-<p class="definition">Definition at line <a class="el" href="_networking_8h_source.html#l00019">19</a> of file <a class="el" href="_networking_8h_source.html">Networking.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_networking_8h_source.html#l00020">20</a> of file <a class="el" href="_networking_8h_source.html">Networking.h</a>.</p>
 
 </div>
 </div>
@@ -185,14 +187,14 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>return true if you are connected, and false if you are not </p><dl class="params"><dt>Parameters</dt><dd>
+<p>return true if you are connected to a wifi network, and false if you are not </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">wifi</td><td>The ESP8266 instance to use </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00015">15</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00122">122</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -239,7 +241,7 @@ Here is the caller graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The error code from the Mbed api: see <a href="https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37">https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00007">7</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00016">16</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -252,8 +254,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a5f7ee8e7ec0867ede93e0807c7cc0578"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f7ee8e7ec0867ede93e0807c7cc0578">&#9670;&nbsp;</a></span>sendBackupDataTCP()</h2>
+<a id="af882b430cdd09e980bdecdf2c065d290"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af882b430cdd09e980bdecdf2c065d290">&#9670;&nbsp;</a></span>sendBackupDataTCP()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -261,8 +263,8 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">int sendBackupDataTCP </td>
           <td>(</td>
-          <td class="paramtype">ESP8266Interface *&#160;</td>
-          <td class="paramname"><em>wifi</em>, </td>
+          <td class="paramtype">TCPSocket *&#160;</td>
+          <td class="paramname"><em>sock</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -274,7 +276,13 @@ Here is the caller graph for this function:</div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>FileName</em>&#160;</td>
+          <td class="paramname"><em>FileName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string &amp;&#160;</td>
+          <td class="paramname"><em>response</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -283,32 +291,42 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>tries to send backup data to the database without TLS. This will work for http connections </p><dl class="params"><dt>Parameters</dt><dd>
+<p>tries to send backup data to the database without TLS. This will work for http connections. sock MUST already be allocated and paired with a network interface, and have its ca_cert set too</p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">wifi</td><td>The ESP8266 instance to use </td></tr>
-    <tr><td class="paramname">Specs</td><td>provides the dabase table name and board name </td></tr>
+    <tr><td class="paramname">wifi</td><td>The ESP8266 instance to use</td></tr>
+    <tr><td class="paramname">Specs</td><td>provides the dabase table name and board name</td></tr>
     <tr><td class="paramname">FileName</td><td>the file to pull data readings from </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>An error code from the Mbed Socket api: see <a href="https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37">https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00194">194</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00216">216</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="_networking_8h_a5f7ee8e7ec0867ede93e0807c7cc0578_cgraph.jpeg" border="0" usemap="#_networking_8h_a5f7ee8e7ec0867ede93e0807c7cc0578_cgraph" alt=""/></div>
-<map name="_networking_8h_a5f7ee8e7ec0867ede93e0807c7cc0578_cgraph" id="_networking_8h_a5f7ee8e7ec0867ede93e0807c7cc0578_cgraph">
-<area shape="rect" title=" " alt="" coords="5,31,144,57"/>
-<area shape="rect" href="_offline_logging_8cpp.html#a9ba0d3e837416232cc05d46e8daf19ca" title=" " alt="" coords="192,5,348,32"/>
-<area shape="rect" href="_networking_8cpp.html#a8bc1232a769d3161dc09c677912f14fd" title=" " alt="" coords="209,56,331,83"/>
+<div class="center"><img src="_networking_8h_af882b430cdd09e980bdecdf2c065d290_cgraph.jpeg" border="0" usemap="#_networking_8h_af882b430cdd09e980bdecdf2c065d290_cgraph" alt=""/></div>
+<map name="_networking_8h_af882b430cdd09e980bdecdf2c065d290_cgraph" id="_networking_8h_af882b430cdd09e980bdecdf2c065d290_cgraph">
+<area shape="rect" title=" " alt="" coords="5,56,160,83"/>
+<area shape="rect" href="_offline_logging_8cpp.html#a9ba0d3e837416232cc05d46e8daf19ca" title=" " alt="" coords="208,5,381,32"/>
+<area shape="rect" href="_networking_8cpp.html#a5f5afdd44e1777a43e0d13d4b505aa8c" title=" " alt="" coords="233,56,357,83"/>
+<area shape="rect" href="_networking_8cpp.html#a6e56fccab107864d3b5dc320bac12e39" title=" " alt="" coords="227,107,362,133"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="_networking_8h_af882b430cdd09e980bdecdf2c065d290_icgraph.jpeg" border="0" usemap="#_networking_8h_af882b430cdd09e980bdecdf2c065d290_icgraph" alt=""/></div>
+<map name="_networking_8h_af882b430cdd09e980bdecdf2c065d290_icgraph" id="_networking_8h_af882b430cdd09e980bdecdf2c065d290_icgraph">
+<area shape="rect" title=" " alt="" coords="108,5,263,32"/>
+<area shape="rect" href="main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,5,60,32"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="ac550cbd406e5f4d54c21c3b1d2c0b6cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac550cbd406e5f4d54c21c3b1d2c0b6cf">&#9670;&nbsp;</a></span>sendBackupDataTLS()</h2>
+<a id="a01e28f0399e1f8da2624b3db6bb3573f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01e28f0399e1f8da2624b3db6bb3573f">&#9670;&nbsp;</a></span>sendBackupDataTLS()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -316,8 +334,8 @@ Here is the call graph for this function:</div>
         <tr>
           <td class="memname">int sendBackupDataTLS </td>
           <td>(</td>
-          <td class="paramtype">ESP8266Interface *&#160;</td>
-          <td class="paramname"><em>wifi</em>, </td>
+          <td class="paramtype">TLSSocket *&#160;</td>
+          <td class="paramname"><em>sock</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -329,7 +347,13 @@ Here is the call graph for this function:</div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>FileName</em>&#160;</td>
+          <td class="paramname"><em>FileName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string &amp;&#160;</td>
+          <td class="paramname"><em>response</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -338,7 +362,7 @@ Here is the call graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Tries to send backup data to the database. This uses TLS and is intended for https connections. the Mbed Socket api: see <a href="https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37">https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37</a> </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Tries to send backup data to the database. This uses TLS and is intended for https connections.sock MUST already be allocated and paired with a network interface, and have its ca_cert set too the Mbed Socket api: see <a href="https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37">https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37</a> </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">wifi</td><td>the ESP8266 instance to use </td></tr>
     <tr><td class="paramname">Specs</td><td>the number of port samples is pulled from the number of ports that Specs has </td></tr>
@@ -347,31 +371,32 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00060">60</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00159">159</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="_networking_8h_ac550cbd406e5f4d54c21c3b1d2c0b6cf_cgraph.jpeg" border="0" usemap="#_networking_8h_ac550cbd406e5f4d54c21c3b1d2c0b6cf_cgraph" alt=""/></div>
-<map name="_networking_8h_ac550cbd406e5f4d54c21c3b1d2c0b6cf_cgraph" id="_networking_8h_ac550cbd406e5f4d54c21c3b1d2c0b6cf_cgraph">
-<area shape="rect" title=" " alt="" coords="5,31,143,57"/>
-<area shape="rect" href="_offline_logging_8cpp.html#a9ba0d3e837416232cc05d46e8daf19ca" title=" " alt="" coords="191,5,347,32"/>
-<area shape="rect" href="_networking_8cpp.html#a229750f7eb5f3b4283c6a62fde9ad6e2" title=" " alt="" coords="208,56,329,83"/>
+<div class="center"><img src="_networking_8h_a01e28f0399e1f8da2624b3db6bb3573f_cgraph.jpeg" border="0" usemap="#_networking_8h_a01e28f0399e1f8da2624b3db6bb3573f_cgraph" alt=""/></div>
+<map name="_networking_8h_a01e28f0399e1f8da2624b3db6bb3573f_cgraph" id="_networking_8h_a01e28f0399e1f8da2624b3db6bb3573f_cgraph">
+<area shape="rect" title=" " alt="" coords="5,56,160,83"/>
+<area shape="rect" href="_offline_logging_8cpp.html#a9ba0d3e837416232cc05d46e8daf19ca" title=" " alt="" coords="208,5,381,32"/>
+<area shape="rect" href="_networking_8cpp.html#a5f5afdd44e1777a43e0d13d4b505aa8c" title=" " alt="" coords="233,56,357,83"/>
+<area shape="rect" href="_networking_8cpp.html#a5827b6c876a0656e6c7d528140654e74" title=" " alt="" coords="228,107,361,133"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="_networking_8h_ac550cbd406e5f4d54c21c3b1d2c0b6cf_icgraph.jpeg" border="0" usemap="#_networking_8h_ac550cbd406e5f4d54c21c3b1d2c0b6cf_icgraph" alt=""/></div>
-<map name="_networking_8h_ac550cbd406e5f4d54c21c3b1d2c0b6cf_icgraph" id="_networking_8h_ac550cbd406e5f4d54c21c3b1d2c0b6cf_icgraph">
-<area shape="rect" title=" " alt="" coords="104,5,241,32"/>
-<area shape="rect" href="main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,5,56,32"/>
+<div class="center"><img src="_networking_8h_a01e28f0399e1f8da2624b3db6bb3573f_icgraph.jpeg" border="0" usemap="#_networking_8h_a01e28f0399e1f8da2624b3db6bb3573f_icgraph" alt=""/></div>
+<map name="_networking_8h_a01e28f0399e1f8da2624b3db6bb3573f_icgraph" id="_networking_8h_a01e28f0399e1f8da2624b3db6bb3573f_icgraph">
+<area shape="rect" title=" " alt="" coords="108,5,263,32"/>
+<area shape="rect" href="main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,5,60,32"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a90aec3ce68a8041b8209ad9980cd2d08"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90aec3ce68a8041b8209ad9980cd2d08">&#9670;&nbsp;</a></span>sendBulkDataTCP()</h2>
+<a id="a415db526d8897f32dc5ebb73ba450ec3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a415db526d8897f32dc5ebb73ba450ec3">&#9670;&nbsp;</a></span>sendBulkDataTCP()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -379,14 +404,20 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">int sendBulkDataTCP </td>
           <td>(</td>
-          <td class="paramtype">ESP8266Interface *&#160;</td>
-          <td class="paramname"><em>wifi</em>, </td>
+          <td class="paramtype">TCPSocket *&#160;</td>
+          <td class="paramname"><em>sock</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="struct_board_specs.html">BoardSpecs</a> &amp;&#160;</td>
-          <td class="paramname"><em>Specs</em>&#160;</td>
+          <td class="paramname"><em>Specs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string &amp;&#160;</td>
+          <td class="paramname"><em>response</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -395,30 +426,40 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Tries to send data from the current port readings in Specs to the remote database without TLS. This will work for http connections </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Tries to send data from the current port readings in Specs to the remote database without TLS. This will work for http connections. sock MUST already be allocated and paired with a network interface, and have its ca_cert set too</p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">wifi</td><td>The ESP8266 instance to use </td></tr>
+    <tr><td class="paramname">wifi</td><td>The ESP8266 instance to use</td></tr>
     <tr><td class="paramname">Specs</td><td>The set of port readings and database table name are pulled from here </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>And error code from the Mbed Socket api: see <a href="https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37">https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00242">242</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00227">227</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="_networking_8h_a90aec3ce68a8041b8209ad9980cd2d08_cgraph.jpeg" border="0" usemap="#_networking_8h_a90aec3ce68a8041b8209ad9980cd2d08_cgraph" alt=""/></div>
-<map name="_networking_8h_a90aec3ce68a8041b8209ad9980cd2d08_cgraph" id="_networking_8h_a90aec3ce68a8041b8209ad9980cd2d08_cgraph">
-<area shape="rect" title=" " alt="" coords="5,5,127,32"/>
-<area shape="rect" href="_networking_8cpp.html#a8bc1232a769d3161dc09c677912f14fd" title=" " alt="" coords="175,5,297,32"/>
+<div class="center"><img src="_networking_8h_a415db526d8897f32dc5ebb73ba450ec3_cgraph.jpeg" border="0" usemap="#_networking_8h_a415db526d8897f32dc5ebb73ba450ec3_cgraph" alt=""/></div>
+<map name="_networking_8h_a415db526d8897f32dc5ebb73ba450ec3_cgraph" id="_networking_8h_a415db526d8897f32dc5ebb73ba450ec3_cgraph">
+<area shape="rect" title=" " alt="" coords="5,31,140,57"/>
+<area shape="rect" href="_networking_8cpp.html#a5f5afdd44e1777a43e0d13d4b505aa8c" title=" " alt="" coords="193,5,317,32"/>
+<area shape="rect" href="_networking_8cpp.html#a6e56fccab107864d3b5dc320bac12e39" title=" " alt="" coords="188,56,323,83"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="_networking_8h_a415db526d8897f32dc5ebb73ba450ec3_icgraph.jpeg" border="0" usemap="#_networking_8h_a415db526d8897f32dc5ebb73ba450ec3_icgraph" alt=""/></div>
+<map name="_networking_8h_a415db526d8897f32dc5ebb73ba450ec3_icgraph" id="_networking_8h_a415db526d8897f32dc5ebb73ba450ec3_icgraph">
+<area shape="rect" title=" " alt="" coords="108,5,243,32"/>
+<area shape="rect" href="main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,5,60,32"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a4f00ff26cea7d5286b80ab60e2860630"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4f00ff26cea7d5286b80ab60e2860630">&#9670;&nbsp;</a></span>sendBulkDataTLS()</h2>
+<a id="ac466923d791b6e83bb5c4745305895b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac466923d791b6e83bb5c4745305895b8">&#9670;&nbsp;</a></span>sendBulkDataTLS()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -426,14 +467,20 @@ Here is the call graph for this function:</div>
         <tr>
           <td class="memname">int sendBulkDataTLS </td>
           <td>(</td>
-          <td class="paramtype">ESP8266Interface *&#160;</td>
-          <td class="paramname"><em>wifi</em>, </td>
+          <td class="paramtype">TLSSocket *&#160;</td>
+          <td class="paramname"><em>sock</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="struct_board_specs.html">BoardSpecs</a> &amp;&#160;</td>
-          <td class="paramname"><em>Specs</em>&#160;</td>
+          <td class="paramname"><em>Specs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string &amp;&#160;</td>
+          <td class="paramname"><em>response</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -442,7 +489,7 @@ Here is the call graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Tries to send data from the current port readings in Specs to the remote database param wifi The ESP8266 instance to use. This uses TLS encryption and is intended for https connections and database table name are pulled from here </p><dl class="section return"><dt>Returns</dt><dd>And error code from the Mbed Socket api: see <a href="https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37">https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37</a> </dd></dl>
+<p>Tries to send data from the current port readings in Specs to the remote database param wifi The ESP8266 instance to use. This uses TLS encryption and is intended for https connections. sock MUST already be allocated and paired with a network interface, and have its ca_cert set too and database table name are pulled from here </p><dl class="section return"><dt>Returns</dt><dd>And error code from the Mbed Socket api: see <a href="https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37">https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37</a> </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">wifi</td><td>the ESP8266 instance to use </td></tr>
@@ -451,30 +498,31 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00111">111</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00175">175</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="_networking_8h_a4f00ff26cea7d5286b80ab60e2860630_cgraph.jpeg" border="0" usemap="#_networking_8h_a4f00ff26cea7d5286b80ab60e2860630_cgraph" alt=""/></div>
-<map name="_networking_8h_a4f00ff26cea7d5286b80ab60e2860630_cgraph" id="_networking_8h_a4f00ff26cea7d5286b80ab60e2860630_cgraph">
-<area shape="rect" title=" " alt="" coords="5,5,125,32"/>
-<area shape="rect" href="_networking_8cpp.html#a229750f7eb5f3b4283c6a62fde9ad6e2" title=" " alt="" coords="173,5,295,32"/>
+<div class="center"><img src="_networking_8h_ac466923d791b6e83bb5c4745305895b8_cgraph.jpeg" border="0" usemap="#_networking_8h_ac466923d791b6e83bb5c4745305895b8_cgraph" alt=""/></div>
+<map name="_networking_8h_ac466923d791b6e83bb5c4745305895b8_cgraph" id="_networking_8h_ac466923d791b6e83bb5c4745305895b8_cgraph">
+<area shape="rect" title=" " alt="" coords="5,31,140,57"/>
+<area shape="rect" href="_networking_8cpp.html#a5f5afdd44e1777a43e0d13d4b505aa8c" title=" " alt="" coords="193,5,317,32"/>
+<area shape="rect" href="_networking_8cpp.html#a5827b6c876a0656e6c7d528140654e74" title=" " alt="" coords="188,56,321,83"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="_networking_8h_a4f00ff26cea7d5286b80ab60e2860630_icgraph.jpeg" border="0" usemap="#_networking_8h_a4f00ff26cea7d5286b80ab60e2860630_icgraph" alt=""/></div>
-<map name="_networking_8h_a4f00ff26cea7d5286b80ab60e2860630_icgraph" id="_networking_8h_a4f00ff26cea7d5286b80ab60e2860630_icgraph">
-<area shape="rect" title=" " alt="" coords="104,5,224,32"/>
-<area shape="rect" href="main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,5,56,32"/>
+<div class="center"><img src="_networking_8h_ac466923d791b6e83bb5c4745305895b8_icgraph.jpeg" border="0" usemap="#_networking_8h_ac466923d791b6e83bb5c4745305895b8_icgraph" alt=""/></div>
+<map name="_networking_8h_ac466923d791b6e83bb5c4745305895b8_icgraph" id="_networking_8h_ac466923d791b6e83bb5c4745305895b8_icgraph">
+<area shape="rect" title=" " alt="" coords="108,5,243,32"/>
+<area shape="rect" href="main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,5,60,32"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a8bc1232a769d3161dc09c677912f14fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8bc1232a769d3161dc09c677912f14fd">&#9670;&nbsp;</a></span>sendMessageTCP()</h2>
+<a id="a4e5a84350ee040936577a2b44c4254d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e5a84350ee040936577a2b44c4254d7">&#9670;&nbsp;</a></span>sendMessageTCP()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -482,14 +530,20 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">int sendMessageTCP </td>
           <td>(</td>
-          <td class="paramtype">ESP8266Interface *&#160;</td>
-          <td class="paramname"><em>wifi</em>, </td>
+          <td class="paramtype">TCPSocket *&#160;</td>
+          <td class="paramname"><em>sock</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">string &amp;&#160;</td>
-          <td class="paramname"><em>message</em>&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string &amp;&#160;</td>
+          <td class="paramname"><em>response</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -498,7 +552,7 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Opens a socket using wifi and sends message to a remote host (without TLS) send </p><dl class="section return"><dt>Returns</dt><dd>And error code from the Mbed Socket api: see <a href="https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37">https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37</a> </dd></dl>
+<p>Opens a socket using wifi and sends message to a remote host (without TLS) send. sock MUST already be allocated and paired with a network interface, and have its ca_cert set too </p><dl class="section return"><dt>Returns</dt><dd>And error code from the Mbed Socket api: see <a href="https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37">https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37</a> </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">wifi</td><td>The ESP8266 instance to use. </td></tr>
@@ -507,22 +561,10 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00155">155</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="_networking_8h_a8bc1232a769d3161dc09c677912f14fd_icgraph.jpeg" border="0" usemap="#_networking_8h_a8bc1232a769d3161dc09c677912f14fd_icgraph" alt=""/></div>
-<map name="_networking_8h_a8bc1232a769d3161dc09c677912f14fd_icgraph" id="_networking_8h_a8bc1232a769d3161dc09c677912f14fd_icgraph">
-<area shape="rect" title=" " alt="" coords="192,31,315,57"/>
-<area shape="rect" href="_networking_8h.html#a5f7ee8e7ec0867ede93e0807c7cc0578" title=" " alt="" coords="5,5,144,32"/>
-<area shape="rect" href="_networking_8h.html#a90aec3ce68a8041b8209ad9980cd2d08" title=" " alt="" coords="14,56,135,83"/>
-</map>
-</div>
-
 </div>
 </div>
-<a id="a229750f7eb5f3b4283c6a62fde9ad6e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a229750f7eb5f3b4283c6a62fde9ad6e2">&#9670;&nbsp;</a></span>sendMessageTLS()</h2>
+<a id="ab50c14e43e0d6b0d1db552d51821d216"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab50c14e43e0d6b0d1db552d51821d216">&#9670;&nbsp;</a></span>sendMessageTLS()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -530,14 +572,20 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">int sendMessageTLS </td>
           <td>(</td>
-          <td class="paramtype">ESP8266Interface *&#160;</td>
-          <td class="paramname"><em>wifi</em>, </td>
+          <td class="paramtype">TLSSocket *&#160;</td>
+          <td class="paramname"><em>sock</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">string &amp;&#160;</td>
-          <td class="paramname"><em>message</em>&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string &amp;&#160;</td>
+          <td class="paramname"><em>response</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -546,7 +594,7 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Opens a socket using wifi and sends message to a remote host with TLS</p><dl class="params"><dt>Parameters</dt><dd>
+<p>Opens a socket using wifi and sends message to a remote host with TLS. sock MUST already be allocated and paired with a network interface, and have its ca_cert set too</p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">wifi</td><td>The ESP instance to use</td></tr>
     <tr><td class="paramname">message</td><td>The data to send </td></tr>
@@ -554,19 +602,6 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>And error code from the Mbed Socket api: see <a href="https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37">https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37</a> </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="_networking_8cpp_source.html#l00019">19</a> of file <a class="el" href="_networking_8cpp_source.html">Networking.cpp</a>.</p>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="_networking_8h_a229750f7eb5f3b4283c6a62fde9ad6e2_icgraph.jpeg" border="0" usemap="#_networking_8h_a229750f7eb5f3b4283c6a62fde9ad6e2_icgraph" alt=""/></div>
-<map name="_networking_8h_a229750f7eb5f3b4283c6a62fde9ad6e2_icgraph" id="_networking_8h_a229750f7eb5f3b4283c6a62fde9ad6e2_icgraph">
-<area shape="rect" title=" " alt="" coords="289,31,411,57"/>
-<area shape="rect" href="_networking_8h.html#ac550cbd406e5f4d54c21c3b1d2c0b6cf" title=" " alt="" coords="104,5,241,32"/>
-<area shape="rect" href="_networking_8h.html#a4f00ff26cea7d5286b80ab60e2860630" title=" " alt="" coords="113,56,233,83"/>
-<area shape="rect" href="main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,31,56,57"/>
-</map>
-</div>
 
 </div>
 </div>

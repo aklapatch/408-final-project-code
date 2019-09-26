@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['sensorid_117',['SensorID',['../struct_port_info.html#a4bb89b294c96ffbb120d635fea6fb4d4',1,'PortInfo']]],
-  ['sensors_118',['Sensors',['../struct_board_specs.html#a818aeda910dd50656e2ad41bfd86d62b',1,'BoardSpecs']]]
+  ['port_5fget_5fstr_130',['port_get_str',['../_networking_8cpp.html#a98ce9ecf5f7328685c6d0b10fad6b4e3',1,'Networking.cpp']]],
+  ['ports_131',['Ports',['../struct_board_specs.html#aa361306a442264cc1f878a9235fecebe',1,'BoardSpecs']]]
 ];

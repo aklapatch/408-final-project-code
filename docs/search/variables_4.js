@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['multiplier_109',['Multiplier',['../struct_port_info.html#aefc53d2b951eca46697494eba4ec6f23',1,'PortInfo::Multiplier()'],['../struct_sensor_info.html#a8dd95589f7e5a69e9bc2abfd10d4f9e6',1,'SensorInfo::Multiplier()']]]
+  ['getstr_123',['getstr',['../_networking_8cpp.html#a11a53e96d994812f7998e2d003650f74',1,'Networking.cpp']]]
 ];

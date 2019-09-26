@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['portinfo_66',['PortInfo',['../struct_port_info.html',1,'']]]
+  ['dualsocket_76',['DualSocket',['../union_dual_socket.html',1,'']]]
 ];
