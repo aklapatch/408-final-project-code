@@ -11,7 +11,8 @@ const char *port_get_str = "&Port_ID[]=";
 
 const char *id_get_str = "Board_ID=";
 
-const char *getstr = "GET ";
+const char *get_req_start = "GET ";
+const char *get_req_end = " Connection: close\r\n\r\n";
 
 /// A certificate for TLS communication. This certificate is from:
 /// https://github.com/ARMmbed/mbed-os-example-tls-socket/blob/master/main.cpp
@@ -61,7 +62,7 @@ int connectESPWiFi(ESP8266Interface *wifi, BoardSpecs &Specs) {
 string makeGetReqStr(BoardSpecs &Specs) {
     // make the message to send
     // get the size to allocate memory
-    size_t message_size = strlen(getstr) + Specs.RemoteDir.size() +
+    size_t message_size = strlen(get_req_start) + Specs.RemoteDir.size() +
                           Specs.DatabaseTableName.size() + 1;
     // the 1 is for the '?'
 
@@ -75,9 +76,9 @@ string makeGetReqStr(BoardSpecs &Specs) {
         }
     }
     // add on for the \r\n
-    message_size += strlen(id_get_str) + strlen(getstr) + strlen("\r\n");
+    message_size += strlen(id_get_str) + strlen(get_req_start) + strlen(get_req_end);
 
-    string Message = getstr;
+    string Message = get_req_start;
 
     // reserve so that further allocations are not needed
     Message.reserve(message_size);
@@ -99,7 +100,7 @@ string makeGetReqStr(BoardSpecs &Specs) {
             Message.append(to_string(Specs.Ports[i].Value));
         }
     }
-    Message.append("\r\n");
+    Message.append(get_req_end);
 
     return Message;
 }
@@ -108,7 +109,7 @@ string makeGetReqStr(BoardSpecs &Specs) {
 string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
     // make the message to send
     // get the size to allocate memory
-    size_t message_size = strlen(getstr) + Specs.RemoteDir.size() +
+    size_t message_size = strlen(get_req_start) + Specs.RemoteDir.size() +
                           Specs.DatabaseTableName.size() + 1;
     // the 1 is for the '?'
 
@@ -122,9 +123,9 @@ string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
         }
     }
     // add on for the \r\n
-    message_size += strlen(id_get_str) + strlen(getstr) + strlen("\r\n");
+    message_size += strlen(id_get_str) + strlen(get_req_start) + strlen(get_req_end);
 
-    string Message = getstr;
+    string Message = get_req_start;
 
     // reserve so that further allocations are not needed
     Message.reserve(message_size);
@@ -146,7 +147,7 @@ string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
             Message.append(to_string(Ports[i].Value));
         }
     }
-    Message.append("\r\n");
+    Message.append(get_req_end);
 
     return Message;
 }
@@ -204,7 +205,7 @@ int sendBackupDataTLS(ESP8266Interface * wifi, BoardSpecs &Specs, const char *Fi
 
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
 
-    string Message = makeGetReqStr(Specs);
+    string Message = makeGetReqStr(Ports, Specs);
     mbed_printf("Data frame size = %d\r\n", Message.size());
     mbed_printf("Data frame is: \r\n %s\r\n",
                 Message.c_str()); // display data frame
