@@ -13,6 +13,9 @@
 
 #include "BlockDevice.h"
 
+#include "ATCmdParser.h"
+#include "UARTSerial.h"
+
 // This will take the system's default block device
 BlockDevice *bd = BlockDevice::get_default_instance();
 
@@ -66,7 +69,6 @@ float extractSampleRate(string &message_response) {
 }
 
 int main() {
-    mbed_trace_init();
 
     // interval for the sensor polling
     float PollingInterval = 5.0;
@@ -101,7 +103,6 @@ int main() {
     // data is gathered from these ports/sensor pins
     AnalogIn Port[] = {PTB2,  PTB3, PTB10, PTB11, PTC11,
                        PTC10, PTC2, PTC0,  PTC9,  PTC8};
-    PRINTLINE;
 
     const char *config_file = "/sd/IAC_Config_File.txt";
 
@@ -110,16 +111,43 @@ int main() {
 
     string response; // a response from tcp/tls connections
 
-    ESP8266Interface *wifi = new ESP8266Interface(PTC17, PTC16, true);
-    if (!wifi) {
+    UARTSerial *_serial = new UARTSerial(PTC17, PTC16, 115200);
+    ATCmdParser * _parser = new ATCmdParser(_serial);
+
+    _parser->debug_on(1);
+    _parser->set_delimiter("\r\n");
+    wait(3);
+
+wait(3);
+
+    mbed_printf("\r\nReading board settings from %s\r\n", config_file);
+    BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
+
+    if (!checkESPWiFiConnection(_parser))
+        connectESPWiFi(_parser, Specs);
+
+    if (checkESPWiFiConnection(_parser)) 
+        mbed_printf("conencted");
+
+        return 0;
+}
+/*
+
+    wait(5);
+    _parser->send("AT+CIPSTART=0,\"TCP\",\"10.0.0.6\",80");
+    _parser->recv("OK");
+    wait(5);
+
+    _parser->send("AT+CIPCLOSE=5");
+    _parser->recv("OK");
+    return 0;
+}
+    if (startESP(_parser,Specs) != 4) {
+
         mbed_printf(
             "\r\n ESP Chip was not initialized, entering offline mode\r\n");
         OfflineMode = true;
     }
-
-    mbed_printf("\r\nReading board settings from %s\r\n", config_file);
-    BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
-    PRINTSTRING(Specs.DatabaseTableName);
 
     // if there is no database tableName, or it is all spaces, then exit
     if (Specs.DatabaseTableName == "" || Specs.DatabaseTableName == " ") {
@@ -149,10 +177,12 @@ int main() {
         mbed_printf("\r\n No Remote port specified, Entering offline mode\r\n");
     }
 
-    int wifi_err = 0;
+    int wifi_err = NSAPI_ERROR_OK;
     if (!OfflineMode) {
-        mbed_printf("trying to connect to %s\r\n", Specs.NetworkSSID.c_str());
-        wifi_err = connectESPWiFi(wifi, Specs);
+        if (!checkESPWiFiConnection(wifi)){
+            mbed_printf("trying to connect to %s\r\n", Specs.NetworkSSID.c_str());
+            wifi_err = connectESPWiFi(wifi, Specs);
+        }
 
         if (wifi_err != NSAPI_ERROR_OK) {
             mbed_printf("\r\n failed to connect to %s. Error code = %d \r\n",
@@ -306,7 +336,7 @@ int main() {
         PollingTimer.reset();
     }
 }
-
+*/
 /**
  * \mainpage IAC Energy Monitoring project
  *

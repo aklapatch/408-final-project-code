@@ -120,7 +120,7 @@ BoardSpecs readConfigText(FILE *fp) {
         const char *s = ":";
 
         // save the remote connection info
-        if (Buffer[0] == 'R' && strstr(Buffer, "RemoteInfo")) {
+        if (Buffer[0] == 'C' && strstr(Buffer, "ConnInfo")) {
 
             // we don't need the first token
             char *tmp = strtok(Buffer, s);
@@ -135,15 +135,14 @@ BoardSpecs readConfigText(FILE *fp) {
                 Specs.RemotePort = 0;
             }
 
-            // check for the TLS variable
-            tmp = strtok(NULL, s);
-            if (tmp == NULL)
-                Specs.RemoteDir = strtok(NULL, "\n");
-            else
-                Specs.RemoteDir = tmp;
-
-            if (strstr(Buffer, ":TLS"))
+            if (strstr(Buffer, ":TLS")) {
                 Specs.useTLS = true;
+
+                Specs.RemoteDir= strtok(NULL, s);
+            }
+            else
+                Specs.RemoteDir = strtok(NULL, "\n");
+
         }
 
         // checks the character at the beginning of each line

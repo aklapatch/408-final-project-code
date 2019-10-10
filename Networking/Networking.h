@@ -10,6 +10,8 @@
 #include "TCPSocket.h"
 #include "TLSSocket.h"
 #include "mbed.h"
+#include "ATCmdParser.h"
+#include "UARTSerial.h"
 
 // C++ headers
 #include <cstring>
@@ -20,6 +22,9 @@
 #define BUFFLEN 1024
 
 using namespace std;
+/// starts the ESP8266 with the correct settings
+/// CIPMUX=1 and CWMODE=3
+int startESP(ATCmdParser* _parser);
 
 /// Uses the SSID and Password stored in Specs to connect to that network
 /// Returns the mbed error code that you get when trying to connect
@@ -29,11 +34,11 @@ using namespace std;
 /// \param Specs The data structure where the SSID and Password are pulled from
 /// \returns The error code from the Mbed api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int connectESPWiFi(ESP8266Interface *wifi, BoardSpecs &Specs);
+int connectESPWiFi(ATCmdParser *_parser, BoardSpecs &Specs);
 
 /// return true if you are connected to a wifi network, and false if you are not
 /// \param wifi The ESP8266 instance to use
-bool checkESPWiFiConnection(ESP8266Interface *wifi);
+bool checkESPWiFiConnection(ATCmdParser *_parser);
 
 /// Opens a socket using wifi and sends message to a remote host with
 /// TLS. sock MUST already be allocated and paired with a network interface, and

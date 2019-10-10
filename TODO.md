@@ -11,3 +11,7 @@ This is by no means a complete TODO list
 
 # notes
 The get bulk data get request is probably not going to work. It will most likely need to be changed to something like `GET / HTTP/1.1\r\nHost: hostname.com\r\nConnection: close\r\n`  or something in that format
+
+# scope creep features
+- watchdog timere
+- saving time, persistence of polling rate after changing (saving to file)

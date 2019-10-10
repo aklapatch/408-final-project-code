@@ -7,7 +7,7 @@ Board-2:Hope:weallneedit:Test-Board:
 # if you are using an https connection, put :TLS at the end of the get directory link
 # If not, leave it off
 # for example, you can do 
-RemoteInfo:192.168.80.1:40:/bulk-sensor-readings.php
+ConnInfo:10.0.0.6:/~aklapatc/iac-website/bulk-sensor-readings.php
 
 # Sensor info
 

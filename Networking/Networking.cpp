@@ -43,19 +43,19 @@ const char *ca_cert =
     "mnkPIAou1Z5jJh5VkpTYghdae9C8x49OhgQ=\n"
     "-----END CERTIFICATE-----";
 
-int connectESPWiFi(ESP8266Interface *wifi, BoardSpecs &Specs) {
-    // check if there is no password
-    nsapi_security_t security =  NSAPI_SECURITY_WPA_WPA2;
-    if (Specs.NetworkPassword == " " || Specs.NetworkPassword == "") {
-        security = NSAPI_SECURITY_NONE;
-    }
-    int wifi_err =
-        wifi->connect(Specs.NetworkSSID.c_str(), Specs.NetworkPassword.c_str(), security);
+int startESP(ATCmdParser* _parser){
+    int err = _parser->send("AT+CWMODE=3");
+    err += _parser->recv("OK");
+    err += _parser->send("AT+CIPMUX=1");
+    err += _parser->recv("OK");
+    return err;
+}
 
-    if (wifi_err == NSAPI_ERROR_IS_CONNECTED)
-        return NSAPI_ERROR_OK;
+int connectESPWiFi(ATCmdParser * _parser, BoardSpecs &Specs) {
 
-    return wifi_err;
+    _parser->send("AT+CWJAP=\"%s\",\"%s\"", Specs.NetworkSSID.c_str(), Specs.NetworkPassword.c_str());
+    return _parser->recv("OK");
+
 }
 
 // =============================================================================
@@ -154,8 +154,21 @@ string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
 //==============================================================================
 
 // return true if you are connected, and false if you are not connected
-bool checkESPWiFiConnection(ESP8266Interface *wifi) {
-    return wifi->get_ip_address() != NULL;
+bool checkESPWiFiConnection(ATCmdParser * _parser) {
+    // 000.000.000.000 max of 15 characters
+    char ip_addr[16];
+    _parser->send("AT+CIFSR");
+
+    _parser->recv("+CIFSR:STAIP,\"%15[^\"]\"", ip_addr);
+
+    ip_addr[15] = 0;
+
+    if (!_parser->recv("OK"))
+        return false;
+
+    // if that expression is true, then 0.0.0.0 is not in the ip address, and we ar connected
+
+    return strstr(ip_addr, "0.0.0.0") == NULL;
 }
 // =============================================================================
 int sendMessageTLS(ESP8266Interface * wifi, BoardSpecs &Specs, string &message,
@@ -226,7 +239,7 @@ int sendBulkDataTLS(ESP8266Interface * wifi, BoardSpecs &Specs, string &response
     return sendMessageTLS(wifi, Specs, Message, response);
 }
 // ============================================================================
-int sendMessageTCP(ESP8266Interface * wifi , BoardSpecs &Specs, string &message,
+int sendMessageTCP(ATCmdParser * _parser, BoardSpecs &Specs, string &message,
                    string &response) {
 
     TCPSocket * sock = new TCPSocket();
@@ -240,7 +253,6 @@ int sendMessageTCP(ESP8266Interface * wifi , BoardSpecs &Specs, string &message,
     // connect to the web server
     err = sock->connect(Specs.RemoteIP.c_str(), Specs.RemotePort);
 
-    wait(4000);
     if (err != NSAPI_ERROR_OK)
         goto CLOSE;
 
