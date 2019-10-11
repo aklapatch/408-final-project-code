@@ -46,11 +46,11 @@ const char *ca_cert =
     "-----END CERTIFICATE-----";
 
 int startESP(ATCmdParser *_parser) {
-    int err = _parser->send("AT+CWMODE=3");
-    err += _parser->recv("OK");
-    err += _parser->send("AT+CIPMUX=1");
-    err += _parser->recv("OK");
-    return err;
+    if (_parser->send("AT+CWMODE=3") && _parser->recv("OK") &&
+        _parser->send("AT+CIPMUX=1") && _parser->recv("OK"))
+        return NETWORKSUCCESS;
+    else
+        return -1;
 }
 
 int connectESPWiFi(ATCmdParser *_parser, BoardSpecs &Specs) {
@@ -248,40 +248,45 @@ int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
 int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
                    string &message, string &response) {
 
-    int err = _parser->send("AT+CIPSTART=0,\"TCP\",\"%s\",%d",
-                            Specs.RemoteIP.c_str(), Specs.RemotePort);
+    _parser->send("AT+CIPSTART=0,\"TCP\",\"%s\",%d", Specs.RemoteIP.c_str(),
+                  Specs.RemotePort);
     if (!_parser->recv("OK")) {
         return -1;
     }
 
-    err = _parser->send("AT+CIPSEND=0,%d", message.size());
+    _parser->send("AT+CIPSEND=0,%d", message.size());
     if (!_parser->recv("OK"))
         return -2;
 
-    _parser->recv(">");
-    _parser->send("%s", message.c_str());
+    if (!_parser->recv(">"))
+        return -3;
+
+    if (!_parser->send("%s", message.c_str()))
+        return -4;
 
     // get the response
     response.clear();
     response.reserve(response_size + 1);
 
     char buffer[response_size + 1];
-    int i = 0;
-    _parser->set_timeout(1);
-
     // wait 5 seconds, then read the buffer.
 
     wait(5);
+    _serial->sync(); // sync on disc
+    while (!_serial->readable()) {
+    }
+
     int size = _serial->size();
     if (size > response_size)
         size = response_size;
+
     _serial->read(buffer, size);
 
     buffer[response_size] = 0;
 
     response.assign(buffer);
 
-    return err;
+    return NETWORKSUCCESS;
 }
 
 int sendBackupDataTCP(ATCmdParser *_parser, UARTSerial *_serial,

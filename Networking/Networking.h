@@ -21,6 +21,8 @@
 /// Arbitrary char array length
 #define BUFFLEN 1024
 
+#define NETWORKSUCCESS (0)
+
 using namespace std;
 /// starts the ESP8266 with the correct settings
 /// CIPMUX=1 and CWMODE=3
@@ -90,8 +92,8 @@ int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
 /// readings and database table name are pulled from here \returns And error
 /// code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
-                    string &response);
+int sendBulkDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
+                    BoardSpecs &Specs, string &response);
 
 /// tries to send backup data to the database without TLS. This will work for
 /// http connections. sock MUST already be allocated and paired with a network
@@ -100,7 +102,8 @@ int sendBulkDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
 /// FileName the file to pull data readings from \returns An error code from the
 /// Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendBackupDataTCP(ESP8266Interface *wifi, BoardSpecs &Specs,
-                      const char *FileName, string &response);
+int sendBackupDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
+                      BoardSpecs &Specs, const char *FileName,
+                      string &response);
 
 #endif

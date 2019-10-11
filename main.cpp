@@ -74,7 +74,7 @@ int main() {
     float PollingInterval = 5.0;
 
     // name of the file where data is stored
-    const char BackupFileName[] = "/sd/PortReadings.dat";
+    const char BackupFileName[] = "/sd/PortReadings.csv";
 
     Timer PollingTimer; // Timer that controlls when polling happens
 
@@ -120,44 +120,16 @@ int main() {
 
     mbed_printf("\r\nReading board settings from %s\r\n", config_file);
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
-    startESP(_parser);
 
-    if (!checkESPWiFiConnection(_parser))
-        connectESPWiFi(_parser, Specs);
-
-    // string message("GET
-    // /bullk-sensor-readings.php?Board_ID=stuff&Port_ID[]=port&Value[]=5.78
-    // HTTP/1.1\r\n\r\n");
-    if (checkESPWiFiConnection(_parser)) {
-        string message(
-            "GET  "
-            "/bulk-sensor-readings.php?Board_ID=stuff&Port_ID[]=port&Value[]=5."
-            "78 HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n");
-        sendMessageTCP(_parser, _serial, Specs, message, response);
-
-        mbed_printf("%s", response.c_str());
-        return 0;
-    }
-    mbed_printf("\r\n done \r\n");
-    return 0;
-}
-/*
-
-    wait(5);
-    _parser->send("AT+CIPSTART=0,\"TCP\",\"10.0.0.6\",80");
-    _parser->recv("OK");
-    wait(5);
-
-    _parser->send("AT+CIPCLOSE=5");
-    _parser->recv("OK");
-    return 0;
-}
-    if (startESP(_parser,Specs) != 4) {
+    if (startESP(_parser) != 4) {
 
         mbed_printf(
             "\r\n ESP Chip was not initialized, entering offline mode\r\n");
         OfflineMode = true;
     }
+
+    if (!checkESPWiFiConnection(_parser))
+        connectESPWiFi(_parser, Specs);
 
     // if there is no database tableName, or it is all spaces, then exit
     if (Specs.DatabaseTableName == "" || Specs.DatabaseTableName == " ") {
@@ -187,14 +159,15 @@ int main() {
         mbed_printf("\r\n No Remote port specified, Entering offline mode\r\n");
     }
 
-    int wifi_err = NSAPI_ERROR_OK;
+    int wifi_err = NETWORKSUCCESS;
     if (!OfflineMode) {
-        if (!checkESPWiFiConnection(wifi)){
+        if (!checkESPWiFiConnection(_parser)) {
             mbed_printf("trying to connect to %s\r\n",
-Specs.NetworkSSID.c_str()); wifi_err = connectESPWiFi(wifi, Specs);
+                        Specs.NetworkSSID.c_str());
+            wifi_err = connectESPWiFi(_parser, Specs);
         }
 
-        if (wifi_err != NSAPI_ERROR_OK) {
+        if (wifi_err != NETWORKSUCCESS) {
             mbed_printf("\r\n failed to connect to %s. Error code = %d \r\n",
                         Specs.NetworkSSID.c_str(), wifi_err);
         } else {
@@ -245,13 +218,13 @@ Specs.NetworkSSID.c_str()); wifi_err = connectESPWiFi(wifi, Specs);
         if (!OfflineMode) {
 
             // try to connect to wifi again if you are not connected now
-            if (!checkESPWiFiConnection(wifi)) {
+            if (!checkESPWiFiConnection(_parser)) {
 
                 mbed_printf("Trying to connect to %s \r\n",
                             Specs.NetworkSSID.c_str());
-                wifi_err = connectESPWiFi(wifi, Specs);
+                wifi_err = connectESPWiFi(_parser, Specs);
 
-                if (wifi_err != NSAPI_ERROR_OK) {
+                if (wifi_err != NETWORKSUCCESS) {
                     mbed_printf("Connection attempt failed error = %d\r\n",
                                 wifi_err);
                 } else {
@@ -262,7 +235,7 @@ Specs.NetworkSSID.c_str()); wifi_err = connectESPWiFi(wifi, Specs);
 
             // if the board is connected to the network, send data to the
             // database
-            if (checkESPWiFiConnection(wifi)) {
+            if (checkESPWiFiConnection(_parser)) {
 
                 // send backed up data while waiting for the polling rate to
                 // expire
@@ -271,27 +244,18 @@ Specs.NetworkSSID.c_str()); wifi_err = connectESPWiFi(wifi, Specs);
 
                     mbed_printf(
                         "\r\n Sending backed up data to the database. \r\n");
-                    // send the backup data to the database
-                    if (Specs.useTLS) {
 
-                        wifi_err = sendBackupDataTLS(wifi, Specs,
-                                                     BackupFileName, response);
-                    } else {
-                        wifi_err = sendBackupDataTCP(wifi, Specs,
-                                                     BackupFileName, response);
-                    }
-                    PRINTLINE;
+                    wifi_err = sendBackupDataTCP(_parser, _serial, Specs,
+                                                 BackupFileName, response);
                     float tmp = extractSampleRate(response);
 
-                    PRINTLINE;
                     if (tmp != -1 && tmp > 0) {
                         PollingInterval = tmp;
                         mbed_printf("Sample interval is now %f\r\n",
                                     PollingInterval);
                     }
 
-                    mbed_printf("Response \r\n %s \r\n", response.c_str());
-                    if (wifi_err != NSAPI_ERROR_OK) {
+                    if (wifi_err != NETWORKSUCCESS) {
                         mbed_printf(
                             "\r\n Failed to transmit backed up data to the "
                             "Database \r\n");
@@ -308,15 +272,11 @@ Specs.NetworkSSID.c_str()); wifi_err = connectESPWiFi(wifi, Specs);
                     mbed_printf(
                         "\r\n Sending the last port reading to the database "
                         "\r\n");
-                    // sends the data for all ports to the remote database
-                    if (Specs.useTLS) {
-                        wifi_err = sendBulkDataTLS(wifi, Specs, response);
 
-                    } else {
-                        wifi_err = sendBulkDataTCP(wifi, Specs, response);
-                    }
+                    wifi_err =
+                        sendBulkDataTCP(_parser, _serial, Specs, response);
 
-                    if (wifi_err != NSAPI_ERROR_OK) {
+                    if (wifi_err != NETWORKSUCCESS) {
 
                         ServerConnection = false;
                         mbed_printf(
@@ -346,7 +306,6 @@ Specs.NetworkSSID.c_str()); wifi_err = connectESPWiFi(wifi, Specs);
         PollingTimer.reset();
     }
 }
-*/
 /**
  * \mainpage IAC Energy Monitoring project
  *
