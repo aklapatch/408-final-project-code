@@ -138,11 +138,9 @@ BoardSpecs readConfigText(FILE *fp) {
             if (strstr(Buffer, ":TLS")) {
                 Specs.useTLS = true;
 
-                Specs.RemoteDir= strtok(NULL, s);
-            }
-            else
+                Specs.RemoteDir = strtok(NULL, s);
+            } else
                 Specs.RemoteDir = strtok(NULL, "\n");
-
         }
 
         // checks the character at the beginning of each line

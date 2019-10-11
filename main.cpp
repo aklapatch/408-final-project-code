@@ -109,27 +109,37 @@ int main() {
     bool OfflineMode = false; // indicates whether to actually send data or not
     bool ServerConnection = false;
 
-    string response; // a response from tcp/tls connections
+    string response(""); // a response from tcp/tls connections
 
     UARTSerial *_serial = new UARTSerial(PTC17, PTC16, 115200);
-    ATCmdParser * _parser = new ATCmdParser(_serial);
+    ATCmdParser *_parser = new ATCmdParser(_serial);
 
     _parser->debug_on(1);
     _parser->set_delimiter("\r\n");
-    wait(3);
-
-wait(3);
+    _parser->set_timeout(5);
 
     mbed_printf("\r\nReading board settings from %s\r\n", config_file);
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
+    startESP(_parser);
 
     if (!checkESPWiFiConnection(_parser))
         connectESPWiFi(_parser, Specs);
 
-    if (checkESPWiFiConnection(_parser)) 
-        mbed_printf("conencted");
+    // string message("GET
+    // /bullk-sensor-readings.php?Board_ID=stuff&Port_ID[]=port&Value[]=5.78
+    // HTTP/1.1\r\n\r\n");
+    if (checkESPWiFiConnection(_parser)) {
+        string message(
+            "GET  "
+            "/bulk-sensor-readings.php?Board_ID=stuff&Port_ID[]=port&Value[]=5."
+            "78 HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n");
+        sendMessageTCP(_parser, _serial, Specs, message, response);
 
+        mbed_printf("%s", response.c_str());
         return 0;
+    }
+    mbed_printf("\r\n done \r\n");
+    return 0;
 }
 /*
 
@@ -180,8 +190,8 @@ wait(3);
     int wifi_err = NSAPI_ERROR_OK;
     if (!OfflineMode) {
         if (!checkESPWiFiConnection(wifi)){
-            mbed_printf("trying to connect to %s\r\n", Specs.NetworkSSID.c_str());
-            wifi_err = connectESPWiFi(wifi, Specs);
+            mbed_printf("trying to connect to %s\r\n",
+Specs.NetworkSSID.c_str()); wifi_err = connectESPWiFi(wifi, Specs);
         }
 
         if (wifi_err != NSAPI_ERROR_OK) {

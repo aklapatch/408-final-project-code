@@ -12,7 +12,9 @@ const char *port_get_str = "&Port_ID[]=";
 const char *id_get_str = "Board_ID=";
 
 const char *get_req_start = "GET ";
-const char *get_req_end = " Connection: close\r\n\r\n";
+const char *get_req_end = " HTTP/1.1\r\nConnection: close\r\n";
+
+const int response_size = 512;
 
 /// A certificate for TLS communication. This certificate is from:
 /// https://github.com/ARMmbed/mbed-os-example-tls-socket/blob/master/main.cpp
@@ -43,7 +45,7 @@ const char *ca_cert =
     "mnkPIAou1Z5jJh5VkpTYghdae9C8x49OhgQ=\n"
     "-----END CERTIFICATE-----";
 
-int startESP(ATCmdParser* _parser){
+int startESP(ATCmdParser *_parser) {
     int err = _parser->send("AT+CWMODE=3");
     err += _parser->recv("OK");
     err += _parser->send("AT+CIPMUX=1");
@@ -51,11 +53,11 @@ int startESP(ATCmdParser* _parser){
     return err;
 }
 
-int connectESPWiFi(ATCmdParser * _parser, BoardSpecs &Specs) {
+int connectESPWiFi(ATCmdParser *_parser, BoardSpecs &Specs) {
 
-    _parser->send("AT+CWJAP=\"%s\",\"%s\"", Specs.NetworkSSID.c_str(), Specs.NetworkPassword.c_str());
+    _parser->send("AT+CWJAP=\"%s\",\"%s\"", Specs.NetworkSSID.c_str(),
+                  Specs.NetworkPassword.c_str());
     return _parser->recv("OK");
-
 }
 
 // =============================================================================
@@ -76,7 +78,8 @@ string makeGetReqStr(BoardSpecs &Specs) {
         }
     }
     // add on for the \r\n
-    message_size += strlen(id_get_str) + strlen(get_req_start) + strlen(get_req_end);
+    message_size +=
+        strlen(id_get_str) + strlen(get_req_start) + strlen(get_req_end);
 
     string Message = get_req_start;
 
@@ -123,7 +126,8 @@ string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
         }
     }
     // add on for the \r\n
-    message_size += strlen(id_get_str) + strlen(get_req_start) + strlen(get_req_end);
+    message_size +=
+        strlen(id_get_str) + strlen(get_req_start) + strlen(get_req_end);
 
     string Message = get_req_start;
 
@@ -154,7 +158,7 @@ string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
 //==============================================================================
 
 // return true if you are connected, and false if you are not connected
-bool checkESPWiFiConnection(ATCmdParser * _parser) {
+bool checkESPWiFiConnection(ATCmdParser *_parser) {
     // 000.000.000.000 max of 15 characters
     char ip_addr[16];
     _parser->send("AT+CIFSR");
@@ -166,15 +170,16 @@ bool checkESPWiFiConnection(ATCmdParser * _parser) {
     if (!_parser->recv("OK"))
         return false;
 
-    // if that expression is true, then 0.0.0.0 is not in the ip address, and we ar connected
+    // if that expression is true, then 0.0.0.0 is not in the ip address, and we
+    // ar connected
 
     return strstr(ip_addr, "0.0.0.0") == NULL;
 }
 // =============================================================================
-int sendMessageTLS(ESP8266Interface * wifi, BoardSpecs &Specs, string &message,
+int sendMessageTLS(ESP8266Interface *wifi, BoardSpecs &Specs, string &message,
                    string &response) {
 
-    TLSSocket * sock = new TLSSocket();
+    TLSSocket *sock = new TLSSocket();
     int err = sock->open(wifi);
     if (err != NSAPI_ERROR_OK)
         goto CLOSEFREE;
@@ -213,8 +218,8 @@ CLOSEFREE:
 // =============================================================================
 // sends a vector of port values instead
 // gets those port values from the backup file
-int sendBackupDataTLS(ESP8266Interface * wifi, BoardSpecs &Specs, const char *FileName,
-                      string &response) {
+int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
+                      const char *FileName, string &response) {
 
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
 
@@ -229,7 +234,8 @@ int sendBackupDataTLS(ESP8266Interface * wifi, BoardSpecs &Specs, const char *Fi
 // wi The socket must be connected to the 8266 chip (opened)
 // the cert must be set too
 // returns the int result from the mbed API
-int sendBulkDataTLS(ESP8266Interface * wifi, BoardSpecs &Specs, string &response) {
+int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
+                    string &response) {
 
     string Message = makeGetReqStr(Specs);
     mbed_printf("Data frame size = %d\r\n", Message.size());
@@ -239,61 +245,61 @@ int sendBulkDataTLS(ESP8266Interface * wifi, BoardSpecs &Specs, string &response
     return sendMessageTLS(wifi, Specs, Message, response);
 }
 // ============================================================================
-int sendMessageTCP(ATCmdParser * _parser, BoardSpecs &Specs, string &message,
-                   string &response) {
+int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
+                   string &message, string &response) {
 
-    TCPSocket * sock = new TCPSocket();
-
-    int err = sock->open(wifi);
-
-    if (err != NSAPI_ERROR_OK)
-        goto CLOSEFREE;
-
-
-    // connect to the web server
-    err = sock->connect(Specs.RemoteIP.c_str(), Specs.RemotePort);
-
-    if (err != NSAPI_ERROR_OK)
-        goto CLOSE;
-
-    err = sock->send(message.c_str(), message.size());
-    if (err != NSAPI_ERROR_OK)
-        goto CLOSE;
-
-    // get the response
-    char buffer[256];
-    response.clear();
-    response.reserve(256);
-
-    while ((err = sock->recv(buffer, 255)) > 0) {
-        buffer[255] = '\0';
-        mbed_printf("%s", buffer);
+    int err = _parser->send("AT+CIPSTART=0,\"TCP\",\"%s\",%d",
+                            Specs.RemoteIP.c_str(), Specs.RemotePort);
+    if (!_parser->recv("OK")) {
+        return -1;
     }
 
-    // store the last 255 characters of the response in the string
+    err = _parser->send("AT+CIPSEND=0,%d", message.size());
+    if (!_parser->recv("OK"))
+        return -2;
+
+    _parser->recv(">");
+    _parser->send("%s", message.c_str());
+
+    // get the response
+    response.clear();
+    response.reserve(response_size + 1);
+
+    char buffer[response_size + 1];
+    int i = 0;
+    _parser->set_timeout(1);
+
+    // wait 5 seconds, then read the buffer.
+
+    wait(5);
+    int size = _serial->size();
+    if (size > response_size)
+        size = response_size;
+    _serial->read(buffer, size);
+
+    buffer[response_size] = 0;
+
     response.assign(buffer);
 
-CLOSE:
-    sock->close();
-CLOSEFREE:
-    delete sock;
     return err;
 }
 
-int sendBackupDataTCP(ESP8266Interface * wifi, BoardSpecs &Specs, const char *FileName,
+int sendBackupDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
+                      BoardSpecs &Specs, const char *FileName,
                       string &response) {
 
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
 
     string Message = makeGetReqStr(Ports, Specs);
 
-    return sendMessageTCP(wifi, Specs, Message, response);
+    return sendMessageTCP(_parser, _serial, Specs, Message, response);
 }
 
 // =============================================================================
-int sendBulkDataTCP(ESP8266Interface * wifi, BoardSpecs &Specs, string &response) {
+int sendBulkDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
+                    BoardSpecs &Specs, string &response) {
 
     string message = makeGetReqStr(Specs);
 
-    return sendMessageTCP(wifi, Specs, message, response);
+    return sendMessageTCP(_parser, _serial, Specs, message, response);
 }
