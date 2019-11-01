@@ -155,19 +155,23 @@ vector<PortInfo> getSensorDataFromFile(BoardSpecs &Specs,
         // use fgetc since fgets ignores binary values
         int characc = 0;
         int j = 0;
-        while ((characc = fgetc(DataFile)) != '\n') {
+
+        // get just the name of the port`
+        while ((characc = fgetc(DataFile)) != ',') {
             Temp[j++] = characc;
         }
-        Temp[j] =
-            '\n'; // later we tokenize for this, so we need to insert it again
+        Temp[j] = 0;
+        output[i].Name.assign(Temp);
 
-        // sort through commas to initialize the port
-        output[i].Name = strtok(Temp, ",");
+        // get the port value
+        fread(&(output[i].Value), sizeof(float), 1, DataFile);
 
         output[i].Multiplier = 1.0;
-        memcpy(&(output[i].Value), strtok(NULL, ","), sizeof(float));
 
-        output[i].Description = strtok(NULL, "\n");
+        // go till the comma
+        while (fgetc(DataFile) != ','){}
+        output[i].Description.reserve(60);
+        fgets((char*)output[i].Description.data(), 60, DataFile);
         mbed_printf(output[i].Description.c_str());
     }
     fclose(DataFile);

@@ -56,11 +56,11 @@ const char *filter_end = "\"></span>";
 /// returns it. This returns -1 if it fails.
 float extractSampleRate(string &message_response) {
     string rate_text = textBetween(message_response, filter_start, filter_end);
-    PRINTLINE;
     if (rate_text == "")
         return -1;
     else {
         if (isdigit(rate_text[0]))
+
             return stof(rate_text);
 
         else
@@ -74,7 +74,7 @@ int main() {
     float PollingInterval = 5.0;
 
     // name of the file where data is stored
-    const char BackupFileName[] = "/sd/PortReadings.csv";
+    const char BackupFileName[] = "/sd/PortReadings.dat";
 
     Timer PollingTimer; // Timer that controlls when polling happens
 
@@ -103,33 +103,57 @@ int main() {
     // data is gathered from these ports/sensor pins
     AnalogIn Port[] = {PTB2,  PTB3, PTB10, PTB11, PTC11,
                        PTC10, PTC2, PTC0,  PTC9,  PTC8};
-
+PRINTLINE;
     const char *config_file = "/sd/IAC_Config_File.txt";
 
     bool OfflineMode = false; // indicates whether to actually send data or not
     bool ServerConnection = false;
 
     string response(""); // a response from tcp/tls connections
-
+PRINTLINE;
     UARTSerial *_serial = new UARTSerial(PTC17, PTC16, 115200);
     ATCmdParser *_parser = new ATCmdParser(_serial);
+/*
+PRINTLINE;
+    _serial->printf("AT+CWMODE=3\r\n");
+    PRINTLINE;
+wait(4);
+response.reserve(255);
+_serial->scanf("%s",response.data());
+PRINTLINE;
+PRINTSTRING(response);
 
+PRINTLINE;
+    _serial->printf("AT+CIPMUX=1\r\n");
+_serial->printf("AT+CWJAP=\"Hope\",\"weallneedit\"\r\n");
+_serial->printf("AT+CIPSTART=0,\"TCP\",\"10.0.0.6\",80\r\n");
+_serial->printf("AT+CIPSEND=0,70\r\n");
+_serial->printf("GET /bulk-sensor-readings.php?Board_ID=blun&Port_ID[]=bleh&Value[]=7\r\n");
+_serial->printf("AT+CIPCLOSE=0\r\n");
+
+    return 0;
+    */
     _parser->debug_on(1);
     _parser->set_delimiter("\r\n");
-    _parser->set_timeout(5);
+    _parser->set_timeout(5000);
 
     mbed_printf("\r\nReading board settings from %s\r\n", config_file);
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
+    wait(4);
 
-    if (startESP(_parser) != 4) {
+    //if (!checkESPWiFiConnection(_parser))
+        if (startESP(_parser) != NETWORKSUCCESS) {
 
-        mbed_printf(
-            "\r\n ESP Chip was not initialized, entering offline mode\r\n");
-        OfflineMode = true;
-    }
+            mbed_printf(
+                "\r\n ESP Chip was not initialized, entering offline mode\r\n");
+            OfflineMode = true;
+        }
 
     if (!checkESPWiFiConnection(_parser))
         connectESPWiFi(_parser, Specs);
+
+
+    mbed_printf("%s\r\n",response.c_str());
 
     // if there is no database tableName, or it is all spaces, then exit
     if (Specs.DatabaseTableName == "" || Specs.DatabaseTableName == " ") {
@@ -244,7 +268,7 @@ int main() {
 
                     mbed_printf(
                         "\r\n Sending backed up data to the database. \r\n");
-
+PRINTLINE;
                     wifi_err = sendBackupDataTCP(_parser, _serial, Specs,
                                                  BackupFileName, response);
                     float tmp = extractSampleRate(response);

@@ -12,9 +12,11 @@ const char *port_get_str = "&Port_ID[]=";
 const char *id_get_str = "Board_ID=";
 
 const char *get_req_start = "GET ";
-const char *get_req_end = " HTTP/1.1\r\nConnection: close\r\n";
+
+const char *get_req_end = "\r\nHost: localhost";
 
 const int response_size = 512;
+
 
 /// A certificate for TLS communication. This certificate is from:
 /// https://github.com/ARMmbed/mbed-os-example-tls-socket/blob/master/main.cpp
@@ -45,13 +47,17 @@ const char *ca_cert =
     "mnkPIAou1Z5jJh5VkpTYghdae9C8x49OhgQ=\n"
     "-----END CERTIFICATE-----";
 
-int startESP(ATCmdParser *_parser) {
-    if (_parser->send("AT+CWMODE=3") && _parser->recv("OK") &&
-        _parser->send("AT+CIPMUX=1") && _parser->recv("OK"))
-        return NETWORKSUCCESS;
-    else
-        return -1;
-}
+    int startESP(ATCmdParser *_parser) {
+        _parser->send("AT+CIPCLOSE=5");
+        _parser->recv("OK");
+        _parser->send("AT+CWMODE=3");
+        _parser->recv("OK"); 
+        _parser->send("AT+CIPMUX=1") ;
+        if ( _parser->recv("OK"))
+            return 0;
+        else 
+            return -1;
+    }
 
 int connectESPWiFi(ATCmdParser *_parser, BoardSpecs &Specs) {
 
@@ -175,6 +181,61 @@ bool checkESPWiFiConnection(ATCmdParser *_parser) {
 
     return strstr(ip_addr, "0.0.0.0") == NULL;
 }
+// ============================================================================
+int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
+                   string &message, string &response) {
+
+    _parser->send("AT+CIPSTART=0,\"TCP\",\"%s\",%d", Specs.RemoteIP.c_str(),
+                  Specs.RemotePort);
+    if (!_parser->recv("OK")) {
+        _parser->send("AT+CIPCLOSE=5");
+        return -1;
+    }
+
+
+    _parser->send("AT+CIPSEND=0,%d", message.size());
+    if (!_parser->recv("OK"))
+        return -2;
+
+    if (!_parser->recv(">"))
+        return -3;
+
+    if (!_parser->send("%s", message.c_str()))
+        return -4;
+
+response.resize(256);
+    _parser->recv("+IPD");
+    while(_parser->read((char*)response.data(), 255) > 0 ){
+        response[255]=0;
+        mbed_printf("%s\r\n", response.c_str());
+    }
+
+    _parser->send("AT+CIPCLOSE=5");
+    _parser->recv("OK");
+
+    return NETWORKSUCCESS;
+}
+
+int sendBackupDataTCP(ATCmdParser *_parser,UARTSerial *_serial,
+                      BoardSpecs &Specs, const char *FileName,
+                      string &response) {
+PRINTLINE;
+    vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
+PRINTLINE;
+    string Message = makeGetReqStr(Ports, Specs);
+PRINTLINE;
+    return sendMessageTCP(_parser, _serial, Specs, Message, response);
+}
+
+// =============================================================================
+int sendBulkDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
+                    BoardSpecs &Specs, string &response) {
+
+    string message = makeGetReqStr(Specs);
+
+    return sendMessageTCP(_parser, _serial, Specs, message, response);
+}
+
 // =============================================================================
 int sendMessageTLS(ESP8266Interface *wifi, BoardSpecs &Specs, string &message,
                    string &response) {
@@ -185,7 +246,6 @@ int sendMessageTLS(ESP8266Interface *wifi, BoardSpecs &Specs, string &message,
         goto CLOSEFREE;
 
     err = sock->connect(Specs.RemoteIP.c_str(), Specs.RemotePort);
-    wait(4000);
 
     if (err != NSAPI_ERROR_OK)
         goto CLOSE;
@@ -243,68 +303,4 @@ int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
                 Message.c_str()); // display data frame
 
     return sendMessageTLS(wifi, Specs, Message, response);
-}
-// ============================================================================
-int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
-                   string &message, string &response) {
-
-    _parser->send("AT+CIPSTART=0,\"TCP\",\"%s\",%d", Specs.RemoteIP.c_str(),
-                  Specs.RemotePort);
-    if (!_parser->recv("OK")) {
-        return -1;
-    }
-
-    _parser->send("AT+CIPSEND=0,%d", message.size());
-    if (!_parser->recv("OK"))
-        return -2;
-
-    if (!_parser->recv(">"))
-        return -3;
-
-    if (!_parser->send("%s", message.c_str()))
-        return -4;
-
-    // get the response
-    response.clear();
-    response.reserve(response_size + 1);
-
-    char buffer[response_size + 1];
-    // wait 5 seconds, then read the buffer.
-
-    wait(5);
-    _serial->sync(); // sync on disc
-    while (!_serial->readable()) {
-    }
-
-    int size = _serial->size();
-    if (size > response_size)
-        size = response_size;
-
-    _serial->read(buffer, size);
-
-    buffer[response_size] = 0;
-
-    response.assign(buffer);
-
-    return NETWORKSUCCESS;
-}
-
-int sendBackupDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
-                      BoardSpecs &Specs, const char *FileName,
-                      string &response) {
-
-    vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
-
-    string Message = makeGetReqStr(Ports, Specs);
-
-    return sendMessageTCP(_parser, _serial, Specs, Message, response);
-}
-
-// =============================================================================
-int sendBulkDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
-                    BoardSpecs &Specs, string &response) {
-
-    string message = makeGetReqStr(Specs);
-
-    return sendMessageTCP(_parser, _serial, Specs, message, response);
 }

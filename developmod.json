@@ -5,7 +5,9 @@
                    "-fmessage-length=0", "-fno-exceptions",
                    "-ffunction-sections", "-fdata-sections", "-funsigned-char",
                    "-MMD", "-fno-delete-null-pointer-checks",
-                   "-fomit-frame-pointer", "-O2",  "-DMBED_TRAP_ERRORS_ENABLED=1"],
+                   "-fstack-usage", "-Wformat=2", "-fno-common", 
+                   
+                   "-fomit-frame-pointer","-g3", "-Os", "-pipe",  "-DMBED_TRAP_ERRORS_ENABLED=1"],
         "asm": ["-x", "assembler-with-cpp"],
         "c": ["-std=gnu11"],
         "cxx": ["-std=gnu++14", "-fno-rtti", "-Wvla"],
