@@ -89,6 +89,9 @@ struct BoardSpecs {
     /// Collection of possible sensor types.
     vector<SensorInfo> Sensors;
 
+    /// Whether to use a TLS connection (https)
+    bool useTLS;
+
     /// Sets the number of ports for the board
     void setPortNum(unsigned int Num) { Ports.resize(Num); }
 
@@ -97,9 +100,11 @@ struct BoardSpecs {
 
     /// Default constructor.
     /// Sets all strings to "" and sets the initializes the vector size to 0
+    /// This one sets useTLS to false, so it will not use an encrypted
+    /// connection by default
     BoardSpecs()
         : ID(""), NetworkSSID(""), NetworkPassword(""), DatabaseTableName(""),
-          RemoteIP(""), RemoteDir(""), RemotePort(0), Ports() {}
+          RemoteIP(""), RemoteDir(""), RemotePort(0), Ports(), useTLS(false) {}
 };
 
 #endif // STRUCTS

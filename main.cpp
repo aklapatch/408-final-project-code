@@ -13,6 +13,9 @@
 
 #include "BlockDevice.h"
 
+#include "ATCmdParser.h"
+#include "UARTSerial.h"
+
 // This will take the system's default block device
 BlockDevice *bd = BlockDevice::get_default_instance();
 
@@ -21,8 +24,16 @@ FATFileSystem fs("sd");
 
 using namespace std;
 
-/// returns the characters between startchars and endchars
+/// returns the characters between startchars and endchars. It returns an empty
+/// string if it cannot find the start and enc filter sequences
 string textBetween(string input, const char *startchars, const char *endchars) {
+
+    // check if the string is big engough to actually filter
+    // this will throw and exception if we do not do this
+    size_t filter_size = strlen(startchars) + strlen(endchars);
+    if (filter_size >= input.size())
+        return "";
+
     size_t start_idx = input.find(startchars);
     size_t end_idx = input.find(endchars);
 
@@ -38,8 +49,26 @@ string textBetween(string input, const char *startchars, const char *endchars) {
     return input.substr(start_idx, end_idx - start_idx);
 }
 
+const char *filter_start = "samplerate=\"";
+const char *filter_end = "\"></span>";
+
+/// extracts the sample rate from response text, converts it to a float, and
+/// returns it. This returns -1 if it fails.
+float extractSampleRate(string &message_response) {
+    string rate_text = textBetween(message_response, filter_start, filter_end);
+    if (rate_text == "")
+        return -1;
+    else {
+        if (isdigit(rate_text[0]))
+
+            return stof(rate_text);
+
+        else
+            return -1;
+    }
+}
+
 int main() {
-    mbed_trace_init();
 
     // interval for the sensor polling
     float PollingInterval = 5.0;
@@ -74,27 +103,57 @@ int main() {
     // data is gathered from these ports/sensor pins
     AnalogIn Port[] = {PTB2,  PTB3, PTB10, PTB11, PTC11,
                        PTC10, PTC2, PTC0,  PTC9,  PTC8};
-    PRINTLINE;
-
+PRINTLINE;
     const char *config_file = "/sd/IAC_Config_File.txt";
 
     bool OfflineMode = false; // indicates whether to actually send data or not
     bool ServerConnection = false;
-    // flags that determine connection status
-    bool ConnectedToWiFi = false;
 
-    string response; // a response from tcp/tls connections
+    string response(""); // a response from tcp/tls connections
+PRINTLINE;
+    UARTSerial *_serial = new UARTSerial(PTC17, PTC16, 115200);
+    ATCmdParser *_parser = new ATCmdParser(_serial);
+/*
+PRINTLINE;
+    _serial->printf("AT+CWMODE=3\r\n");
+    PRINTLINE;
+wait(4);
+response.reserve(255);
+_serial->scanf("%s",response.data());
+PRINTLINE;
+PRINTSTRING(response);
 
-    ESP8266Interface *wifi = new ESP8266Interface(PTC17, PTC16);
-    if (!wifi) {
-        mbed_printf(
-            "\r\n ESP Chip was not initialized, entering offline mode\r\n");
-        OfflineMode = true;
-    }
+PRINTLINE;
+    _serial->printf("AT+CIPMUX=1\r\n");
+_serial->printf("AT+CWJAP=\"Hope\",\"weallneedit\"\r\n");
+_serial->printf("AT+CIPSTART=0,\"TCP\",\"10.0.0.6\",80\r\n");
+_serial->printf("AT+CIPSEND=0,70\r\n");
+_serial->printf("GET /bulk-sensor-readings.php?Board_ID=blun&Port_ID[]=bleh&Value[]=7\r\n");
+_serial->printf("AT+CIPCLOSE=0\r\n");
+
+    return 0;
+    */
+    _parser->debug_on(1);
+    _parser->set_delimiter("\r\n");
+    _parser->set_timeout(5000);
 
     mbed_printf("\r\nReading board settings from %s\r\n", config_file);
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
-    PRINTSTRING(Specs.DatabaseTableName);
+    wait(4);
+
+    //if (!checkESPWiFiConnection(_parser))
+        if (startESP(_parser) != NETWORKSUCCESS) {
+
+            mbed_printf(
+                "\r\n ESP Chip was not initialized, entering offline mode\r\n");
+            OfflineMode = true;
+        }
+
+    if (!checkESPWiFiConnection(_parser))
+        connectESPWiFi(_parser, Specs);
+
+
+    mbed_printf("%s\r\n",response.c_str());
 
     // if there is no database tableName, or it is all spaces, then exit
     if (Specs.DatabaseTableName == "" || Specs.DatabaseTableName == " ") {
@@ -124,16 +183,18 @@ int main() {
         mbed_printf("\r\n No Remote port specified, Entering offline mode\r\n");
     }
 
-    int wifi_err = 0;
+    int wifi_err = NETWORKSUCCESS;
     if (!OfflineMode) {
-        mbed_printf("trying to connect to %s\r\n", Specs.NetworkSSID.c_str());
-        wifi_err = connectESPWiFi(wifi, Specs);
-        if (wifi_err != NSAPI_ERROR_OK) {
+        if (!checkESPWiFiConnection(_parser)) {
+            mbed_printf("trying to connect to %s\r\n",
+                        Specs.NetworkSSID.c_str());
+            wifi_err = connectESPWiFi(_parser, Specs);
+        }
+
+        if (wifi_err != NETWORKSUCCESS) {
             mbed_printf("\r\n failed to connect to %s. Error code = %d \r\n",
                         Specs.NetworkSSID.c_str(), wifi_err);
-            ConnectedToWiFi = false;
         } else {
-            ConnectedToWiFi = true;
             mbed_printf(" connected to %s\r\n", Specs.NetworkSSID.c_str());
         }
     }
@@ -181,26 +242,24 @@ int main() {
         if (!OfflineMode) {
 
             // try to connect to wifi again if you are not connected now
-            if (!ConnectedToWiFi) {
+            if (!checkESPWiFiConnection(_parser)) {
 
                 mbed_printf("Trying to connect to %s \r\n",
                             Specs.NetworkSSID.c_str());
-                wifi_err = connectESPWiFi(wifi, Specs);
+                wifi_err = connectESPWiFi(_parser, Specs);
 
-                if (wifi_err != NSAPI_ERROR_OK) {
+                if (wifi_err != NETWORKSUCCESS) {
                     mbed_printf("Connection attempt failed error = %d\r\n",
                                 wifi_err);
-                    ConnectedToWiFi = false;
                 } else {
                     mbed_printf("Connected to %s \r\n",
                                 Specs.NetworkSSID.c_str());
-                    ConnectedToWiFi = true;
                 }
             }
 
             // if the board is connected to the network, send data to the
             // database
-            if (ConnectedToWiFi) {
+            if (checkESPWiFiConnection(_parser)) {
 
                 // send backed up data while waiting for the polling rate to
                 // expire
@@ -208,12 +267,19 @@ int main() {
                        checkForBackupFile(BackupFileName)) {
 
                     mbed_printf(
-                        "\r\n Sending backup up data to the database. \r\n");
-                    // send the backup data to the database
-                    wifi_err = sendBackupDataTLS(wifi, Specs, BackupFileName,
-                                                 response);
-                    mbed_printf("Response \r\n %s \r\n", response.c_str());
-                    if (wifi_err != NSAPI_ERROR_OK) {
+                        "\r\n Sending backed up data to the database. \r\n");
+PRINTLINE;
+                    wifi_err = sendBackupDataTCP(_parser, _serial, Specs,
+                                                 BackupFileName, response);
+                    float tmp = extractSampleRate(response);
+
+                    if (tmp != -1 && tmp > 0) {
+                        PollingInterval = tmp;
+                        mbed_printf("Sample interval is now %f\r\n",
+                                    PollingInterval);
+                    }
+
+                    if (wifi_err != NETWORKSUCCESS) {
                         mbed_printf(
                             "\r\n Failed to transmit backed up data to the "
                             "Database \r\n");
@@ -230,9 +296,11 @@ int main() {
                     mbed_printf(
                         "\r\n Sending the last port reading to the database "
                         "\r\n");
-                    // sends the data for all ports to the remote database
-                    wifi_err = sendBulkDataTLS(wifi, Specs, response);
-                    if (wifi_err != NSAPI_ERROR_OK) {
+
+                    wifi_err =
+                        sendBulkDataTCP(_parser, _serial, Specs, response);
+
+                    if (wifi_err != NETWORKSUCCESS) {
 
                         ServerConnection = false;
                         mbed_printf(
@@ -262,7 +330,6 @@ int main() {
         PollingTimer.reset();
     }
 }
-
 /**
  * \mainpage IAC Energy Monitoring project
  *

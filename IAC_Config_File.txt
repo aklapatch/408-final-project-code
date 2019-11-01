@@ -1,10 +1,13 @@
 # system info.
 # Board Number:Wifi-SSID:Wifi-Password:DataBase-TABLE:
 # for this to be detected, Board needs to be in this line and B needs to be the first letter in the line
-Board-2:IU DeviceNet: :Test-Board:
+Board-2:Hope:weallneedit:Test-Board:
 
-# Label:RemoteIP:portNum:file/link to reference with making a get request
-RemoteInfo:134.68.51.14:443:/~aklapatc/iac/bulk-data-send.php
+# Label:RemoteIP:portNum:file/link to reference for the get request
+# if you are using an https connection, put :TLS at the end of the get directory link
+# If not, leave it off
+# for example, you can do 
+ConnInfo:10.0.0.6:/~aklapatc/iac-website/bulk-sensor-readings.php
 
 # Sensor info
 
