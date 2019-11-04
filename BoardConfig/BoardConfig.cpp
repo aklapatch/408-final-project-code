@@ -13,10 +13,12 @@ void printSpecs(BoardSpecs &Specs) {
 
     mbed_printf("Remote IP = %s\t", Specs.RemoteIP.c_str());
     mbed_printf("Remote Get Request directory = %s\r\n",
+
                 Specs.RemoteDir.c_str());
 
     mbed_printf("remote http port = %d\t", Specs.RemotePort);
-    mbed_printf("TLS usage: %d\r\n", Specs.useTLS);
+
+    mbed_printf("Remote Hostname = %s\r\n", Specs.HostName);
 }
 // ============================================================================
 BoardSpecs readSDCard(const char *FileName) {
@@ -135,12 +137,9 @@ BoardSpecs readConfigText(FILE *fp) {
                 Specs.RemotePort = 0;
             }
 
-            if (strstr(Buffer, ":TLS")) {
-                Specs.useTLS = true;
+            Specs.HostName = strtok(NULL, s);
 
-                Specs.RemoteDir = strtok(NULL, s);
-            } else
-                Specs.RemoteDir = strtok(NULL, "\n");
+            Specs.RemoteDir = strtok(NULL, "\n");
         }
 
         // checks the character at the beginning of each line

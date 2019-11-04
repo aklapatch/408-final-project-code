@@ -33,31 +33,23 @@ void dumpSensorDataToFile(BoardSpecs &Specs, const char *FileName) {
         // only dump the data if the port multipler != 0
         if (Specs.Ports[i].Multiplier != 0.0f) {
 
-            fwrite(Specs.Ports[i].Name.c_str(),
-                   sizeof(char) * Specs.Ports[i].Name.size(), 1, File);
-
-            fputc(',', File);
-
-            fwrite(&(Specs.Ports[i].Value), sizeof(float), 1,
-                   File); // write binary data
-
-            fputc(',', File);
-
-            fwrite(Specs.Ports[i].Description.c_str(),
-                   sizeof(char) * Specs.Ports[i].Description.size(), 1, File);
-            fputc('\n', File);
+            fprintf(File, 
+                    "%s,%f,%s\n",
+                    Specs.Ports[i].Name.c_str(),
+                    Specs.Ports[i].Value, 
+                    Specs.Ports[i].Description.c_str()
+                    );
         }
     }
 
     fclose(File);
 }
 //=============================================================================
-// 1. get the number of ports the board has
-// 2. count the number of entries (\n)
-// 3. go back to the beginning of the file
-// 4. write (numlines - portNum) lines of text to a temporary file
-// 5. delete the old file
-// 6. rename the temporary file
+// 1. get the number of ports the board has (n ports)
+// 2. go down n ports
+// 3. transfer the rest of the file to another file (the first n entries were
+// read earlier);
+// 4. delete the original file
 bool deleteDataEntry(BoardSpecs &Specs, const char *FileName) {
 
     // get the data for the ports
@@ -78,19 +70,19 @@ bool deleteDataEntry(BoardSpecs &Specs, const char *FileName) {
         return false;
     }
 
-    // see how many lines (\n) are in the file
-    size_t line_num = 0;
-    int charac = 'a';
-    while ((charac = fgetc(DataFile)) != EOF) {
-        if (charac == '\n')
-            ++line_num;
+    // go down N port readings in the file
+    char *fgetstatus;
+    while (Size > 0) {
+        fgetstatus = fgets(NULL, LINESIZE, DataFile);
+
+        // in this case, you have already sent all the data entries and the
+        // backup file should be deleted
+        if (fgetstatus == NULL) {
+            fclose(DataFile);
+            remove(FileName);
+        }
+        --Size;
     }
-
-    // get the number of lines that you want to save
-    line_num -= Size;
-
-    // go to the beginning of the file
-    rewind(DataFile);
 
     // at this point, you need get the remaining data into a different file
     // We do not need to eat up all the memory, so we will do it in steps
@@ -107,13 +99,12 @@ bool deleteDataEntry(BoardSpecs &Specs, const char *FileName) {
         return true; // data still needs to be transmitted
     }
 
-    // transfer file contents line by line
-    while (line_num > 0) {
-        charac = fgetc(DataFile);
-        if (charac == '\n')
-            --line_num;
+    // transfer file contents
+    char Line[LINESIZE + 1];
 
-        fputc(charac, TempFile);
+    while (fgets(Line, LINESIZE, DataFile) != NULL) {
+        fputs(Line, DataFile);
+        memset(Line, 0, LINESIZE + 1);
     }
 
     // close the data file
@@ -149,30 +140,22 @@ vector<PortInfo> getSensorDataFromFile(BoardSpecs &Specs,
     // init vector to read data into
     vector<PortInfo> output(Size);
 
-    // get the data from the file to insert into the output vec
-    char Temp[LINESIZE];
     for (int i = 0; i < Size; ++i) {
-        // use fgetc since fgets ignores binary values
-        int characc = 0;
-        int j = 0;
-
-        // get just the name of the port`
-        while ((characc = fgetc(DataFile)) != ',') {
-            Temp[j++] = characc;
-        }
-        Temp[j] = 0;
-        output[i].Name.assign(Temp);
-
-        // get the port value
-        fread(&(output[i].Value), sizeof(float), 1, DataFile);
-
-        output[i].Multiplier = 1.0;
-
-        // go till the comma
-        while (fgetc(DataFile) != ','){}
+        // grab all the data
+        output[i].Name.reserve(60);
         output[i].Description.reserve(60);
-        fgets((char*)output[i].Description.data(), 60, DataFile);
-        mbed_printf(output[i].Description.c_str());
+        fscanf(DataFile, 
+                "%s,%f,%s\n",
+                (char *)output[i].Name.data(),
+               &(output[i].Value), 
+               (char *)output[i].Description.data()
+               );
+
+        output[i].Name.shrink_to_fit();
+
+        output[i].Description.shrink_to_fit();
+
+        Specs.Ports[i].Multiplier = 1.0f;
     }
     fclose(DataFile);
     return output;

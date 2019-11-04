@@ -80,6 +80,9 @@ struct BoardSpecs {
     /// The remote directory used when making a GET request
     string RemoteDir;
 
+    /// hostname for the site you are connecting to
+    string HostName;
+
     /// the http port used in the GET request
     uint16_t RemotePort;
 

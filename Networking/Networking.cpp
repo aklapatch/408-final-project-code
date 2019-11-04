@@ -17,7 +17,6 @@ const char *get_req_end = "\r\nHost: localhost";
 
 const int response_size = 512;
 
-
 /// A certificate for TLS communication. This certificate is from:
 /// https://github.com/ARMmbed/mbed-os-example-tls-socket/blob/master/main.cpp
 const char *ca_cert =
@@ -47,17 +46,17 @@ const char *ca_cert =
     "mnkPIAou1Z5jJh5VkpTYghdae9C8x49OhgQ=\n"
     "-----END CERTIFICATE-----";
 
-    int startESP(ATCmdParser *_parser) {
-        _parser->send("AT+CIPCLOSE=5");
-        _parser->recv("OK");
-        _parser->send("AT+CWMODE=3");
-        _parser->recv("OK"); 
-        _parser->send("AT+CIPMUX=1") ;
-        if ( _parser->recv("OK"))
-            return 0;
-        else 
-            return -1;
-    }
+int startESP(ATCmdParser *_parser) {
+    _parser->send("AT+CIPCLOSE=5");
+    _parser->recv("OK");
+    _parser->send("AT+CWMODE=3");
+    _parser->recv("OK");
+    _parser->send("AT+CIPMUX=1");
+    if (_parser->recv("OK"))
+        return 0;
+    else
+        return -1;
+}
 
 int connectESPWiFi(ATCmdParser *_parser, BoardSpecs &Specs) {
 
@@ -192,7 +191,6 @@ int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
         return -1;
     }
 
-
     _parser->send("AT+CIPSEND=0,%d", message.size());
     if (!_parser->recv("OK"))
         return -2;
@@ -203,10 +201,10 @@ int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
     if (!_parser->send("%s", message.c_str()))
         return -4;
 
-response.resize(256);
+    response.resize(256);
     _parser->recv("+IPD");
-    while(_parser->read((char*)response.data(), 255) > 0 ){
-        response[255]=0;
+    while (_parser->read((char *)response.data(), 255) > 0) {
+        response[255] = 0;
         mbed_printf("%s\r\n", response.c_str());
     }
 
@@ -216,14 +214,14 @@ response.resize(256);
     return NETWORKSUCCESS;
 }
 
-int sendBackupDataTCP(ATCmdParser *_parser,UARTSerial *_serial,
+int sendBackupDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
                       BoardSpecs &Specs, const char *FileName,
                       string &response) {
-PRINTLINE;
+    PRINTLINE;
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
-PRINTLINE;
+    PRINTLINE;
     string Message = makeGetReqStr(Ports, Specs);
-PRINTLINE;
+    PRINTLINE;
     return sendMessageTCP(_parser, _serial, Specs, Message, response);
 }
 
