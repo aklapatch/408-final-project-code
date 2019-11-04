@@ -166,7 +166,7 @@ int main() {
     if (Specs.HostName == "" || Specs.HostName == " ") {
         OfflineMode = true;
 
-        mbed_printf("\r\n No Remote port specified, Entering offline mode\r\n");
+        mbed_printf("\r\n No Remote Hostname found, Entering offline mode\r\n");
     }
 
     int wifi_err = NETWORKSUCCESS;
