@@ -13,10 +13,12 @@ void printSpecs(BoardSpecs &Specs) {
 
     mbed_printf("Remote IP = %s\t", Specs.RemoteIP.c_str());
     mbed_printf("Remote Get Request directory = %s\r\n",
+
                 Specs.RemoteDir.c_str());
 
     mbed_printf("remote http port = %d\t", Specs.RemotePort);
-    mbed_printf("TLS usage: %d\r\n", Specs.useTLS);
+
+    mbed_printf("Remote Hostname = %s\r\n", Specs.HostName.c_str());
 }
 // ============================================================================
 BoardSpecs readSDCard(const char *FileName) {
@@ -110,6 +112,7 @@ BoardSpecs readConfigText(FILE *fp) {
             tmp.RangeEnd = atof(value);
 
             Specs.Sensors.push_back(tmp); // store those values
+            mbed_printf("Sensor: Type: %s Unit: %s\r\n", tmp.Type.c_str(),tmp.Unit.c_str());
         }
     }
 
@@ -135,12 +138,9 @@ BoardSpecs readConfigText(FILE *fp) {
                 Specs.RemotePort = 0;
             }
 
-            if (strstr(Buffer, ":TLS")) {
-                Specs.useTLS = true;
+            Specs.HostName = strtok(NULL, s);
 
-                Specs.RemoteDir = strtok(NULL, s);
-            } else
-                Specs.RemoteDir = strtok(NULL, "\n");
+            Specs.RemoteDir = strtok(NULL, "\n");
         }
 
         // checks the character at the beginning of each line
@@ -225,8 +225,8 @@ string getSensorName(vector<SensorInfo> &Sensors, size_t Sens_ID) {
     size_t str_size = strlen(in) + Sensors[Sens_ID].Type.size() +
                       Sensors[Sens_ID].Unit.size();
 
-    string ret_str(str_size, '\0');
-
+    string ret_str;
+    ret_str.reserve(str_size);
     ret_str.append(Sensors[Sens_ID].Type);
     ret_str.append(in);
     ret_str.append(Sensors[Sens_ID].Unit);

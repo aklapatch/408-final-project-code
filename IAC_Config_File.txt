@@ -3,11 +3,9 @@
 # for this to be detected, Board needs to be in this line and B needs to be the first letter in the line
 Board-2:Hope:weallneedit:Test-Board:
 
-# Label:RemoteIP:portNum:file/link to reference for the get request
-# if you are using an https connection, put :TLS at the end of the get directory link
-# If not, leave it off
+# ConnInfo:IP address:portNum:hostname:file/link to reference for the get request
 # for example, you can do 
-ConnInfo:10.0.0.6:/~aklapatc/iac-website/bulk-sensor-readings.php
+ConnInfo:10.0.0.12:80:localhost:/seniorDesign/bulk_sensor_readings.php
 
 # Sensor info
 
@@ -36,7 +34,7 @@ Swt_Pos = 4 : 0 - 10 Vdc
 
 # Port info.
 
-# Port : SensorID : Swt_Pos
+# Port : SensorID : 
 # the sensor id has to be 9 spaces out
 # P has to be the first letter on the line ,otherwise the program will skip the line
 Port_1 : 2 : 2 

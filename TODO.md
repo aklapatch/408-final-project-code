@@ -1,17 +1,14 @@
 # TODO
 This is by no means a complete TODO list
-- Think of a way to address the failure to open a log file (OfflineLogging.cpp)
-- write a test suite for the offline logging functions
-- test everything
-- simplify the logic in main.cpp
-- make a simple file header for all files in this project
-- in the initialization fucntion for boardspecs, add in a parameter to pass in teh wifi access point so that you can set the wifi ssid and password without storing them twice (in boardspecs and the wifiInterface class)
-- Add the remote pollling rate, or make some code to deal with that
-# Planning
-
-# notes
-The get bulk data get request is probably not going to work. It will most likely need to be changed to something like `GET / HTTP/1.1\r\nHost: hostname.com\r\nConnection: close\r\n`  or something in that format
+- assigning a Sensor its own ID does nothing, remove the ID from the logic and the config file
+- change the config file so that it has one variable for each connection quality, like so:
+    RemoteIP:IPGoesHere
+    HostName:NameGoesHere
+    PortNumber:NumberGoesHere   
+- document the config file    
+- change the method by which the board scans the response for a polling rate
 
 # scope creep features
 - watchdog timere
 - saving time, persistence of polling rate after changing (saving to file)
+- add error logging (logging in general)

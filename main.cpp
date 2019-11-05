@@ -71,7 +71,7 @@ float extractSampleRate(string &message_response) {
 int main() {
 
     // interval for the sensor polling
-    float PollingInterval = 5.0;
+    float PollingInterval = 7.0f;
 
     // name of the file where data is stored
     const char BackupFileName[] = "/sd/PortReadings.dat";
@@ -103,57 +103,36 @@ int main() {
     // data is gathered from these ports/sensor pins
     AnalogIn Port[] = {PTB2,  PTB3, PTB10, PTB11, PTC11,
                        PTC10, PTC2, PTC0,  PTC9,  PTC8};
-PRINTLINE;
+    PRINTLINE;
     const char *config_file = "/sd/IAC_Config_File.txt";
 
     bool OfflineMode = false; // indicates whether to actually send data or not
     bool ServerConnection = false;
 
     string response(""); // a response from tcp/tls connections
-PRINTLINE;
     UARTSerial *_serial = new UARTSerial(PTC17, PTC16, 115200);
     ATCmdParser *_parser = new ATCmdParser(_serial);
-/*
-PRINTLINE;
-    _serial->printf("AT+CWMODE=3\r\n");
-    PRINTLINE;
-wait(4);
-response.reserve(255);
-_serial->scanf("%s",response.data());
-PRINTLINE;
-PRINTSTRING(response);
 
-PRINTLINE;
-    _serial->printf("AT+CIPMUX=1\r\n");
-_serial->printf("AT+CWJAP=\"Hope\",\"weallneedit\"\r\n");
-_serial->printf("AT+CIPSTART=0,\"TCP\",\"10.0.0.6\",80\r\n");
-_serial->printf("AT+CIPSEND=0,70\r\n");
-_serial->printf("GET /bulk-sensor-readings.php?Board_ID=blun&Port_ID[]=bleh&Value[]=7\r\n");
-_serial->printf("AT+CIPCLOSE=0\r\n");
-
-    return 0;
-    */
     _parser->debug_on(1);
     _parser->set_delimiter("\r\n");
-    _parser->set_timeout(5000);
+    _parser->set_timeout(3000);
 
     mbed_printf("\r\nReading board settings from %s\r\n", config_file);
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
     wait(4);
 
-    //if (!checkESPWiFiConnection(_parser))
-        if (startESP(_parser) != NETWORKSUCCESS) {
+    // if (!checkESPWiFiConnection(_parser))
+    if (startESP(_parser) != NETWORKSUCCESS) {
 
-            mbed_printf(
-                "\r\n ESP Chip was not initialized, entering offline mode\r\n");
-            OfflineMode = true;
-        }
+        mbed_printf(
+            "\r\n ESP Chip was not initialized, entering offline mode\r\n");
+        OfflineMode = true;
+    }
 
     if (!checkESPWiFiConnection(_parser))
         connectESPWiFi(_parser, Specs);
 
-
-    mbed_printf("%s\r\n",response.c_str());
+    mbed_printf("%s\r\n", response.c_str());
 
     // if there is no database tableName, or it is all spaces, then exit
     if (Specs.DatabaseTableName == "" || Specs.DatabaseTableName == " ") {
@@ -181,6 +160,12 @@ _serial->printf("AT+CIPCLOSE=0\r\n");
         OfflineMode = true;
 
         mbed_printf("\r\n No Remote port specified, Entering offline mode\r\n");
+    }
+
+    if (Specs.HostName == "" || Specs.HostName == " ") {
+        OfflineMode = true;
+
+        mbed_printf("\r\n No Remote Hostname found, Entering offline mode\r\n");
     }
 
     int wifi_err = NETWORKSUCCESS;
@@ -268,7 +253,6 @@ _serial->printf("AT+CIPCLOSE=0\r\n");
 
                     mbed_printf(
                         "\r\n Sending backed up data to the database. \r\n");
-PRINTLINE;
                     wifi_err = sendBackupDataTCP(_parser, _serial, Specs,
                                                  BackupFileName, response);
                     float tmp = extractSampleRate(response);
@@ -292,7 +276,7 @@ PRINTLINE;
                     }
                 }
 
-                if (ServerConnection) {
+                if (!checkForBackupFile(BackupFileName)){
                     mbed_printf(
                         "\r\n Sending the last port reading to the database "
                         "\r\n");
@@ -305,11 +289,16 @@ PRINTLINE;
                         ServerConnection = false;
                         mbed_printf(
                             "Could not send data to database, error = %d\r\n",
+
                             wifi_err);
+
+                        dumpSensorDataToFile(Specs, BackupFileName);
                     }
-                } else {
+                }
+                else{
                     dumpSensorDataToFile(Specs, BackupFileName);
                 }
+
 
             } else { // back up data if you are not connected
                 dumpSensorDataToFile(Specs, BackupFileName);
