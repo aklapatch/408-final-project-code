@@ -83,7 +83,7 @@ int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
 /// \param wifi The ESP8266 instance to use.
 /// \param message The plaintext message to send
 int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
-                   string &message, string &response);
+                   string &message, float &response);
 
 /// Tries to send data from the current port readings in Specs to the remote
 /// database without TLS. This will work for http connections. sock MUST already
@@ -93,7 +93,7 @@ int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
 /// code from the Mbed Socket api: see
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
 int sendBulkDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
-                    BoardSpecs &Specs, string &response);
+                    BoardSpecs &Specs, float &response);
 
 /// tries to send backup data to the database without TLS. This will work for
 /// http connections. sock MUST already be allocated and paired with a network
@@ -104,6 +104,6 @@ int sendBulkDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
 /// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
 int sendBackupDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
                       BoardSpecs &Specs, const char *FileName,
-                      string &response);
+                      float &response);
 
 #endif

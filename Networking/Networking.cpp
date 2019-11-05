@@ -193,7 +193,7 @@ bool checkESPWiFiConnection(ATCmdParser *_parser) {
 }
 // ============================================================================
 int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
-                   string &message, string &response) {
+                   string &message, float &response) {
 
     _parser->send("AT+CIPSTART=0,\"TCP\",\"%s\",%d", Specs.RemoteIP.c_str(),
                   Specs.RemotePort);
@@ -210,12 +210,24 @@ int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
     if (!_parser->send("%s", message.c_str()))
         return -4;
 
-    response.resize(256);
-    if ( !_parser->recv("+IPD"))
+    if (!_parser->recv("+IPD"))
         return -5;
-    while (_parser->read((char *)response.data(), 255) > 0) {
-        response[255] = 0;
-        mbed_printf("%s\r\n", response.c_str());
+
+    char Buf[255];
+    _parser->read(Buf, 254);
+    Buf[254] = 0;
+    mbed_printf("Response: %s\r\n", Buf);
+    if (strstr(Buf, "404"))
+        return -6;
+    
+    // get polling rate
+    const char *tok = "samplerate=\"";
+    char * ratestart = strstr(Buf, tok);
+    // go right up to the float value
+    ratestart += strlen(tok);
+
+    if (isdigit(ratestart[0])){
+        response = atof(ratestart);
     }
 
     _parser->send("AT+CIPCLOSE=5");
@@ -226,7 +238,7 @@ int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
 
 int sendBackupDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
                       BoardSpecs &Specs, const char *FileName,
-                      string &response) {
+                      float &response) {
     mbed_printf("Sending backup data over the network \r\n");
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
     string Message = makeGetReqStr(Ports, Specs);
@@ -235,7 +247,7 @@ int sendBackupDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
 
 // =============================================================================
 int sendBulkDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
-                    BoardSpecs &Specs, string &response) {
+                    BoardSpecs &Specs, float &response) {
 
     string message = makeGetReqStr(Specs);
 
