@@ -24,54 +24,11 @@ FATFileSystem fs("sd");
 
 using namespace std;
 
-/// returns the characters between startchars and endchars. It returns an empty
-/// string if it cannot find the start and enc filter sequences
-string textBetween(string input, const char *startchars, const char *endchars) {
-
-    // check if the string is big engough to actually filter
-    // this will throw and exception if we do not do this
-    size_t filter_size = strlen(startchars) + strlen(endchars);
-    if (filter_size >= input.size())
-        return "";
-
-    size_t start_idx = input.find(startchars);
-    size_t end_idx = input.find(endchars);
-
-    // return an empty string if you cannot find the filter text
-    if (start_idx != string::npos || end_idx != string::npos)
-        return "";
-
-    if (start_idx > end_idx)
-        return "";
-
-    start_idx += strlen(startchars);
-
-    return input.substr(start_idx, end_idx - start_idx);
-}
-
-const char *filter_start = "samplerate=\"";
-const char *filter_end = "\"></span>";
-
-/// extracts the sample rate from response text, converts it to a float, and
-/// returns it. This returns -1 if it fails.
-float extractSampleRate(string &message_response) {
-    string rate_text = textBetween(message_response, filter_start, filter_end);
-    if (rate_text == "")
-        return -1;
-    else {
-        if (isdigit(rate_text[0]))
-
-            return stof(rate_text);
-
-        else
-            return -1;
-    }
-}
 
 int main() {
 
     // interval for the sensor polling
-    float PollingInterval = 7.0f;
+    float PollingInterval = 5.0f;
 
     // name of the file where data is stored
     const char BackupFileName[] = "/sd/PortReadings.dat";
@@ -253,11 +210,12 @@ int main() {
 
                     mbed_printf(
                         "\r\n Sending backed up data to the database. \r\n");
+                    float tmp = -1;
                     wifi_err = sendBackupDataTCP(_parser, _serial, Specs,
-                                                 BackupFileName, response);
-                    float tmp = extractSampleRate(response);
+                                                 BackupFileName, tmp);
+                    
 
-                    if (tmp != -1 && tmp > 0) {
+                    if (tmp != -1.0f && tmp > 0.0f) {
                         PollingInterval = tmp;
                         mbed_printf("Sample interval is now %f\r\n",
                                     PollingInterval);
@@ -280,10 +238,15 @@ int main() {
                     mbed_printf(
                         "\r\n Sending the last port reading to the database "
                         "\r\n");
-
+                    float tmp = -1;
                     wifi_err =
-                        sendBulkDataTCP(_parser, _serial, Specs, response);
+                        sendBulkDataTCP(_parser, _serial, Specs, tmp);
 
+                    if (tmp != -1.0f && tmp > 0.0f) {
+                        PollingInterval = tmp;
+                        mbed_printf("Sample interval is now %f\r\n",
+                                    PollingInterval);
+                    }
                     if (wifi_err != NETWORKSUCCESS) {
 
                         ServerConnection = false;
@@ -291,6 +254,7 @@ int main() {
                             "Could not send data to database, error = %d\r\n",
 
                             wifi_err);
+
 
                         dumpSensorDataToFile(Specs, BackupFileName);
                     }
