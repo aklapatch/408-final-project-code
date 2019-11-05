@@ -13,7 +13,9 @@ const char *id_get_str = "Board_ID=";
 
 const char *get_req_start = "GET ";
 
-const char *get_req_end = "\r\nHost: localhost";
+const char *req_header = "Host: ";
+
+const char *get_req_end = "\r\n";
 
 const int response_size = 512;
 
@@ -85,6 +87,7 @@ string makeGetReqStr(BoardSpecs &Specs) {
     // add on for the \r\n
     message_size +=
         strlen(id_get_str) + strlen(get_req_start) + strlen(get_req_end);
+    message_size += strlen(req_header) + Specs.HostName.size() + strlen("\r\n");
 
     string Message = get_req_start;
 
@@ -108,6 +111,9 @@ string makeGetReqStr(BoardSpecs &Specs) {
             Message.append(to_string(Specs.Ports[i].Value));
         }
     }
+    Message.append("\r\n");
+    Message.append(req_header);
+    Message.append(Specs.HostName);
     Message.append(get_req_end);
 
     return Message;
@@ -125,7 +131,7 @@ string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
     size_t get_extras = strlen(port_get_str) + strlen(value_get_str);
 
     for (size_t i = 0; i < End; ++i) {
-        if (Ports[i].Multiplier != 0) {
+        if (Ports[i].Multiplier != 0.0f) {
             message_size += Ports[i].Name.size() +
                             to_string(Ports[i].Value).size() + get_extras;
         }
@@ -133,6 +139,8 @@ string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
     // add on for the \r\n
     message_size +=
         strlen(id_get_str) + strlen(get_req_start) + strlen(get_req_end);
+
+    message_size += strlen(req_header) + Specs.HostName.size() + strlen("\r\n");
 
     string Message = get_req_start;
 
@@ -149,13 +157,16 @@ string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
 
     // append to get request for every active port
     for (size_t i = 0; i < End; ++i) {
-        if (Ports[i].Multiplier != 0) {
+        if (Ports[i].Multiplier != 0.0f) {
             Message.append(port_get_str);
             Message.append(Ports[i].Name);
             Message.append(value_get_str);
             Message.append(to_string(Ports[i].Value));
         }
     }
+    Message.append("\r\n");
+    Message.append(req_header);
+    Message.append(Specs.HostName);
     Message.append(get_req_end);
 
     return Message;
@@ -192,8 +203,6 @@ int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
     }
 
     _parser->send("AT+CIPSEND=0,%d", message.size());
-    if (!_parser->recv("OK"))
-        return -2;
 
     if (!_parser->recv(">"))
         return -3;
@@ -202,7 +211,8 @@ int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
         return -4;
 
     response.resize(256);
-    _parser->recv("+IPD");
+    if ( !_parser->recv("+IPD"))
+        return -5;
     while (_parser->read((char *)response.data(), 255) > 0) {
         response[255] = 0;
         mbed_printf("%s\r\n", response.c_str());
@@ -217,11 +227,9 @@ int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
 int sendBackupDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
                       BoardSpecs &Specs, const char *FileName,
                       string &response) {
-    PRINTLINE;
+    mbed_printf("Sending backup data over the network \r\n");
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
-    PRINTLINE;
     string Message = makeGetReqStr(Ports, Specs);
-    PRINTLINE;
     return sendMessageTCP(_parser, _serial, Specs, Message, response);
 }
 

@@ -18,7 +18,7 @@ void printSpecs(BoardSpecs &Specs) {
 
     mbed_printf("remote http port = %d\t", Specs.RemotePort);
 
-    mbed_printf("Remote Hostname = %s\r\n", Specs.HostName);
+    mbed_printf("Remote Hostname = %s\r\n", Specs.HostName.c_str());
 }
 // ============================================================================
 BoardSpecs readSDCard(const char *FileName) {
@@ -112,6 +112,7 @@ BoardSpecs readConfigText(FILE *fp) {
             tmp.RangeEnd = atof(value);
 
             Specs.Sensors.push_back(tmp); // store those values
+            mbed_printf("Sensor: Type: %s Unit: %s\r\n", tmp.Type.c_str(),tmp.Unit.c_str());
         }
     }
 
@@ -224,8 +225,8 @@ string getSensorName(vector<SensorInfo> &Sensors, size_t Sens_ID) {
     size_t str_size = strlen(in) + Sensors[Sens_ID].Type.size() +
                       Sensors[Sens_ID].Unit.size();
 
-    string ret_str(str_size, '\0');
-
+    string ret_str;
+    ret_str.reserve(str_size);
     ret_str.append(Sensors[Sens_ID].Type);
     ret_str.append(in);
     ret_str.append(Sensors[Sens_ID].Unit);

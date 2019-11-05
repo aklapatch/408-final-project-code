@@ -71,7 +71,7 @@ float extractSampleRate(string &message_response) {
 int main() {
 
     // interval for the sensor polling
-    float PollingInterval = 5.0;
+    float PollingInterval = 7.0f;
 
     // name of the file where data is stored
     const char BackupFileName[] = "/sd/PortReadings.dat";
@@ -110,13 +110,12 @@ int main() {
     bool ServerConnection = false;
 
     string response(""); // a response from tcp/tls connections
-    PRINTLINE;
     UARTSerial *_serial = new UARTSerial(PTC17, PTC16, 115200);
     ATCmdParser *_parser = new ATCmdParser(_serial);
 
     _parser->debug_on(1);
     _parser->set_delimiter("\r\n");
-    _parser->set_timeout(5000);
+    _parser->set_timeout(3000);
 
     mbed_printf("\r\nReading board settings from %s\r\n", config_file);
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
@@ -254,7 +253,6 @@ int main() {
 
                     mbed_printf(
                         "\r\n Sending backed up data to the database. \r\n");
-                    PRINTLINE;
                     wifi_err = sendBackupDataTCP(_parser, _serial, Specs,
                                                  BackupFileName, response);
                     float tmp = extractSampleRate(response);
@@ -278,7 +276,7 @@ int main() {
                     }
                 }
 
-                if (ServerConnection) {
+                if (!checkForBackupFile(BackupFileName)){
                     mbed_printf(
                         "\r\n Sending the last port reading to the database "
                         "\r\n");
@@ -291,11 +289,16 @@ int main() {
                         ServerConnection = false;
                         mbed_printf(
                             "Could not send data to database, error = %d\r\n",
+
                             wifi_err);
+
+                        dumpSensorDataToFile(Specs, BackupFileName);
                     }
-                } else {
+                }
+                else{
                     dumpSensorDataToFile(Specs, BackupFileName);
                 }
+
 
             } else { // back up data if you are not connected
                 dumpSensorDataToFile(Specs, BackupFileName);
