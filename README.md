@@ -18,11 +18,11 @@ That will automatically grab the project and basically `git clone` it right in y
 
 You might need to run `mbed deploy` to download all the necessary libraries to build the program.
 
-And you might have to fiddle with different versions of python packages. (use pip to get the newest, that worked for me at one point)
+And you might have to fiddle with different versions of python packages. (try using pip to get the newest, that worked for me at one point)
 
 When you have your environment setup and every tool is added to your path, you should be able to run `mbed compile -m k64f -t GCC_ARM --flash` with a FRDM K64F connected, and the program should compile and be flashed to the K64F.
 
-The ESP8266 chip may to have firmware of at least v2 to work. There are some instructions/tips in the `getting the ESP8266 to work with the arduino.md` file, but you are on your own as far as that goes. 
+The ESP8266 chip may need firmware of at least v2 to work. There are some instructions/tips in the `getting the ESP8266 to work with the arduino.md` file, but you are on your own as far as that goes. 
 
 Some Arduino instructions for flashing [here](https://www.electronicshub.org/update-flash-esp8266-firmware/).
 
