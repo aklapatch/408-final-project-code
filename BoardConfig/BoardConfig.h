@@ -1,15 +1,13 @@
 #ifndef BOARDCONFIG_H
 #define BOARDCONFIG_H
 /// \file
-/// Has the function prototypes for functions that set the board's
+/// \brief Has the function prototypes for functions that set the board's
 /// configuration.
 
 #include "Networking.h"
 #include "Structs.h"
 #include "mbed.h"
 #include "mbed_printf.h"
-
-// C++ headers
 
 // C headers
 //
@@ -20,6 +18,10 @@ using namespace std;
 
 /// Arbitrary length for char buffers
 #define BUFFLEN 1024
+
+/// Prints out most of the values of the member variables in \ref Specs
+/// This excludes the port configuration values.
+void printSpecs(BoardSpecs &Specs);
 
 /// Tries to open the specified file to read and return the configuration.
 /// \returns The board's configuration
@@ -48,11 +50,5 @@ float setUnitMultiplier(vector<SensorInfo> &Sensors, size_t Sens_ID);
 /// \param Sensors The set of sensor information to pick from
 /// \returns What that sensor measures
 string getSensorName(vector<SensorInfo> &Sensors, size_t Sens_ID);
-
-/// Converts an integer to a string without C++11 functions.
-string toString(int input);
-
-/// Converts a float to a string without C++11 functions.
-string toString(float input);
 
 #endif // BOARDCONFIG

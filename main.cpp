@@ -1,4 +1,5 @@
-
+/// \file
+/// \brief Contains the logic and control flow for the entire program.
 
 #include "BoardConfig.h"
 #include "ESP8266.h"
@@ -23,7 +24,6 @@ BlockDevice *bd = BlockDevice::get_default_instance();
 FATFileSystem fs("sd");
 
 using namespace std;
-
 
 int main() {
 
@@ -64,7 +64,6 @@ int main() {
     const char *config_file = "/sd/IAC_Config_File.txt";
 
     bool OfflineMode = false; // indicates whether to actually send data or not
-    bool ServerConnection = false;
 
     string response(""); // a response from tcp/tls connections
     UARTSerial *_serial = new UARTSerial(PTC17, PTC16, 115200);
@@ -211,9 +210,8 @@ int main() {
                     mbed_printf(
                         "\r\n Sending backed up data to the database. \r\n");
                     float tmp = -1;
-                    wifi_err = sendBackupDataTCP(_parser, _serial, Specs,
-                                                 BackupFileName, tmp);
-                    
+                    wifi_err =
+                        sendBackupDataTCP(_parser, Specs, BackupFileName, tmp);
 
                     if (tmp != -1.0f && tmp > 0.0f) {
                         PollingInterval = tmp;
@@ -225,7 +223,6 @@ int main() {
                         mbed_printf(
                             "\r\n Failed to transmit backed up data to the "
                             "Database \r\n");
-                        ServerConnection = false;
                         mbed_printf("Error code = %d\r\n", wifi_err);
                         break; // stop transmitting if data transmission failed.
 
@@ -234,13 +231,12 @@ int main() {
                     }
                 }
 
-                if (!checkForBackupFile(BackupFileName)){
+                if (!checkForBackupFile(BackupFileName)) {
                     mbed_printf(
                         "\r\n Sending the last port reading to the database "
                         "\r\n");
                     float tmp = -1;
-                    wifi_err =
-                        sendBulkDataTCP(_parser, _serial, Specs, tmp);
+                    wifi_err = sendBulkDataTCP(_parser, Specs, tmp);
 
                     if (tmp != -1.0f && tmp > 0.0f) {
                         PollingInterval = tmp;
@@ -249,20 +245,16 @@ int main() {
                     }
                     if (wifi_err != NETWORKSUCCESS) {
 
-                        ServerConnection = false;
                         mbed_printf(
                             "Could not send data to database, error = %d\r\n",
 
                             wifi_err);
 
-
                         dumpSensorDataToFile(Specs, BackupFileName);
                     }
-                }
-                else{
+                } else {
                     dumpSensorDataToFile(Specs, BackupFileName);
                 }
-
 
             } else { // back up data if you are not connected
                 dumpSensorDataToFile(Specs, BackupFileName);
@@ -292,7 +284,10 @@ int main() {
  * This usage is collected through sensors attached to the board.
  * Then it is uploaded to a database where the data can be processed later.
  *
+ * If you have any questions, please email me at klapatchaaron at gmail dot com
+ *
  * Here is how some of the code is organized:
+ * - main.cpp -> Well, it's where everything starts.
  * - Networking.cpp / Networking.h -> functions related to networking
  * - BoardConfig.cpp / BoardConfig.h -> functions for getting, and holding the
  *   configuration for the board

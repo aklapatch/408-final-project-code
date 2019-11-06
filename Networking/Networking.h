@@ -1,15 +1,12 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 /// \file
-/// Networking function declarations
+/// \brief Networking function declarations
 #include "ATCmdParser.h"
 #include "BoardConfig.h"
-#include "ESP8266Interface.h"
 #include "OfflineLogging.h"
 #include "SocketAddress.h"
 #include "Structs.h"
-#include "TCPSocket.h"
-#include "TLSSocket.h"
 #include "UARTSerial.h"
 #include "mbed.h"
 
@@ -21,89 +18,46 @@
 /// Arbitrary char array length
 #define BUFFLEN 1024
 
+/// a constant value that is returned from some functions upon a successful
+// network operations
 #define NETWORKSUCCESS (0)
 
 using namespace std;
-/// starts the ESP8266 with the correct settings
+/// starts the ESP8266 with the correct settings:
 /// CIPMUX=1 and CWMODE=3
+/// returns NETWORKSUCCESS if successful, -1 otherwise.
 int startESP(ATCmdParser *_parser);
 
 /// Uses the SSID and Password stored in Specs to connect to that network
-/// Returns the mbed error code that you get when trying to connect
-/// THE ESP8266Interface MUST BE ALLOCATE/INITALIZED ALREADY. It will not be
-/// freed inside this function either.
-/// \param wifi The ESP8266 connection to use
-/// \param Specs The data structure where the SSID and Password are pulled from
-/// \returns The error code from the Mbed api: see
-/// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
+/// returns NETWORKSUCCESS if successful, and a negative integer otherwise
 int connectESPWiFi(ATCmdParser *_parser, BoardSpecs &Specs);
 
 /// return true if you are connected to a wifi network, and false if you are not
-/// \param wifi The ESP8266 instance to use
 bool checkESPWiFiConnection(ATCmdParser *_parser);
 
-/// Opens a socket using wifi and sends message to a remote host with
-/// TLS. sock MUST already be allocated and paired with a network interface, and
-/// have its ca_cert set too \param wifi The ESP instance to use \param message
-/// The data to send \returns And error code from the Mbed Socket api: see
-/// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendMessageTLS(ESP8266Interface *wifi, string &message, string &response);
+/// makes a get request string to send the port readings from Ports to the
+/// remote database in Specs
+string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs);
 
-/// Tries to send data from the current port readings in Specs to the remote
-/// database param wifi The ESP8266 instance to use. This uses TLS encryption
-/// and is intended for https connections. sock MUST already be allocated and
-/// paired with a network interface, and have its ca_cert set too and database
-/// table name are pulled from here \returns And error code from the Mbed Socket
-/// api: see
-/// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-/// \param wifi the ESP8266 instance to use
-/// \param Specs The port readings that are sent are pulled from here
-int sendBulkDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
-                    string &response);
+/// makes a get request string to send the Port samples in Specs to the remote
+/// database specified in Specs
+string makeGetReqStr(BoardSpecs &Specs);
 
-/// Tries to send backup data to the database. This uses TLS and is intended for
-/// https connections.sock MUST already be allocated and paired with a network
-/// interface, and have its ca_cert set too
-// \returns An error code from
-/// the Mbed Socket api: see
-/// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-/// \param wifi the ESP8266 instance to use
-/// \param Specs the number of port samples is pulled from the number of ports
-/// that Specs has
-/// \param FileName The file from which to pull port readings
-int sendBackupDataTLS(ESP8266Interface *wifi, BoardSpecs &Specs,
-                      const char *FileName, string &response);
+/// Sends message over TCP to the destination specified in Specs
+/// response is the new sampling interval for the board that you get
+/// back from the server.
+int sendMessageTCP(ATCmdParser *_parser, BoardSpecs &Specs, string &message,
+                   float &response);
 
-/// Opens a socket using wifi and sends message to a remote host
-/// (without TLS)
-/// send. sock MUST already be allocated and paired with a network interface,
-/// and have its ca_cert set too \returns And error code from the Mbed Socket
-/// api: see
-/// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-/// \param wifi The ESP8266 instance to use.
-/// \param message The plaintext message to send
-int sendMessageTCP(ATCmdParser *_parser, UARTSerial *_serial, BoardSpecs &Specs,
-                   string &message, float &response);
+/// sends a GET request with the most recent port readings to the remote
+/// location specified in Specs. response is the new sampling interval for the
+/// board that you get back from the server.
+int sendBulkDataTCP(ATCmdParser *_parser, BoardSpecs &Specs, float &response);
 
-/// Tries to send data from the current port readings in Specs to the remote
-/// database without TLS. This will work for http connections. sock MUST already
-/// be allocated and paired with a network interface, and have its ca_cert set
-/// too \param wifi The ESP8266 instance to use \param Specs The set of port
-/// readings and database table name are pulled from here \returns And error
-/// code from the Mbed Socket api: see
-/// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendBulkDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
-                    BoardSpecs &Specs, float &response);
-
-/// tries to send backup data to the database without TLS. This will work for
-/// http connections. sock MUST already be allocated and paired with a network
-/// interface, and have its ca_cert set too \param wifi The ESP8266 instance to
-/// use \param Specs provides the dabase table name and board name \param
-/// FileName the file to pull data readings from \returns An error code from the
-/// Mbed Socket api: see
-/// https://github.com/ARMmbed/mbed-os/blob/master/features/netsocket/nsapi_types.h#L37
-int sendBackupDataTCP(ATCmdParser *_parser, UARTSerial *_serial,
-                      BoardSpecs &Specs, const char *FileName,
-                      float &response);
-
+/// grabs port readings from FileName and
+/// sends a GET request with those readings to the remote location specified in
+/// Specs. response is the new sampling interval for the board that you get back
+/// from the server.
+int sendBackupDataTCP(ATCmdParser *_parser, BoardSpecs &Specs,
+                      const char *FileName, float &response);
 #endif

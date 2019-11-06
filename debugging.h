@@ -1,12 +1,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H
-//===-- debug.h - Debugging macros -----------------===//
-//
-// Part of the IAC energy monitoring project
-//
-//===---------------------------------------------------------------------===//
 /// \file
-/// Defines macros that make debugging easier.
+/// \brief Defines macros that make debugging easier.
 
 /// Prints out the current line of text and name of the file that this macro is
 /// in and on.
