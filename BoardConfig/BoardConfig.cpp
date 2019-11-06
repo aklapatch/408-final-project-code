@@ -1,4 +1,5 @@
-
+/// \file
+/// \brief Definitions for board configuration functions
 #include "BoardConfig.h"
 #include "debugging.h"
 #include <cctype>
@@ -57,14 +58,6 @@ BoardSpecs readSDCard(const char *FileName) {
     return Output;
 }
 
-// increments Text until is not pointed at a ' ' character
-char *goPastSpaces(char *Text) {
-    while (Text[0] == ' ') {
-        ++Text;
-    }
-    return Text;
-}
-
 // ============================================================================
 BoardSpecs readConfigText(FILE *fp) {
     BoardSpecs Specs;
@@ -112,7 +105,8 @@ BoardSpecs readConfigText(FILE *fp) {
             tmp.RangeEnd = atof(value);
 
             Specs.Sensors.push_back(tmp); // store those values
-            mbed_printf("Sensor: Type: %s Unit: %s\r\n", tmp.Type.c_str(),tmp.Unit.c_str());
+            mbed_printf("Sensor: Type: %s Unit: %s\r\n", tmp.Type.c_str(),
+                        tmp.Unit.c_str());
         }
     }
 

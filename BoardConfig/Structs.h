@@ -1,7 +1,7 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 /// \file
-/// Has the structs that store the board's information.
+///  \brief Has the structs that store the board's information.
 
 #include "mbed.h"
 #include <string>
@@ -41,7 +41,7 @@ struct PortInfo {
 struct SensorInfo {
     int ID; ///< The sensor's id integer
 
-    string Type; ///< quatity that the sensor type measures.
+    string Type; ///< quantity that the sensor type measures.
 
     string Unit; ///< Unit the quantity is measured in
 
@@ -57,12 +57,13 @@ struct SensorInfo {
           RangeStart(0.0), RangeEnd(0) {}
 };
 
-/// Contains board properties and the ports' data and info
+/// Contains board properties and the ports' data and info.
+
 /// To access a port's data, use this syntax: BoardSpecs.Ports[i].Value
 /// \sa PortInfo
 struct BoardSpecs {
 
-    /// Unique identifier for the Board
+    /// The board's name
     string ID;
 
     /// Name of the WiFi network to connect to
@@ -71,7 +72,9 @@ struct BoardSpecs {
     /// Password of the above WiFi network
     string NetworkPassword;
 
-    /// The Database table name that this board is associated with
+    /// The name used in the remote database to identify this board.
+    /// This name is sent up every time this board needs to send data
+    /// to the remote database
     string DatabaseTableName;
 
     /// The IP Address that this board will communicate with
@@ -92,9 +95,6 @@ struct BoardSpecs {
     /// Collection of possible sensor types.
     vector<SensorInfo> Sensors;
 
-    /// Whether to use a TLS connection (https)
-    bool useTLS;
-
     /// Sets the number of ports for the board
     void setPortNum(unsigned int Num) { Ports.resize(Num); }
 
@@ -103,11 +103,9 @@ struct BoardSpecs {
 
     /// Default constructor.
     /// Sets all strings to "" and sets the initializes the vector size to 0
-    /// This one sets useTLS to false, so it will not use an encrypted
-    /// connection by default
     BoardSpecs()
         : ID(""), NetworkSSID(""), NetworkPassword(""), DatabaseTableName(""),
-          RemoteIP(""), RemoteDir(""), RemotePort(0), Ports(), useTLS(false) {}
+          RemoteIP(""), RemoteDir(""), RemotePort(0), Ports() {}
 };
 
 #endif // STRUCTS

@@ -1,5 +1,5 @@
 /** @file
-    Implementations for Data logging functions
+ \brief    Implementations for Data logging functions
 
 */
 #include "OfflineLogging.h"
@@ -33,15 +33,11 @@ void dumpSensorDataToFile(BoardSpecs &Specs, const char *FileName) {
         // only dump the data if the port multipler != 0
         if (Specs.Ports[i].Multiplier != 0.0f) {
 
-            fprintf(File, 
-                    "%s,%f,%s",
-                    Specs.Ports[i].Name.c_str(),
-                    Specs.Ports[i].Value, 
-                    Specs.Ports[i].Description.c_str()
-                    );
-            // I moved adding the \n down here because fprintf may have been botching it
-            // I am not sure though act as you feel is best
-            fputc('\n',File);
+            fprintf(File, "%s,%f,%s", Specs.Ports[i].Name.c_str(),
+                    Specs.Ports[i].Value, Specs.Ports[i].Description.c_str());
+            // I moved adding the \n down here because fprintf may have been
+            // botching it I am not sure though act as you feel is best
+            fputc('\n', File);
         }
     }
 
@@ -88,14 +84,14 @@ bool deleteDataEntry(BoardSpecs &Specs, const char *FileName) {
         --Size;
     }
     int flocation = ftell(DataFile);
-    if (fgets(Line, LINESIZE, DataFile) == NULL){
+    if (fgets(Line, LINESIZE, DataFile) == NULL) {
         fclose(DataFile);
         remove(FileName);
         mbed_printf("Removed DataFile\r\n");
         return false;
     }
 
-    memset(Line, 0, LINESIZE+1);
+    memset(Line, 0, LINESIZE + 1);
 
     // reset file position
     fseek(DataFile, flocation, SEEK_SET);
@@ -154,8 +150,8 @@ vector<PortInfo> getSensorDataFromFile(BoardSpecs &Specs,
     }
     // init vector to read data into
     vector<PortInfo> output(Size);
-    char Line[LINESIZE+1];
-    Line[LINESIZE] =0;
+    char Line[LINESIZE + 1];
+    Line[LINESIZE] = 0;
 
     for (int i = 0; i < Size; ++i) {
 
@@ -164,15 +160,14 @@ vector<PortInfo> getSensorDataFromFile(BoardSpecs &Specs,
 
         output[i].Name = strtok(Line, ",");
 
-
-        char * number = strtok(NULL, ",");
+        char *number = strtok(NULL, ",");
 
         output[i].Value = atof(number);
 
         output[i].Description = strtok(NULL, "\n");
 
         output[i].Multiplier = 1.0f;
-    } 
+    }
     fclose(DataFile);
     return output;
 }

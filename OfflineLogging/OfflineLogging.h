@@ -1,7 +1,8 @@
 #ifndef OFFLINELOGGING_H
 #define OFFLINELOGGING_H
 /// \file
-/// Has prototypes for functions that log data that cannot be sent to a database
+/// \brief Has prototypes for functions that log data that cannot be sent to a
+/// database
 
 #include "BoardConfig.h"
 
@@ -17,19 +18,18 @@
 
 using namespace std;
 
-/// deletes data entries from the file listed
-/// Returns false if the file was, or should be deleted (no entries are there),
-/// returns true if there is more data left. more data to send. This function
-/// will delete the backup data file
+/// Deletes data entries store in \ref FileName
+/// It deletes N entries where N is the number of ports currently active.
+/// It also deletes the backup file when no entries are left.
 bool deleteDataEntry(BoardSpecs &Specs, const char *FileName);
 
-/// Writes the sensor data to a file.
+/// Writes the sensor data in Specs to a file.
 /// It appends data if the file exists, and makes the file if it does not exist
 void dumpSensorDataToFile(BoardSpecs &Specs, const char *FileName);
 
 /// Returns a single sensor reading from the file. That includes one sample from
-/// every sensor. The size of the vector is the same size as the number of
-/// active ports in Specs
+/// every active sensor. The size of the vector is the same size as the number
+/// of active ports in Specs
 vector<PortInfo> getSensorDataFromFile(BoardSpecs &Specs, const char *FileName);
 
 /// Returns true if FileName exists in the current filesystem.
