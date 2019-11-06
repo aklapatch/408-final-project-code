@@ -1,9 +1,6 @@
 .vscode/*
 BUILD/*
 __pycache__/*
-sphinx/build/*
 doxygen_sqlite3.db
 docs/*
-mbed-os/*
-minimal-printf/*
 
