@@ -2,14 +2,11 @@
 /// \brief Contains the logic and control flow for the entire program.
 
 #include "BoardConfig.h"
-#include "ESP8266.h"
-#include "ESP8266Interface.h"
 #include "Networking.h"
 #include "OfflineLogging.h"
 #include "debugging.h"
 #include "mbed.h"
 #include <cmath>
-#include <errno.h>
 
 #include "BlockDevice.h"
 
@@ -74,7 +71,8 @@ int main() {
 
     printf("\r\nReading board settings from %s\r\n", config_file);
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
-    wait(2);
+    // wait_us() is not deprecated, but wait() is
+    wait_us(1000000);
 
     // if (!checkESPWiFiConnection(_parser))
     if (startESP(_parser) != NETWORKSUCCESS) {
