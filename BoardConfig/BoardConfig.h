@@ -7,7 +7,6 @@
 #include "Networking.h"
 #include "Structs.h"
 #include "mbed.h"
-#include "mbed_printf.h"
 
 // C headers
 //

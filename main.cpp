@@ -8,7 +8,6 @@
 #include "OfflineLogging.h"
 #include "debugging.h"
 #include "mbed.h"
-#include "mbed_trace.h"
 #include <cmath>
 #include <errno.h>
 
@@ -36,24 +35,24 @@ int main() {
     Timer PollingTimer; // Timer that controlls when polling happens
 
     // Try to mount the filesystem
-    mbed_printf("Mounting the filesystem... ");
+    printf("Mounting the filesystem... ");
     fflush(stdout);
     int err = fs.mount(bd);
-    mbed_printf("%s\n", (err ? "Fail :(" : "OK"));
-    mbed_printf("\r\n");
+    printf("%s\n", (err ? "Fail :(" : "OK"));
+    printf("\r\n");
     if (err) {
         // Reformat if we can't mount the filesystem
         // this should only happen on the first boot
-        mbed_printf("No filesystem found, formatting... ");
+        printf("No filesystem found, formatting... ");
         fflush(stdout);
         err = fs.reformat(bd);
-        mbed_printf("%s\n", (err ? "Fail :(" : "OK"));
+        printf("%s\n", (err ? "Fail :(" : "OK"));
         if (err) {
             error("error: %s (%d)\n", strerror(-err), err);
         }
-        mbed_printf(
+        printf(
             "There is not config file since the drive was just formatted\r\n");
-        mbed_printf("Exiting\r\n");
+        printf("Exiting\r\n");
         return -1;
     }
 
@@ -73,14 +72,14 @@ int main() {
     _parser->set_delimiter("\r\n");
     _parser->set_timeout(3000);
 
-    mbed_printf("\r\nReading board settings from %s\r\n", config_file);
+    printf("\r\nReading board settings from %s\r\n", config_file);
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
     wait(2);
 
     // if (!checkESPWiFiConnection(_parser))
     if (startESP(_parser) != NETWORKSUCCESS) {
 
-        mbed_printf(
+        printf(
             "\r\n ESP Chip was not initialized, entering offline mode\r\n");
         OfflineMode = true;
     }
@@ -88,11 +87,11 @@ int main() {
     if (!checkESPWiFiConnection(_parser))
         connectESPWiFi(_parser, Specs);
 
-    mbed_printf("%s\r\n", response.c_str());
+    printf("%s\r\n", response.c_str());
 
     // if there is no database tableName, or it is all spaces, then exit
     if (Specs.DatabaseTableName == "" || Specs.DatabaseTableName == " ") {
-        mbed_printf(
+        printf(
             "\r\n No Database Table Name Specified, Entering offline mode\r\n");
         OfflineMode = true;
     }
@@ -101,42 +100,42 @@ int main() {
     if (Specs.RemoteDir == " " || Specs.RemoteDir == "") {
         OfflineMode = true;
 
-        mbed_printf(
+        printf(
             "\r\n No Remote directory specified, Entering offline mode\r\n");
     }
 
     if (Specs.RemoteIP == " " || Specs.RemoteIP == "") {
         OfflineMode = true;
 
-        mbed_printf(
+        printf(
             "\r\n No Remote IP address specified, Entering offline mode\r\n");
     }
 
     if (Specs.RemotePort == 0) {
         OfflineMode = true;
 
-        mbed_printf("\r\n No Remote port specified, Entering offline mode\r\n");
+        printf("\r\n No Remote port specified, Entering offline mode\r\n");
     }
 
     if (Specs.HostName == "" || Specs.HostName == " ") {
         OfflineMode = true;
 
-        mbed_printf("\r\n No Remote Hostname found, Entering offline mode\r\n");
+        printf("\r\n No Remote Hostname found, Entering offline mode\r\n");
     }
 
     int wifi_err = NETWORKSUCCESS;
     if (!OfflineMode) {
         if (!checkESPWiFiConnection(_parser)) {
-            mbed_printf("trying to connect to %s\r\n",
+            printf("trying to connect to %s\r\n",
                         Specs.NetworkSSID.c_str());
             wifi_err = connectESPWiFi(_parser, Specs);
         }
 
         if (wifi_err != NETWORKSUCCESS) {
-            mbed_printf("\r\n failed to connect to %s. Error code = %d \r\n",
+            printf("\r\n failed to connect to %s. Error code = %d \r\n",
                         Specs.NetworkSSID.c_str(), wifi_err);
         } else {
-            mbed_printf(" connected to %s\r\n", Specs.NetworkSSID.c_str());
+            printf(" connected to %s\r\n", Specs.NetworkSSID.c_str());
         }
     }
 
@@ -158,19 +157,19 @@ int main() {
                 // set error indicator if the sample is out of range
                 if (Specs.Ports[i].Value > Specs.Ports[i].RangeEnd) {
                     Specs.Ports[i].Value = HUGE_VAL;
-                    mbed_printf(
+                    printf(
                         "\r\nPort value exceeded valid sample value range, "
                         "assigning "
                         "error value\r\n");
                 } else if (Specs.Ports[i].Value < Specs.Ports[i].RangeStart) {
                     Specs.Ports[i].Value = -HUGE_VAL;
-                    mbed_printf(
+                    printf(
                         "\r\nPort value is under the valid sample range, "
                         "assigning "
                         "error value\r\n");
                 }
                 // print data
-                mbed_printf("\r\n%s's value = %f\r\n",
+                printf("\r\n%s's value = %f\r\n",
                             Specs.Ports[i].Name.c_str(), Specs.Ports[i].Value);
             }
         }
@@ -185,15 +184,15 @@ int main() {
             // try to connect to wifi again if you are not connected now
             if (!checkESPWiFiConnection(_parser)) {
 
-                mbed_printf("Trying to connect to %s \r\n",
+                printf("Trying to connect to %s \r\n",
                             Specs.NetworkSSID.c_str());
                 wifi_err = connectESPWiFi(_parser, Specs);
 
                 if (wifi_err != NETWORKSUCCESS) {
-                    mbed_printf("Connection attempt failed error = %d\r\n",
+                    printf("Connection attempt failed error = %d\r\n",
                                 wifi_err);
                 } else {
-                    mbed_printf("Connected to %s \r\n",
+                    printf("Connected to %s \r\n",
                                 Specs.NetworkSSID.c_str());
                 }
             }
@@ -207,7 +206,7 @@ int main() {
                 while ((PollingTimer.read() <= PollingInterval) &&
                        checkForBackupFile(BackupFileName)) {
 
-                    mbed_printf(
+                    printf(
                         "\r\n Sending backed up data to the database. \r\n");
                     float tmp = -1;
                     wifi_err =
@@ -215,15 +214,15 @@ int main() {
 
                     if (tmp != -1.0f && tmp > 0.0f) {
                         PollingInterval = tmp;
-                        mbed_printf("Sample interval is now %f\r\n",
+                        printf("Sample interval is now %f\r\n",
                                     PollingInterval);
                     }
 
                     if (wifi_err != NETWORKSUCCESS) {
-                        mbed_printf(
+                        printf(
                             "\r\n Failed to transmit backed up data to the "
                             "Database \r\n");
-                        mbed_printf("Error code = %d\r\n", wifi_err);
+                        printf("Error code = %d\r\n", wifi_err);
                         break; // stop transmitting if data transmission failed.
 
                     } else { // delete data entry if data was sent
@@ -232,7 +231,7 @@ int main() {
                 }
 
                 if (!checkForBackupFile(BackupFileName)) {
-                    mbed_printf(
+                    printf(
                         "\r\n Sending the last port reading to the database "
                         "\r\n");
                     float tmp = -1;
@@ -240,12 +239,12 @@ int main() {
 
                     if (tmp != -1.0f && tmp > 0.0f) {
                         PollingInterval = tmp;
-                        mbed_printf("Sample interval is now %f\r\n",
+                        printf("Sample interval is now %f\r\n",
                                     PollingInterval);
                     }
                     if (wifi_err != NETWORKSUCCESS) {
 
-                        mbed_printf(
+                        printf(
                             "Could not send data to database, error = %d\r\n",
 
                             wifi_err);
@@ -258,11 +257,11 @@ int main() {
 
             } else { // back up data if you are not connected
                 dumpSensorDataToFile(Specs, BackupFileName);
-                mbed_printf("\r\n Backed up Active Port data\r\n");
+                printf("\r\n Backed up Active Port data\r\n");
             }
 
         } else { // in offline mode, just dump data to file
-            mbed_printf("\r\nIn offline mode. Dumping data to file.\r\n");
+            printf("\r\nIn offline mode. Dumping data to file.\r\n");
             dumpSensorDataToFile(Specs, BackupFileName);
         }
 

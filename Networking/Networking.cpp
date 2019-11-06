@@ -188,7 +188,7 @@ int sendMessageTCP(ATCmdParser *_parser, BoardSpecs &Specs, string &message,
     char Buf[response_size + 1];
     _parser->read(Buf, response_size);
     Buf[response_size] = 0;
-    mbed_printf("Response: %s\r\n", Buf);
+    printf("Response: %s\r\n", Buf);
     if (strstr(Buf, "404"))
         return -6;
 
@@ -210,7 +210,7 @@ int sendMessageTCP(ATCmdParser *_parser, BoardSpecs &Specs, string &message,
 
 int sendBackupDataTCP(ATCmdParser *_parser, BoardSpecs &Specs,
                       const char *FileName, float &response) {
-    mbed_printf("Sending backup data over the network \r\n");
+    printf("Sending backup data over the network \r\n");
     vector<PortInfo> Ports = getSensorDataFromFile(Specs, FileName);
     string Message = makeGetReqStr(Ports, Specs);
     return sendMessageTCP(_parser, Specs, Message, response);

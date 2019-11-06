@@ -2,12 +2,6 @@
 	"target_overrides": {
 		"K64F": {
 			"platform.stdio-baud-rate": 9600
-		},
-"*": {
-            "platform.stdio-convert-newlines": true,
-            "minimal-printf.enable-file-stream": true,
-            "minimal-printf.enable-floating-point": true,
-            "minimal-printf.set-floating-point-max-decimals": 6
-        }
+		}
 	}
 }

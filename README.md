@@ -1,6 +1,10 @@
 # IAC Project FRDM K64F code
 This is the code for our energy project from the IAC (Indiana University's Industrial Audit Commission).
 
+## Notes
+To upgrade the mbed-os version, download a new release from their [github](https://github.com/ARMmbed/mbed-os/releases) and then replace the `mbed-os` folder in this folder with  the mbed folder you downloaded.
+Make sure that you rename the downloaded folder to `mbed-os`. Also make sure that there is not extra directory level in the mbed-os folder before you get into the source code.
+
 ## Building
 You also need to have `git` and `python` installed. Python 3.7.4 is used here and the git version is probably not as important.
 
@@ -12,9 +16,13 @@ You can import this repository by using the CLI command: `mbed import REPO-URL`
 
 That will automatically grab the project and basically `git clone` it right in your current directory.
 
+You might need to run `mbed deploy` to download all the necessary libraries to build the program.
+
+And you might have to fiddle with different versions of python packages. (use pip to get the newest, that worked for me at one point)
+
 When you have your environment setup and every tool is added to your path, you should be able to run `mbed compile -m k64f -t GCC_ARM --flash` with a FRDM K64F connected, and the program should compile and be flashed to the K64F.
 
-The ESP8266 chip needs to have firmware of at least v2 to work. There are some instructions/tips in the `getting the ESP8266 to work with the arduino.md` file, but you are on your own as far as that goes. 
+The ESP8266 chip may to have firmware of at least v2 to work. There are some instructions/tips in the `getting the ESP8266 to work with the arduino.md` file, but you are on your own as far as that goes. 
 
 Some Arduino instructions for flashing [here](https://www.electronicshub.org/update-flash-esp8266-firmware/).
 

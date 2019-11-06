@@ -10,18 +10,18 @@ void dumpSensorDataToFile(BoardSpecs &Specs, const char *FileName) {
 
     // if the file is not there, open in write, not append mode
     if (File == NULL) {
-        mbed_printf("making new data file \r\n");
+        printf("making new data file \r\n");
         File = fopen(FileName, "wb");
 
         if (File == NULL) {
-            mbed_printf(
+            printf(
                 "Failed to open %s for logging. Skipping data logging\r\n",
                 FileName);
             return;
         }
 
     } else {
-        mbed_printf("Appending data to data file \r\n");
+        printf("Appending data to data file \r\n");
         fclose(File);
         File = fopen(FileName, "ab");
     }
@@ -50,7 +50,7 @@ void dumpSensorDataToFile(BoardSpecs &Specs, const char *FileName) {
 // read earlier);
 // 4. delete the original file
 bool deleteDataEntry(BoardSpecs &Specs, const char *FileName) {
-    mbed_printf("Deleting data entry!\r\n");
+    printf("Deleting data entry!\r\n");
     // get the data for the ports
     // only get the data for ports where the multiplier != 0
     int Size = 0;
@@ -65,7 +65,7 @@ bool deleteDataEntry(BoardSpecs &Specs, const char *FileName) {
 
     // if the file is not there, just return false (entry was not deleted)
     if (DataFile == NULL) {
-        mbed_printf("Data file not found!\n");
+        printf("Data file not found!\n");
         return false;
     }
 
@@ -87,7 +87,7 @@ bool deleteDataEntry(BoardSpecs &Specs, const char *FileName) {
     if (fgets(Line, LINESIZE, DataFile) == NULL) {
         fclose(DataFile);
         remove(FileName);
-        mbed_printf("Removed DataFile\r\n");
+        printf("Removed DataFile\r\n");
         return false;
     }
 
@@ -107,7 +107,7 @@ bool deleteDataEntry(BoardSpecs &Specs, const char *FileName) {
 
     // stop if the file was not able to be opened
     if (TempFile == NULL) {
-        mbed_printf("Failed to open temporary file!\n");
+        printf("Failed to open temporary file!\n");
         return true; // data still needs to be transmitted
     }
 
@@ -134,7 +134,7 @@ vector<PortInfo> getSensorDataFromFile(BoardSpecs &Specs,
 
     // if the file is not there, just return an empty vector
     if (DataFile == NULL) {
-        mbed_printf("Data file not found!\n");
+        printf("Data file not found!\n");
         return std::vector<PortInfo>(0);
     }
 

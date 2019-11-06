@@ -5,27 +5,27 @@
 #include <cctype>
 
 void printSpecs(BoardSpecs &Specs) {
-    mbed_printf("Board ID = %s\t", Specs.ID.c_str());
-    mbed_printf("Network SSID = %s \r\n", Specs.NetworkSSID.c_str());
+    printf("Board ID = %s\t", Specs.ID.c_str());
+    printf("Network SSID = %s \r\n", Specs.NetworkSSID.c_str());
 
-    mbed_printf("Network Password = %s\t", Specs.NetworkPassword.c_str());
-    mbed_printf("Remote Database Table name = %s\r\n",
+    printf("Network Password = %s\t", Specs.NetworkPassword.c_str());
+    printf("Remote Database Table name = %s\r\n",
                 Specs.DatabaseTableName.c_str());
 
-    mbed_printf("Remote IP = %s\t", Specs.RemoteIP.c_str());
-    mbed_printf("Remote Get Request directory = %s\r\n",
+    printf("Remote IP = %s\t", Specs.RemoteIP.c_str());
+    printf("Remote Get Request directory = %s\r\n",
 
                 Specs.RemoteDir.c_str());
 
-    mbed_printf("remote http port = %d\t", Specs.RemotePort);
+    printf("remote http port = %d\t", Specs.RemotePort);
 
-    mbed_printf("Remote Hostname = %s\r\n", Specs.HostName.c_str());
+    printf("Remote Hostname = %s\r\n", Specs.HostName.c_str());
 }
 // ============================================================================
 BoardSpecs readSDCard(const char *FileName) {
 
     // try to open sd card
-    mbed_printf("\r\nReading from SD card...\r\n\n\n");
+    printf("\r\nReading from SD card...\r\n\n\n");
     FILE *fp = fopen(FileName, "rb");
 
     BoardSpecs Output;
@@ -48,11 +48,11 @@ BoardSpecs readSDCard(const char *FileName) {
         // read config from SD card
         rewind(fp);
         Output = readConfigText(fp);
-        mbed_printf("\r\n %d Ports were configured\r\n", Output.Ports.size());
+        printf("\r\n %d Ports were configured\r\n", Output.Ports.size());
         fclose(fp);
 
     } else {
-        mbed_printf("\nReading Failed!\r\n");
+        printf("\nReading Failed!\r\n");
     }
 
     return Output;
@@ -105,7 +105,7 @@ BoardSpecs readConfigText(FILE *fp) {
             tmp.RangeEnd = atof(value);
 
             Specs.Sensors.push_back(tmp); // store those values
-            mbed_printf("Sensor: Type: %s Unit: %s\r\n", tmp.Type.c_str(),
+            printf("Sensor: Type: %s Unit: %s\r\n", tmp.Type.c_str(),
                         tmp.Unit.c_str());
         }
     }
@@ -183,7 +183,7 @@ BoardSpecs readConfigText(FILE *fp) {
             // get sensorname
             tmp.Description = getSensorName(Specs.Sensors, tmp.SensorID);
 
-            mbed_printf("Port Info: %s  %d  %0.2f    %s\r\n", tmp.Name.c_str(),
+            printf("Port Info: %s  %d  %0.2f    %s\r\n", tmp.Name.c_str(),
                         tmp.SensorID, tmp.Multiplier, tmp.Description.c_str());
 
             // store the port in the boardSpecs struct only if it means anything
