@@ -75,7 +75,7 @@ int main() {
 
     mbed_printf("\r\nReading board settings from %s\r\n", config_file);
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
-    wait(4);
+    wait(2);
 
     // if (!checkESPWiFiConnection(_parser))
     if (startESP(_parser) != NETWORKSUCCESS) {
