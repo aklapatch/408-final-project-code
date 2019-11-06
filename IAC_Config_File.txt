@@ -1,7 +1,7 @@
 # system info.
 # Board Number:Wifi-SSID:Wifi-Password:DataBase-TABLE:
 # for this to be detected, Board needs to be in this line and B needs to be the first letter in the line
-Board-2:Hope:weallneedit:Test-Board:
+Board-2: : :Test-Board:
 
 # ConnInfo:IP address:portNum:hostname:file/link to reference for the get request
 # for example, you can do 
