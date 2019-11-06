@@ -33,7 +33,7 @@ int startESP(ATCmdParser *_parser) {
 }
 
 int connectESPWiFi(ATCmdParser *_parser, BoardSpecs &Specs) {
-
+    
     _parser->send("AT+CWJAP=\"%s\",\"%s\"", Specs.NetworkSSID.c_str(),
                   Specs.NetworkPassword.c_str());
     return _parser->recv("OK");
@@ -147,6 +147,7 @@ string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs) {
 
 // return true if you are connected, and false if you are not connected
 bool checkESPWiFiConnection(ATCmdParser *_parser) {
+    _parser->debug_on(0);
     // 000.000.000.000 max of 15 characters
     char ip_addr[16];
     _parser->send("AT+CIFSR");
@@ -161,6 +162,7 @@ bool checkESPWiFiConnection(ATCmdParser *_parser) {
     // if that expression is true, then 0.0.0.0 is not in the ip address, and we
     // ar connected
 
+    _parser->debug_on(1);
     return strstr(ip_addr, "0.0.0.0") == NULL;
 }
 // ============================================================================
