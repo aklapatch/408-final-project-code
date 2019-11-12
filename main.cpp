@@ -24,6 +24,8 @@ using namespace std;
 // for the watchdog timer, we will have a timeout that goes off 
 // and resets the program. This function will be detached and reattached
 // throughout the life of the program to keep from resetting all the time
+/// Resets timeout be detaching first, and then attaching the NVIC_SystemReset()
+/// function to the timeout with the new_delay
 void resetWatchdog(Timeout & timeout, float new_delay){
     timeout.detach();
     timeout.attach(&NVIC_SystemReset, new_delay);
