@@ -21,10 +21,20 @@ FATFileSystem fs("sd");
 
 using namespace std;
 
+// for the watchdog timer, we will have a timeout that goes off 
+// and resets the program. This function will be detached and reattached
+// throughout the life of the program to keep from resetting all the time
+void resetWatchdog(Timeout & timeout, float new_delay){
+    timeout.detach();
+    timeout.attach(&NVIC_SystemReset, new_delay);
+}
+
 int main() {
 
     // interval for the sensor polling
     float PollingInterval = 5.0f;
+
+    Timeout watchdog;
 
     // name of the file where data is stored
     const char BackupFileName[] = "/sd/PortReadings.dat";
@@ -61,7 +71,6 @@ int main() {
 
     bool OfflineMode = false; // indicates whether to actually send data or not
 
-    string response(""); // a response from tcp/tls connections
     UARTSerial *_serial = new UARTSerial(PTC17, PTC16, 115200);
     ATCmdParser *_parser = new ATCmdParser(_serial);
 
@@ -85,7 +94,6 @@ int main() {
     if (!checkESPWiFiConnection(_parser))
         connectESPWiFi(_parser, Specs);
 
-    printf("%s\r\n", response.c_str());
 
     // if there is no database tableName, or it is all spaces, then exit
     if (Specs.DatabaseTableName == "" || Specs.DatabaseTableName == " ") {
@@ -169,6 +177,8 @@ int main() {
                 // print data
                 printf("\r\n%s's value = %f\r\n",
                             Specs.Ports[i].Name.c_str(), Specs.Ports[i].Value);
+
+                resetWatchdog(watchdog, PollingInterval*2);
             }
         }
 
