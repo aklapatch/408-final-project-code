@@ -10,12 +10,12 @@ void printSpecs(BoardSpecs &Specs) {
 
     printf("Network Password = %s\t", Specs.NetworkPassword.c_str());
     printf("Remote Database Table name = %s\r\n",
-                Specs.DatabaseTableName.c_str());
+           Specs.DatabaseTableName.c_str());
 
     printf("Remote IP = %s\t", Specs.RemoteIP.c_str());
     printf("Remote Get Request directory = %s\r\n",
 
-                Specs.RemoteDir.c_str());
+           Specs.RemoteDir.c_str());
 
     printf("remote http port = %d\t", Specs.RemotePort);
 
@@ -106,7 +106,7 @@ BoardSpecs readConfigText(FILE *fp) {
 
             Specs.Sensors.push_back(tmp); // store those values
             printf("Sensor: Type: %s Unit: %s\r\n", tmp.Type.c_str(),
-                        tmp.Unit.c_str());
+                   tmp.Unit.c_str());
         }
     }
 
@@ -184,7 +184,7 @@ BoardSpecs readConfigText(FILE *fp) {
             tmp.Description = getSensorName(Specs.Sensors, tmp.SensorID);
 
             printf("Port Info: %s  %d  %0.2f    %s\r\n", tmp.Name.c_str(),
-                        tmp.SensorID, tmp.Multiplier, tmp.Description.c_str());
+                   tmp.SensorID, tmp.Multiplier, tmp.Description.c_str());
 
             // store the port in the boardSpecs struct only if it means anything
             if (tmp.Multiplier != 0.0f) {

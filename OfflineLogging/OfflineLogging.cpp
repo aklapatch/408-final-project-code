@@ -14,9 +14,8 @@ void dumpSensorDataToFile(BoardSpecs &Specs, const char *FileName) {
         File = fopen(FileName, "wb");
 
         if (File == NULL) {
-            printf(
-                "Failed to open %s for logging. Skipping data logging\r\n",
-                FileName);
+            printf("Failed to open %s for logging. Skipping data logging\r\n",
+                   FileName);
             return;
         }
 

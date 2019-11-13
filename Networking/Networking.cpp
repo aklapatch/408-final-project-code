@@ -33,10 +33,19 @@ int startESP(ATCmdParser *_parser) {
 }
 
 int connectESPWiFi(ATCmdParser *_parser, BoardSpecs &Specs) {
-    
+
     _parser->send("AT+CWJAP=\"%s\",\"%s\"", Specs.NetworkSSID.c_str(),
                   Specs.NetworkPassword.c_str());
-    return _parser->recv("OK");
+
+    if (_parser->recv("OK")) {
+        if (checkESPWiFiConnection(_parser)) {
+            return NETWORKSUCCESS;
+        } else {
+            return -2;
+        }
+    } else {
+        return -1;
+    }
 }
 
 // =============================================================================

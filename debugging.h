@@ -1,6 +1,6 @@
 #ifndef DEBUG_H
 #define DEBUG_H
-#include<cstdio>
+#include <cstdio>
 /// \file
 /// \brief Defines macros that make debugging easier.
 
@@ -17,7 +17,5 @@
 /// Prints the value of the integer and the line number of the print statement
 #define PRINTSTRING(x)                                                         \
     printf("\r\n Line %d string = %s\r\n", __LINE__, (x.c_str()));
-
-
 
 #endif // DEBUG

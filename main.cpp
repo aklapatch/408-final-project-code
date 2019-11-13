@@ -13,6 +13,10 @@
 #include "ATCmdParser.h"
 #include "UARTSerial.h"
 
+/// the number of times to try reconnecting to wifi before going into offline
+/// mode
+#define WIFITRIES (5)
+
 // This will take the system's default block device
 BlockDevice *bd = BlockDevice::get_default_instance();
 
@@ -21,12 +25,12 @@ FATFileSystem fs("sd");
 
 using namespace std;
 
-// for the watchdog timer, we will have a timeout that goes off 
+// for the watchdog timer, we will have a timeout that goes off
 // and resets the program. This function will be detached and reattached
 // throughout the life of the program to keep from resetting all the time
 /// Resets timeout be detaching first, and then attaching the NVIC_SystemReset()
 /// function to the timeout with the new_delay
-void resetWatchdog(Timeout & timeout, float new_delay){
+void resetWatchdog(Timeout &timeout, float new_delay) {
     timeout.detach();
     timeout.attach(&NVIC_SystemReset, new_delay);
 }
@@ -68,10 +72,12 @@ int main() {
     // data is gathered from these ports/sensor pins
     AnalogIn Port[] = {PTB2,  PTB3, PTB10, PTB11, PTC11,
                        PTC10, PTC2, PTC0,  PTC9,  PTC8};
-    PRINTLINE;
     const char *config_file = "/sd/IAC_Config_File.txt";
 
     bool OfflineMode = false; // indicates whether to actually send data or not
+
+    /// how many times to try connecting to the wifi before giving up
+    int wifi_tries = WIFITRIES;
 
     UARTSerial *_serial = new UARTSerial(PTC17, PTC16, 115200);
     ATCmdParser *_parser = new ATCmdParser(_serial);
@@ -88,14 +94,9 @@ int main() {
     // if (!checkESPWiFiConnection(_parser))
     if (startESP(_parser) != NETWORKSUCCESS) {
 
-        printf(
-            "\r\n ESP Chip was not initialized, entering offline mode\r\n");
+        printf("\r\n ESP Chip was not initialized, entering offline mode\r\n");
         OfflineMode = true;
     }
-
-    if (!checkESPWiFiConnection(_parser))
-        connectESPWiFi(_parser, Specs);
-
 
     // if there is no database tableName, or it is all spaces, then exit
     if (Specs.DatabaseTableName == "" || Specs.DatabaseTableName == " ") {
@@ -108,8 +109,7 @@ int main() {
     if (Specs.RemoteDir == " " || Specs.RemoteDir == "") {
         OfflineMode = true;
 
-        printf(
-            "\r\n No Remote directory specified, Entering offline mode\r\n");
+        printf("\r\n No Remote directory specified, Entering offline mode\r\n");
     }
 
     if (Specs.RemoteIP == " " || Specs.RemoteIP == "") {
@@ -134,14 +134,14 @@ int main() {
     int wifi_err = NETWORKSUCCESS;
     if (!OfflineMode) {
         if (!checkESPWiFiConnection(_parser)) {
-            printf("trying to connect to %s\r\n",
-                        Specs.NetworkSSID.c_str());
+            printf("trying to connect to %s\r\n", Specs.NetworkSSID.c_str());
             wifi_err = connectESPWiFi(_parser, Specs);
         }
 
         if (wifi_err != NETWORKSUCCESS) {
             printf("\r\n failed to connect to %s. Error code = %d \r\n",
-                        Specs.NetworkSSID.c_str(), wifi_err);
+                   Specs.NetworkSSID.c_str(), wifi_err);
+            wifi_tries -= 1;
         } else {
             printf(" connected to %s\r\n", Specs.NetworkSSID.c_str());
         }
@@ -165,22 +165,20 @@ int main() {
                 // set error indicator if the sample is out of range
                 if (Specs.Ports[i].Value > Specs.Ports[i].RangeEnd) {
                     Specs.Ports[i].Value = HUGE_VAL;
-                    printf(
-                        "\r\nPort value exceeded valid sample value range, "
-                        "assigning "
-                        "error value\r\n");
+                    printf("\r\nPort value exceeded valid sample value range, "
+                           "assigning "
+                           "error value\r\n");
                 } else if (Specs.Ports[i].Value < Specs.Ports[i].RangeStart) {
                     Specs.Ports[i].Value = -HUGE_VAL;
-                    printf(
-                        "\r\nPort value is under the valid sample range, "
-                        "assigning "
-                        "error value\r\n");
+                    printf("\r\nPort value is under the valid sample range, "
+                           "assigning "
+                           "error value\r\n");
                 }
                 // print data
-                printf("\r\n%s's value = %f\r\n",
-                            Specs.Ports[i].Name.c_str(), Specs.Ports[i].Value);
+                printf("\r\n%s's value = %f\r\n", Specs.Ports[i].Name.c_str(),
+                       Specs.Ports[i].Value);
 
-                resetWatchdog(watchdog, PollingInterval*2);
+                resetWatchdog(watchdog, PollingInterval * 5);
             }
         }
 
@@ -195,15 +193,25 @@ int main() {
             if (!checkESPWiFiConnection(_parser)) {
 
                 printf("Trying to connect to %s \r\n",
-                            Specs.NetworkSSID.c_str());
+                       Specs.NetworkSSID.c_str());
                 wifi_err = connectESPWiFi(_parser, Specs);
 
                 if (wifi_err != NETWORKSUCCESS) {
                     printf("Connection attempt failed error = %d\r\n",
-                                wifi_err);
+                           wifi_err);
+
+                    wifi_tries -= 1;
+                    if (wifi_tries <= 0) {
+
+                        printf("Wifi connection failed %d times, activating "
+                               "offline mode\r\n",
+                               WIFITRIES);
+                        OfflineMode = true;
+                    }
+
                 } else {
-                    printf("Connected to %s \r\n",
-                                Specs.NetworkSSID.c_str());
+                    printf("Connected to %s \r\n", Specs.NetworkSSID.c_str());
+                    wifi_tries = WIFITRIES;
                 }
             }
 
@@ -216,8 +224,7 @@ int main() {
                 while ((PollingTimer.read() <= PollingInterval) &&
                        checkForBackupFile(BackupFileName)) {
 
-                    printf(
-                        "\r\n Sending backed up data to the database. \r\n");
+                    printf("\r\n Sending backed up data to the database. \r\n");
                     float tmp = -1;
                     wifi_err =
                         sendBackupDataTCP(_parser, Specs, BackupFileName, tmp);
@@ -225,13 +232,12 @@ int main() {
                     if (tmp != -1.0f && tmp > 0.0f) {
                         PollingInterval = tmp;
                         printf("Sample interval is now %f\r\n",
-                                    PollingInterval);
+                               PollingInterval);
                     }
 
                     if (wifi_err != NETWORKSUCCESS) {
-                        printf(
-                            "\r\n Failed to transmit backed up data to the "
-                            "Database \r\n");
+                        printf("\r\n Failed to transmit backed up data to the "
+                               "Database \r\n");
                         printf("Error code = %d\r\n", wifi_err);
                         break; // stop transmitting if data transmission failed.
 
@@ -241,16 +247,15 @@ int main() {
                 }
 
                 if (!checkForBackupFile(BackupFileName)) {
-                    printf(
-                        "\r\n Sending the last port reading to the database "
-                        "\r\n");
+                    printf("\r\n Sending the last port reading to the database "
+                           "\r\n");
                     float tmp = -1;
                     wifi_err = sendBulkDataTCP(_parser, Specs, tmp);
 
                     if (tmp != -1.0f && tmp > 0.0f) {
                         PollingInterval = tmp;
                         printf("Sample interval is now %f\r\n",
-                                    PollingInterval);
+                               PollingInterval);
                     }
                     if (wifi_err != NETWORKSUCCESS) {
 
