@@ -13,10 +13,6 @@
 #include "ATCmdParser.h"
 #include "UARTSerial.h"
 
-/// the number of times to try reconnecting to wifi before going into offline
-/// mode
-#define WIFITRIES (5)
-
 // This will take the system's default block device
 BlockDevice *bd = BlockDevice::get_default_instance();
 
@@ -28,7 +24,7 @@ using namespace std;
 // for the watchdog timer, we will have a timeout that goes off
 // and resets the program. This function will be detached and reattached
 // throughout the life of the program to keep from resetting all the time
-/// Resets timeout be detaching first, and then attaching the NVIC_SystemReset()
+/// Resets timeout by detaching first, and then attaching the NVIC_SystemReset()
 /// function to the timeout with the new_delay
 void resetWatchdog(Timeout &timeout, float new_delay) {
     timeout.detach();
@@ -225,7 +221,7 @@ int main() {
                        checkForBackupFile(BackupFileName)) {
 
                     printf("\r\n Sending backed up data to the database. \r\n");
-                    float tmp = -1;
+                    float tmp = -1.0f;
                     wifi_err =
                         sendBackupDataTCP(_parser, Specs, BackupFileName, tmp);
 
