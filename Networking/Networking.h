@@ -15,6 +15,10 @@
 #include <string>
 #include <vector>
 
+/// the number of times to try reconnecting to wifi before going into offline
+/// mode
+#define WIFITRIES (5)
+
 /// Arbitrary char array length
 #define BUFFLEN 1024
 
@@ -23,6 +27,7 @@
 #define NETWORKSUCCESS (0)
 
 using namespace std;
+
 /// starts the ESP8266 with the correct settings:
 /// CIPMUX=1 and CWMODE=3
 /// returns NETWORKSUCCESS if successful, -1 otherwise.
@@ -44,8 +49,8 @@ string makeGetReqStr(vector<PortInfo> Ports, BoardSpecs &Specs);
 string makeGetReqStr(BoardSpecs &Specs);
 
 /// Sends message over TCP to the destination specified in Specs
-/// response is the new sampling interval for the board that you get
-/// back from the server.
+/// response is the new sampling interval that you get
+/// back from the server (if the connection is successful).
 int sendMessageTCP(ATCmdParser *_parser, BoardSpecs &Specs, string &message,
                    float &response);
 
