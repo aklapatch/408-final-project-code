@@ -36,18 +36,5 @@ BoardSpecs readSDCard(const char *FileName);
 /// \sa BoardSpecs
 BoardSpecs readConfigText(FILE *fp);
 
-/// takes in the sensor ID number and returns a number to convert the sensor's
-/// value into a meaningful unit
-/// \param Sens_ID The sensor's ID number
-/// \param Sensors The set of sensor information to pick from
-/// \returns The port's unit multiplier
-float setUnitMultiplier(vector<SensorInfo> &Sensors, size_t Sens_ID);
-
-/// Returns a name for each sensor depending on the sensor's ID number.
-/// \returns A const char * that is the sensor name
-/// \param Sens_ID The sensor's ID number
-/// \param Sensors The set of sensor information to pick from
-/// \returns What that sensor measures
-string getSensorName(vector<SensorInfo> &Sensors, size_t Sens_ID);
 
 #endif // BOARDCONFIG

@@ -5,12 +5,13 @@
 #include <cctype>
 
 void printSpecs(BoardSpecs &Specs) {
-    printf("Board ID = %s\t", Specs.ID.c_str());
+    printf("\r\nBoard information\r\n");
     printf("Network SSID = %s \r\n", Specs.NetworkSSID.c_str());
 
     printf("Network Password = %s\t", Specs.NetworkPassword.c_str());
-    printf("Remote Database Table name = %s\r\n",
+    printf("Board name = %s\r\n",
            Specs.DatabaseTableName.c_str());
+
 
     printf("Remote IP = %s\t", Specs.RemoteIP.c_str());
     printf("Remote Get Request directory = %s\r\n",
@@ -58,10 +59,6 @@ BoardSpecs readSDCard(const char *FileName) {
     return Output;
 }
 
-void setBoundsFromID(PortInfo &input, vector<SensorInfo> sensors){
-    input.RangeEnd = sensors[input.SensorID].RangeEnd;
-    input.RangeEnd = sensors[input.SensorID].RangeEnd;
-}
 
 // ============================================================================
 BoardSpecs readConfigText(FILE *fp) {
@@ -123,17 +120,17 @@ BoardSpecs readConfigText(FILE *fp) {
             // we don't need the first token
             char *tmp = strtok(Buffer, s);
 
-            Specs.RemoteIP = strtok(NULL, s);
+            Specs.RemoteIP = strtok(NULL, ",");
 
             // make sure there is a digit to convert, and set an error value
-            tmp = strtok(NULL, s);
+            tmp = strtok(NULL, ",");
             if (isdigit(tmp[0])) {
                 Specs.RemotePort = atoi(tmp);
             } else {
                 Specs.RemotePort = 0;
             }
 
-            Specs.HostName = strtok(NULL, s);
+            Specs.HostName = strtok(NULL, ",");
 
             Specs.RemoteDir = strtok(NULL, "\n");
         }
@@ -141,87 +138,66 @@ BoardSpecs readConfigText(FILE *fp) {
         // checks the character at the beginning of each line
         if (Buffer[0] == 'B' && strstr(Buffer, "Board")) {
 
-            // get board id and assign it
-            Specs.ID = strtok(Buffer, s);
+            // get past the :
+            strtok(Buffer, s);
 
             // get WIFI SSID and assign it
-            Specs.NetworkSSID = strtok(NULL, s);
+            Specs.NetworkSSID = strtok(NULL, ",");
 
             // get WIFI Password and assign it
-            Specs.NetworkPassword = strtok(NULL, s);
+            Specs.NetworkPassword = strtok(NULL, ",");
 
             // getting and assigning Database tablename
-            Specs.DatabaseTableName = strtok(NULL, s); // opt opportunity
-        } else if (Buffer[0] == 'P') { // if a port description is detected
+            Specs.DatabaseTableName = strtok(NULL, "\n"); 
+        } else if (Buffer[0] == 'P' && strstr(Buffer, "Port")) { // if a port description is detected
 
             // hold a Port entry
             // then assign them to the vector in Specs
             PortInfo tmp;
 
             ++prtCnt;
-
+            // skip the : 
+            strtok(Buffer, ":"); 
             
-            // grab the port name too
-            tmp.Name = strtok(Buffer, ":");
+            // grab the port name 
+            tmp.Name = strtok(NULL, ",");
 
             tmp.SensorID = atoi(strtok(NULL, "\n"));
 
-            // remove whitespace from the name
-            size_t SpaceDex = tmp.Name.find_first_of(' ');
-            while (SpaceDex != string::npos) {
-                tmp.Name.erase(SpaceDex);
-                SpaceDex = tmp.Name.find_first_of(' ');
-            }
+            if (tmp.SensorID < Specs.Sensors.size() && tmp.SensorID >= 0){
 
             // get port multiplier
-            tmp.Multiplier = setUnitMultiplier(Specs.Sensors, tmp.SensorID);
+                tmp.Multiplier = Specs.Sensors[ tmp.SensorID].Multiplier;
 
-            // get sensorname
-            tmp.Description = getSensorName(Specs.Sensors, tmp.SensorID);
+                // get sensorname
+                tmp.Description = Specs.Sensors[ tmp.SensorID].Type;
+                tmp.Description.append(" in ");
+                tmp.Description.append(Specs.Sensors[ tmp.SensorID].Unit);
 
-            setBoundsFromID(tmp, Specs.Sensors);
+                tmp.RangeEnd = Specs.Sensors[tmp.SensorID].RangeEnd;
+                tmp.RangeStart= Specs.Sensors[tmp.SensorID].RangeStart;
 
             printf("Port Info: name= %s id=  %d Multiplier= %0.2f description=%s\r\n", tmp.Name.c_str(),
+
                    tmp.SensorID, tmp.Multiplier, tmp.Description.c_str());
 
-            // store the port in the boardSpecs struct only if it means anything
-            if (tmp.Multiplier != 0.0f) {
+            if (tmp.Multiplier != 0.0f){
                 Specs.Ports.push_back(tmp);
             }
+            else {
+
+                printf ("Port %s has a multiplier of 0, skipping\r\n", tmp.Name.c_str());
+            }
+            }
+            else {
+                // skip this sensor, sensor id is bad
+                printf("Port %s has an out of bounds Sensor ID, skipping\r\n", tmp.Name.c_str());
+            }
+            
+
         }
     }
     printSpecs(Specs);
     return Specs;
 }
 
-// ============================================================================
-float setUnitMultiplier(vector<SensorInfo> &Sensors, size_t Sens_ID) {
-    // if there is no sensor for that id, then return 0
-    if (Sens_ID >= Sensors.size()) {
-        return 0.0;
-    }
-
-    return Sensors[Sens_ID].Multiplier;
-}
-
-// ============================================================================
-string getSensorName(vector<SensorInfo> &Sensors, size_t Sens_ID) {
-
-    // if there is no sensor for that id, then return error message
-    if (Sens_ID >= Sensors.size()) {
-        return "No Sensor";
-    }
-
-    const char *in = " in ";
-
-    size_t str_size = strlen(in) + Sensors[Sens_ID].Type.size() +
-                      Sensors[Sens_ID].Unit.size();
-
-    string ret_str;
-    ret_str.reserve(str_size);
-    ret_str.append(Sensors[Sens_ID].Type);
-    ret_str.append(in);
-    ret_str.append(Sensors[Sens_ID].Unit);
-
-    return ret_str;
-}

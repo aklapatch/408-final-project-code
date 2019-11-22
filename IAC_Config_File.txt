@@ -1,11 +1,11 @@
 # system info.
-# Board Number:Wifi-SSID:Wifi-Password:DataBase-TABLE:
+# BoardInfo:Wifi-SSID,Wifi-Password,BoardName
 # for this to be detected, Board needs to be in this line and B needs to be the first letter in the line
-Board-2:GenericWiFi:testpass:Test-Board:
+BoardInfo:GenericWiFi,testpass,Test-Board
 
-# ConnInfo:IP address:portNum:hostname:file/link to reference for the get request
+# ConnInfo:IP address,portNum,hostname,file/link to reference for the get request
 # for example, you can do 
-ConnInfo:192.168.43.220:80:localhost :/seniorDesign/bulk_sensor_readings.php
+ConnInfo:192.168.43.220,80,localhost,/seniorDesign/bulk_sensor_readings.php
 
 # Sensor info
 
@@ -22,31 +22,14 @@ SensorID: Temperature, Degree Celcius, 50.0, 0, 50
 SensorID: Temperature, Degree Celcius, 50.0, 0, 50
 SensorID: Pressure, PSIG, 240.0, 0.0, 200.0
 SensorID: Potentiometer, Volts, 1, -5.0, 5.0
-*SensorID = 7, Humidity, Percentage, 100.0, 0.0, 100.0
-*SensorID = 8, Compressed Air Flow, Percentage , 100.0, 0.0, 100.0,
-
-# Slide Switch Info
-
-# Position : Conversion Circuit 
-# These are meaningless and do nothing right now - Aaron K.
-Swt_Pos = 1 : 0 - 5 Vdc
-Swt_Pos = 2 : 0 - 2.5 Vdc
-Swt_Pos = 3 : 0 - 20 mA
-Swt_Pos = 4 : 0 - 10 Vdc
+*SensorID: Humidity, Percentage, 100.0, 0.0, 100.0
+*SensorID: Compressed Air Flow, Percentage , 100.0, 0.0, 100.0,
 
 # Port info.
 
-# Port : SensorID number
+# format
+# Port: PortName, SensorID
 # P has to be the first letter on the line ,otherwise the program will skip the line
-Port_1 : 7
-Port_2 : 0 
-Port_3 : 0
-Port_4 : 0
-Port_5 : 0
-Port_6 : 0
-Port_7 : 0
-Port_8 : 0
-Port_9 : 0
-Port_10 : 0
+Port:TestPort, 7
 
 
