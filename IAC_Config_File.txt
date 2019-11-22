@@ -1,25 +1,27 @@
 # system info.
 # Board Number:Wifi-SSID:Wifi-Password:DataBase-TABLE:
 # for this to be detected, Board needs to be in this line and B needs to be the first letter in the line
-Board-2: : :Test-Board:
+Board-2:GenericWiFi:testpass:Test-Board:
 
 # ConnInfo:IP address:portNum:hostname:file/link to reference for the get request
 # for example, you can do 
-ConnInfo:10.0.0.12:80:localhost:/seniorDesign/bulk_sensor_readings.php
+ConnInfo:192.168.43.220:80:localhost :/seniorDesign/bulk_sensor_readings.php
 
 # Sensor info
 
-# ID number: type: Unit: Unit Multiplier :start-range: end-range: unit.
+# format:
+# SensorID: Sensor type, Unit, Sensor multiplier, start-range, end-range
 # for this to work, S has to be the first character in the line and SensorID has to be in the line
 # this is setup so that a port with a sensor id of 0 will be assigned the first sensor id in the file, and
 # a port with a sensor id of 1 will be assigned the second sensor id in the file, and so on
-SensorID = 0, No Sensor, 0, 0, 0,
-SensorID = 1, CO2, ppm, 2000.0, 0, 2000.0, 
-SensorID = 2, Current, Amps, 133.33, 0.0, 100.0
-SensorID = 3, Current, Amps, 800.00, 0.0, 600.0
-SensorID = 4, Temperature, Degree Celcius, 50.0, 0, 50
-SensorID = 5, Temperature, Degree Celcius, 50.0, 0, 50
-SensorID = 6, Pressure, PSIG, 240.0, 0.0, 200.0
+SensorID: No Sensor, 0, 0, 0,
+SensorID: CO2, ppm, 2000.0, 0, 2000.0, 
+SensorID: Current, Amps, 133.33, 0.0, 100.0
+SensorID: Current, Amps, 800.00, 0.0, 600.0
+SensorID: Temperature, Degree Celcius, 50.0, 0, 50
+SensorID: Temperature, Degree Celcius, 50.0, 0, 50
+SensorID: Pressure, PSIG, 240.0, 0.0, 200.0
+SensorID: Potentiometer, Volts, 1, -5.0, 5.0
 *SensorID = 7, Humidity, Percentage, 100.0, 0.0, 100.0
 *SensorID = 8, Compressed Air Flow, Percentage , 100.0, 0.0, 100.0,
 
@@ -34,18 +36,17 @@ Swt_Pos = 4 : 0 - 10 Vdc
 
 # Port info.
 
-# Port : SensorID : 
-# the sensor id has to be 9 spaces out
+# Port : SensorID number
 # P has to be the first letter on the line ,otherwise the program will skip the line
-Port_1 : 2 : 2 
-Port_2 : 0 : 0 
-Port_3 : 0 : 0
-Port_4 : 0 : 0
-Port_5 : 0 : 0
-Port_6 : 0 : 0
-Port_7 : 0 : 0
-Port_8 : 0 : 0
-Port_9 : 0 : 0
-Port_10 : 0 : 0
+Port_1 : 7
+Port_2 : 0 
+Port_3 : 0
+Port_4 : 0
+Port_5 : 0
+Port_6 : 0
+Port_7 : 0
+Port_8 : 0
+Port_9 : 0
+Port_10 : 0
 
 

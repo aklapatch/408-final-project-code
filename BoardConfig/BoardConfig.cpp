@@ -58,6 +58,11 @@ BoardSpecs readSDCard(const char *FileName) {
     return Output;
 }
 
+void setBoundsFromID(PortInfo &input, vector<SensorInfo> sensors){
+    input.RangeEnd = sensors[input.SensorID].RangeEnd;
+    input.RangeEnd = sensors[input.SensorID].RangeEnd;
+}
+
 // ============================================================================
 BoardSpecs readConfigText(FILE *fp) {
     BoardSpecs Specs;
@@ -77,15 +82,11 @@ BoardSpecs readConfigText(FILE *fp) {
             SensorInfo tmp;
 
             // get the id number
-            strtok(Buffer, "="); // get past the = sign
+            strtok(Buffer, ":"); // get past the :
 
             const char token[] = ","; // token to split values
 
             char *value = strtok(NULL, token);
-            tmp.ID = atoi(value); // get id value
-
-            // get waht the sensor is measuring
-            value = strtok(NULL, token);
             tmp.Type = value;
 
             // get the unit of the sensor
@@ -105,8 +106,8 @@ BoardSpecs readConfigText(FILE *fp) {
             tmp.RangeEnd = atof(value);
 
             Specs.Sensors.push_back(tmp); // store those values
-            printf("Sensor: Type: %s Unit: %s\r\n", tmp.Type.c_str(),
-                   tmp.Unit.c_str());
+            printf("Sensor type: %s, Unit: %s, range start: %f, range-end: %f\r\n", tmp.Type.c_str(),
+                   tmp.Unit.c_str(), tmp.RangeStart, tmp.RangeEnd);
         }
     }
 
@@ -159,16 +160,11 @@ BoardSpecs readConfigText(FILE *fp) {
 
             ++prtCnt;
 
-            if (prtCnt < 10) {
-
-                // get sensor ID
-                tmp.SensorID = int(Buffer[9] - '0');
-
-            } else {
-                tmp.SensorID = int(Buffer[10] - '0');
-            }
+            
             // grab the port name too
             tmp.Name = strtok(Buffer, ":");
+
+            tmp.SensorID = atoi(strtok(NULL, "\n"));
 
             // remove whitespace from the name
             size_t SpaceDex = tmp.Name.find_first_of(' ');
@@ -183,7 +179,9 @@ BoardSpecs readConfigText(FILE *fp) {
             // get sensorname
             tmp.Description = getSensorName(Specs.Sensors, tmp.SensorID);
 
-            printf("Port Info: %s  %d  %0.2f    %s\r\n", tmp.Name.c_str(),
+            setBoundsFromID(tmp, Specs.Sensors);
+
+            printf("Port Info: name= %s id=  %d Multiplier= %0.2f description=%s\r\n", tmp.Name.c_str(),
                    tmp.SensorID, tmp.Multiplier, tmp.Description.c_str());
 
             // store the port in the boardSpecs struct only if it means anything
