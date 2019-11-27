@@ -21,6 +21,9 @@ FATFileSystem fs("sd");
 
 using namespace std;
 
+/// The watchdog timer goes off after PollingInterval*WATCHDOGCOEFF seconds
+#define WATCHDOGCOEFF (5)
+
 // for the watchdog timer, we will have a timeout that goes off
 // and resets the program. This function will be detached and reattached
 // throughout the life of the program to keep from resetting all the time
@@ -174,7 +177,7 @@ int main() {
                 printf("\r\n%s's value = %f\r\n", Specs.Ports[i].Name.c_str(),
                        Specs.Ports[i].Value);
 
-                resetWatchdog(watchdog, PollingInterval * 5);
+                resetWatchdog(watchdog, PollingInterval * WATCHDOGCOEFF);
             }
         }
 
