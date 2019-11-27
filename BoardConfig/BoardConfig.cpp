@@ -96,15 +96,15 @@ BoardSpecs readConfigText(FILE *fp) {
 
             // get range start
             value = strtok(NULL, token);
-            tmp.RangeStart = atof(value);
+            tmp.RangeFloor = atof(value);
 
             // get range end till end of line
             value = strtok(NULL, "\n");
-            tmp.RangeEnd = atof(value);
+            tmp.RangeCeiling = atof(value);
 
             Specs.Sensors.push_back(tmp); // store those values
             printf("Sensor type: %s, Unit: %s, range start: %f, range-end: %f\r\n", tmp.Type.c_str(),
-                   tmp.Unit.c_str(), tmp.RangeStart, tmp.RangeEnd);
+                   tmp.Unit.c_str(), tmp.RangeFloor, tmp.RangeCeiling);
         }
     }
 
@@ -174,20 +174,20 @@ BoardSpecs readConfigText(FILE *fp) {
                 tmp.Description.append(" in ");
                 tmp.Description.append(Specs.Sensors[ tmp.SensorID].Unit);
 
-                tmp.RangeEnd = Specs.Sensors[tmp.SensorID].RangeEnd;
-                tmp.RangeStart= Specs.Sensors[tmp.SensorID].RangeStart;
+                tmp.RangeCeiling = Specs.Sensors[tmp.SensorID].RangeCeiling;
+                tmp.RangeFloor= Specs.Sensors[tmp.SensorID].RangeFloor;
 
             printf("Port Info: name= %s id=  %d Multiplier= %0.2f description=%s\r\n", tmp.Name.c_str(),
 
                    tmp.SensorID, tmp.Multiplier, tmp.Description.c_str());
 
-            if (tmp.Multiplier != 0.0f){
-                Specs.Ports.push_back(tmp);
-            }
-            else {
+                if (tmp.Multiplier != 0.0f){
+                    Specs.Ports.push_back(tmp);
+                }
+                else {
 
-                printf ("Port %s has a multiplier of 0, skipping\r\n", tmp.Name.c_str());
-            }
+                    printf ("Port %s has a multiplier of 0, skipping\r\n", tmp.Name.c_str());
+                }
             }
             else {
                 // skip this sensor, sensor id is bad

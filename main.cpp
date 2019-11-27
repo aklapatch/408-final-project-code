@@ -159,12 +159,12 @@ int main() {
                     Port[i].read() * Specs.Ports[i].Multiplier;
 
                 // set error indicator if the sample is out of range
-                if (Specs.Ports[i].Value > Specs.Ports[i].RangeEnd) {
+                if (Specs.Ports[i].Value > Specs.Ports[i].RangeCeiling) {
                     Specs.Ports[i].Value = HUGE_VAL;
                     printf("\r\nPort value exceeded valid sample value range, "
                            "assigning "
                            "error value\r\n");
-                } else if (Specs.Ports[i].Value < Specs.Ports[i].RangeStart) {
+                } else if (Specs.Ports[i].Value < Specs.Ports[i].RangeFloor) {
                     Specs.Ports[i].Value = -HUGE_VAL;
                     printf("\r\nPort value is under the valid sample range, "
                            "assigning "

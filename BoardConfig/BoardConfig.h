@@ -18,7 +18,7 @@ using namespace std;
 /// Arbitrary length for char buffers
 #define BUFFLEN 1024
 
-/// Prints out most of the values of the member variables in \ref Specs
+/// Prints out most of the values of the member variables in Specs
 /// This excludes the port configuration values.
 void printSpecs(BoardSpecs &Specs);
 

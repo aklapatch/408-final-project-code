@@ -26,15 +26,15 @@ struct PortInfo {
     /// Indicates what type of sensor is attached to the port
     int SensorID;
 
-    float RangeStart; ///< Any port reading below this is considered an error.
+    float RangeFloor; ///< Any port reading below this is considered an error.
 
-    float RangeEnd; ///< Any port reading above this is cosidered an error.
+    float RangeCeiling; ///< Any port reading above this is cosidered an error.
 
     /// Default Constructor.
     /// Sets all string values to "", integers to 0, and floats to 0.0
     PortInfo()
         : Name(""), Value(0.0), Description(""), Multiplier(0.0), SensorID(0),
-          RangeStart(0.0), RangeEnd(0.0) {}
+           RangeFloor(0.0), RangeCeiling(0.0) {}
 };
 
 /// Stores information regarding specific sensors
@@ -48,13 +48,13 @@ struct SensorInfo {
     float
         Multiplier; ///< Multiplier to convert sensor's value to specified unit
 
-    float RangeStart; ///< Any port reading below this is considered an error.
+    float RangeFloor; ///< Any port reading below this is considered an error.
 
-    float RangeEnd; ///< Any port reading above this is cosidered an error.
+    float RangeCeiling; ///< Any port reading above this is cosidered an error.
 
     SensorInfo()
         : ID(0), Type("No Sensor"), Unit("No Unit"), Multiplier(0.0),
-          RangeStart(0.0), RangeEnd(0) {}
+          RangeFloor(0.0), RangeCeiling(0) {}
 };
 
 /// Contains board properties and the ports' data and info.

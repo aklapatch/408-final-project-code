@@ -18,7 +18,7 @@
 
 using namespace std;
 
-/// Deletes data entries store in \ref FileName
+/// Deletes data entries store in FileName 
 /// It deletes N entries where N is the number of ports currently active.
 /// It also deletes the backup file when no entries are left.
 bool deleteDataEntry(BoardSpecs &Specs, const char *FileName);
