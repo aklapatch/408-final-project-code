@@ -74,8 +74,8 @@ BoardSpecs readConfigText(FILE *fp) {
     // read through and get sensor ids before getting the port information
     while (fgets(Buffer, BUFFLEN, fp) != NULL) {
 
-        // if the line has 'SensorID' in it, then get the sensor info from it
-        if (strstr(Buffer, "SensorID") && Buffer[0] == 'S') {
+        // if the line has 'Sensor' in it, then get the sensor info from it
+        if (strstr(Buffer, "Sensor") && Buffer[0] == 'S') {
             SensorInfo tmp;
 
             // get the id number

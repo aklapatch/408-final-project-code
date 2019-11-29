@@ -308,4 +308,54 @@ int main() {
  * - OfflineLogging.cpp / OfflineLogging.h -> functions that relate to logging
  *   and deleting data to and from a file
  * - debugging.h -> Macros that are meant to assist in debugging
+ *
+ * 
+ * Configuration File Documentation
+ * --------------------------------
+ * There are 4 different fields that need to be filled out for the board configuration.
+ * - `BoardInfo`
+ * - `ConnInfo`
+ * - `Sensor`
+ * - `Port`
+ *
+ * This is an example of filling out the `BoardInfo` field:
+ * ```
+ * BoardInfo:WiFi SSID,WiFi Password,Board Name
+ * ```
+ * To fill out a field, put the field name at the very beginning of the line, put a colon after it, and then put text after it, with subfields separated by commas.
+ * 
+ * This is an example of a board configuration:
+ * ```
+ * BoardInfo:HomeWiFi,password123,Test Board
+ *
+ * ConnInfo:192.168.0.3,80,test-server.com,/sensor-readings.php
+ *
+ * Sensor:Voltage,Volts,10,-20,20
+ * Sensor:Voltage,Volts,1000,-50,50
+ *
+ * Port:Voltage Port,0
+ * Port:Different Voltage Port,1
+ * ```
+ * 
+ * In that configuration, there are 2 sensor types, 2 active ports.
+ * All of the following descriptions are related to the previous example.
+ * ### BoardInfo
+ * The board will try to connect to a wifi SSID `HomeWiFi` with the password `password123` and the board's name is `Test Board`.
+ *
+ * ### ConnInfo
+ * The board will try to connect to `192.168.0.3` at port `80`, with the hostname `test-server.com`, and try push a GET request to the file `sensor-readings.php` at the site root.
+ *
+ * ### Sensor
+ * The first sensor has an id of 0, is measuring voltage, has volts as a unit, has a multiplier of 10, and has a valid range is from -20 to 20.
+ *
+ * The second sensor has an id of 1, is measuring voltage, has volts as a unit, has a multiplier of 1000, and has a valid range is from -50 to 50.
+ *
+ * The `Voltage` and `Volts` text in this case is not important. The sensor descriptions are based on that text, but no sensor readings are derived from those labels
+ *
+ * Sensor ID number are automatically assigned. The topmost sensor in the file has the id of 0, and the next one down has an ID of 1, and the next one has an ID of 2, and so on.
+ *
+ * ### Port
+ * The first port has the name `Voltage Port` and inherits the multipliers and valid range of its sensor id. Its sensor ID is 0 in this case.
+ *
+ * The second port has the name `Different Voltage Port` and inherits the multipliers and valid range of its sensor id. Its sensor ID is 1 in this case.
  */
