@@ -5,6 +5,10 @@
 #include <cctype>
 
 void printSpecs(BoardSpecs &Specs) {
+    printf("\r\nPossible Sensor Info: \r\n");
+    for (auto Sensor : Specs.Sensors){
+        printf("Type = %s, Unit = %s, Multiplier = %f, RangeFloor = %f, RangeCeiling = %f\r\n", Sensor.Type.c_str(), Sensor.Unit.c_str(), Sensor.Multiplier, Sensor.RangeFloor, Sensor.RangeCeiling);
+    }
     printf("\r\nBoard information\r\n");
     printf("Network SSID = %s \r\n", Specs.NetworkSSID.c_str());
 
@@ -191,7 +195,7 @@ BoardSpecs readConfigText(FILE *fp) {
             }
             else {
                 // skip this sensor, sensor id is bad
-                printf("Port %s has an out of bounds Sensor ID, skipping\r\n", tmp.Name.c_str());
+                printf("Port %s has an out of bounds Sensor ID= %d, skipping\r\n", tmp.Name.c_str(), tmp.SensorID);
             }
             
 

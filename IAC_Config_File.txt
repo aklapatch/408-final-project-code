@@ -23,7 +23,7 @@ Sensor: Current, Amps, 800.00, 0.0, 600.0
 Sensor: Temperature, Degree Celcius, 50.0, 0, 50
 Sensor: Temperature, Degree Celcius, 50.0, 0, 50
 Sensor: Pressure, PSIG, 240.0, 0.0, 200.0
-Sensor: Potentiometer, Volts, 1, -5.0, 5.0
+Sensor: Potentiometer, Volts, 1, 0,0.3
 *Sensor: Humidity, Percentage, 100.0, 0.0, 100.0
 *Sensor: Compressed Air Flow, Percentage , 100.0, 0.0, 100.0,
 
@@ -32,6 +32,5 @@ Sensor: Potentiometer, Volts, 1, -5.0, 5.0
 # format
 # Port: PortName, SensorID
 # P has to be the first letter on the line ,otherwise the program will skip the line
-Port:TestPort, 7
-
-
+Port:TestPort,7
+Port:OtherTestPort,7
