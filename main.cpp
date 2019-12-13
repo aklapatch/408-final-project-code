@@ -24,6 +24,9 @@ using namespace std;
 /// The watchdog timer goes off after PollingInterval*WATCHDOGCOEFF seconds
 #define WATCHDOGCOEFF (5)
 
+/// the serial timeout for the ESP8266 in milliseconds
+#define SERIALTIMEOUT (3000)
+
 // for the watchdog timer, we will have a timeout that goes off
 // and resets the program. This function will be detached and reattached
 // throughout the life of the program to keep from resetting all the time
@@ -83,7 +86,7 @@ int main() {
 
     _parser->debug_on(1);
     _parser->set_delimiter("\r\n");
-    _parser->set_timeout(3000);
+    _parser->set_timeout(SERIALTIMEOUT);
 
     printf("\r\nReading board settings from %s\r\n", config_file);
     BoardSpecs Specs = readSDCard("/sd/IAC_Config_File.txt");
@@ -129,6 +132,8 @@ int main() {
 
         printf("\r\n No Remote Hostname found, Entering offline mode\r\n");
     }
+
+    resetWatchdog(watchdog, PollingInterval*WATCHDOGCOEFF);
 
     int wifi_err = NETWORKSUCCESS;
     if (!OfflineMode) {

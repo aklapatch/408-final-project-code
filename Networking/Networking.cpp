@@ -193,29 +193,34 @@ int sendMessageTCP(ATCmdParser *_parser, BoardSpecs &Specs, string &message,
     if (!_parser->send("%s", message.c_str()))
         return -4;
 
-    if (!_parser->recv("+IPD"))
-        return -5;
-
-    char Buf[response_size + 1];
-    _parser->read(Buf, response_size);
-    Buf[response_size] = 0;
-    printf("Response: %s\r\n", Buf);
-    if (strstr(Buf, "404"))
-        return -6;
-
-    // get polling rate
-    const char *tok = "samplerate=\"";
-    char *ratestart = strstr(Buf, tok);
-    // go right up to the float value
-    ratestart += strlen(tok);
-
-    if (isdigit(ratestart[0])) {
-        response = atof(ratestart);
+    if (!_parser->recv("SEND OK")){
+        if (!_parser->recv("+IPD"))
+            return -5;
     }
+    else {
+        if (_parser->recv("+IPD")){
 
+            char Buf[response_size + 1];
+            _parser->read(Buf, response_size);
+            Buf[response_size] = 0;
+            printf("Response: %s\r\n", Buf);
+            if (strstr(Buf, "404"))
+                return -6;
+
+            // get polling rate
+            const char *tok = "samplerate=\"";
+            char *ratestart = strstr(Buf, tok);
+            // go right up to the float value
+            ratestart += strlen(tok);
+
+            if (isdigit(ratestart[0])) {
+                response = atof(ratestart);
+            }
+        }    
+    }
+    
     _parser->send("AT+CIPCLOSE=5");
     _parser->recv("OK");
-
     return NETWORKSUCCESS;
 }
 
